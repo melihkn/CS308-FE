@@ -1,0 +1,16 @@
+.center-button {
+    display: flex;
+    justify-content: center; /* Centers the button horizontally */
+    margin-top: 20px; /* Optional: Adds space above the button */
+  }
+
+.center-text-add-padding{
+    text-align: center;
+    padding-top: 20px;
+}
+
+.div-button{
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}

@@ -1,0 +1,13 @@
+/* styles.css */
+.container {
+    margin-top: 20px;
+  }
+  .card {
+    width: 100%; /* Full width */
+    border: 1px solid #ddd; /* Optional: Add border */
+  }
+  .card-img-top {
+    height: 150px; /* Fixed height for images */
+    object-fit: cover; /* Cover to maintain aspect ratio */
+  }
+  
