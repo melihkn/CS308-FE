@@ -1,52 +1,62 @@
 // Login.js
 import React, { useState } from 'react';
-import axios from 'axios'; // axios is for sending http requests to the server (endpoints in the backend)
-import { useNavigate } from 'react-router-dom'; // import useNavigate hook to navigate to different pages
-import './login.css'; // Import CSS for styling
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import './login.css';
 
+/*
+    Login component is a form that takes email and password as input.
+    When the form is submitted, it sends a POST request to the server to authenticate the user.
+    If the authentication is successful, it saves the JWT token coming from the backend to local storage and updates the login state in App.js.
 
-const Login = () => {
-  // // State variables for email and password with initial values of empty strings
+    From now on, in AppContent.js, isLoggedIn state will be true and userProfile state will be updated with the user's profile information.
+    
+    Props:
+        - onLogin: function to update the login state in App.js. It is passed from AppContent.js. It returns the login status, user id, and user profile information to AppContent.js.
+
+    State:
+        - email: input value for email
+        - password: input value for password
+
+    Redirects:
+        - Redirects to '/' after successful login which is home page
+*/
+
+const Login = ({ onLogin }) => {
+  // State variables
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // // after this, we can change the value of email and password using setEmail and setPassword functions in jsx code for example (yani burda variable ları ve update fonksiyonlarını tanımlammış olduk)
-
-  // Initialize useNavigate hook to navigate to different pages
   const navigate = useNavigate();
 
+  // Login function
   const handleLogin = async (e) => {
-    // Prevent default form submission behavior (refreshing the page)
+    // Prevent the default form submission behavior (refreshing the page)
     e.preventDefault();
 
+    // Send a POST request to the server to authenticate the user with email and password
     try {
-      // Send a POST request to the server with the email and password entered by the user
-      // endpoint returns an object with a JSON BODY. The object (response of backend) contains a key named access_token which is the JWT token 
-      // access_token is the key of the token returned from the backend
       const response = await axios.post('http://127.0.0.1:8000/login', { email, password });
-      // Save JWT token to local storage
-      localStorage.setItem('token', response.data.access_token); 
-      // Display success message on the top of the page as an alert 
+      // Save the JWT token coming from the backend to local storage to keep the user logged in with the key 'token' 
+      localStorage.setItem('token', response.data.access_token);
+
+      // Send a GET request by passing the token in the header to the server to get the user's profile information (using the /auth/status endpoint)
+      const profileResponse = await axios.get('http://127.0.0.1:8000/auth/status', {
+        headers: { 'Authorization': `Bearer ${response.data.access_token}` }
+      });
+
+      // Update the login state in App.js with the login status, user id, and user profile information
+      onLogin(true, profileResponse.data.userId, profileResponse.data);
+      
+      // Redirect to the home page after successful login and display an alert message to the user as google does
       alert('Login successful');
-      // If successful login, redirect to the home page
       navigate('/');
-      // Reload the page to reflect the login state
-      window.location.reload();
-    } 
-    // If there is an error, display the error message
+
+    }
+    // Catch any error and display an alert message to the user
     catch (error) {
       alert(error.response?.data?.detail || 'Login failed');
     }
   };
-
-  /*
-  The following JSX code is returned to render the login form.
-
-      It contains input fields for email and password.
-      The value of the input fields is set to the corresponding values in the email and password state. 
-      This is done using the value attribute of the input fields and onChange event handler to update the state when the user types in the input fields.
-  
-      Then, When the user submits the form, the handleLogin function is called.
-  */
 
   return (
     <div className="container">
@@ -79,3 +89,4 @@ const Login = () => {
 };
 
 export default Login;
+
