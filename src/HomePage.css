@@ -1,13 +1,13 @@
-/* styles.css */
-.container {
-    margin-top: 20px;
-  }
-  .card {
-    width: 100%; /* Full width */
-    border: 1px solid #ddd; /* Optional: Add border */
-  }
-  .card-img-top {
-    height: 150px; /* Fixed height for images */
-    object-fit: cover; /* Cover to maintain aspect ratio */
-  }
-  
+.homepage-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.products-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
