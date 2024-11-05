@@ -4,10 +4,14 @@ import axios from 'axios';
 import ProductCard from './ProductCard';
 import './HomePage.css';
 
+
+// THIS WILL CHANGE BECAUSE BACKEND HAS CHANGED
+// THIS WILL CALL THE PRODUCTS SERVICE TO GET THE PRODUCTS TO BE DISPLAYED ON THE MAIN PAGE BASED ON POPULARIRTY OR ETC!!!!!!!
+
 const HomePage = () => {
   // products state is used to store the list of products fetched from the backend
   const [products, setProducts] = useState([]);
-  const BACKEND_URL = 'http://127.0.0.1:8000';
+  const BACKEND_URL = 'http://127.0.0.1:8001';
 
   // useEffect hook is used to fetch products from the backend when the component is mounted to the DOM (whenever, homepage is visited)
   useEffect(() => {

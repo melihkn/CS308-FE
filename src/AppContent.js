@@ -9,29 +9,6 @@ import Profile from './profile';
 import ShoppingCart from './ShoppingCart';
 import axios from 'axios';
 
-/*
-  Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
-
-  In AppContent component:
-    - We have a state variable isLoggedIn to keep track of the user's login status.
-    - We have a state variable userId to keep track of the user's id.
-    - We have a state variable userProfile to keep track of the user's profile information. (like email, name, surname, phone number),
-    - We have a function handleLogin to update the login status, user id, and user profile information to be passed to the child componnent Login.
-    - We have a function handleLogout to remove the token from local storage and update the login status, user id, and user profile information.
-    - We have a useEffect hook to check the login status when the component mounts.
-    - We have a Routes component to define the routes in the application.
-    - We have Route components to map URLs to specific pages. 
-
-
-  In jsx code:
-    - We have a Navbar component to display the navbar on every page.
-    - We have Route components to map URLs to specific pages.
-    - We have a HomePage component to display the home page.
-    - We have a Login component to display the login page.
-    - We have a Register component to display the register page.
-    - We have a Profile component to display the user's profile information.
-    - We have a ShoppingCart component to display the items in the shopping cart.
-*/
 
 function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -88,7 +65,12 @@ function AppContent() {
 
   // handleLogout function is defined to remove the token from local storage and update the login status, user id, and user profile information
   const handleLogout = () => {
+    // remove the token (which is sent to backend whenever user need to be authenticated) from the local storage
     localStorage.removeItem('token');
+
+    // clear the local cart of the client 
+    localStorage.removeItem('cart'); 
+
     setIsLoggedIn(false);
     setUserId(null);
     setUserProfile(null);
@@ -111,6 +93,30 @@ function AppContent() {
 }
 
 export default AppContent;
+
+/*
+  Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
+
+  In AppContent component:
+    - We have a state variable isLoggedIn to keep track of the user's login status.
+    - We have a state variable userId to keep track of the user's id.
+    - We have a state variable userProfile to keep track of the user's profile information. (like email, name, surname, phone number),
+    - We have a function handleLogin to update the login status, user id, and user profile information to be passed to the child componnent Login.
+    - We have a function handleLogout to remove the token from local storage and update the login status, user id, and user profile information.
+    - We have a useEffect hook to check the login status when the component mounts.
+    - We have a Routes component to define the routes in the application.
+    - We have Route components to map URLs to specific pages. 
+
+
+  In jsx code:
+    - We have a Navbar component to display the navbar on every page.
+    - We have Route components to map URLs to specific pages.
+    - We have a HomePage component to display the home page.
+    - We have a Login component to display the login page.
+    - We have a Register component to display the register page.
+    - We have a Profile component to display the user's profile information.
+    - We have a ShoppingCart component to display the items in the shopping cart.
+*/
 
 /* 
   Functionalities of the App:
