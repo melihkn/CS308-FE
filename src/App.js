@@ -12,3 +12,6 @@ function App() {
 }
 
 export default App;
+
+// to run: npm start
+// if it does not run, try before: export NODE_OPTIONS=--openssl-legacy-provider
