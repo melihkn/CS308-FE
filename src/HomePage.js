@@ -5,13 +5,13 @@ import ProductCard from './ProductCard';
 import './HomePage.css';
 
 
-// THIS WILL CHANGE BECAUSE BACKEND HAS CHANGED
-// THIS WILL CALL THE PRODUCTS SERVICE TO GET THE PRODUCTS TO BE DISPLAYED ON THE MAIN PAGE BASED ON POPULARIRTY OR ETC!!!!!!!
+// backend url of the server in which images are kept (static file)
+const BACKEND_URL = 'http://127.0.0.1:8001';
 
+// we display all the products in the homepage (for now, then we display the most popular items in the home page)
 const HomePage = () => {
   // products state is used to store the list of products fetched from the backend
   const [products, setProducts] = useState([]);
-  const BACKEND_URL = 'http://127.0.0.1:8001';
 
   // useEffect hook is used to fetch products from the backend when the component is mounted to the DOM (whenever, homepage is visited)
   useEffect(() => {
@@ -30,11 +30,8 @@ const HomePage = () => {
     fetchProducts();
   }, []);
   
-  const getImageUrl = (imageUrl) => {    
-      // imageUrl is the URL of the product image on the database which is something like : "images/dog-food.jpg"
-      return `${BACKEND_URL}/static/${imageUrl}`;
-    };
-
+  // note: we pass the relative url of the image to the ProductCard component and the ProductCard component will convert it to the full url
+  
   return (
     <div className="homepage-container">
       <h1>Welcome to MyVet!</h1>
@@ -49,7 +46,8 @@ const HomePage = () => {
             description={product.description}
             quantity={product.quantity}
             distributor={product.distributor}
-            imageUrl={getImageUrl(product.image_url)}
+            imageUrl={product.image_url}
+            price={product.price}
           />
         ))}
       </div>
