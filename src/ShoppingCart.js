@@ -1,132 +1,145 @@
-// ShoppingCart.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProductCard from './ProductCard';
 import './ShoppingCart.css';
 
-// ShoppingCart component (a type of function) displays the items in the shopping cart.
+const BACKEND_URL = 'http://127.0.0.1:8001';
+
 function ShoppingCart({ isLoggedIn, userId }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [basicCart, setBasicCart] = useState([]);       // Keeps product_id and quantity
+  const [detailedCart, setDetailedCart] = useState([]); // Keeps full product details
   const [totalPrice, setTotalPrice] = useState(0);
 
-  // this useEffect will be called when user logs in or logs out in each time the ShoppingCart component mounts (if no change in the isLoggedIn and userId, it will not run whether the component mounts or not)
+  // Load the cart from either localStorage (non-logged-in) or backend (logged-in)
   useEffect(() => {
-    const fetchCartItems = async () => {
-      // if the last of action of user is logging in, from now on, cartItems will be fetched from the backend using the appropriate endpoint
+    const fetchBasicCart = async () => {
       if (isLoggedIn && userId) {
         try {
-          // try to call the cart service of the backend to get the cart items of the user
-          const response = await axios.get(`http://127.0.0.1:8001/cart/${userId}`);
-          // then set the state variable cartItems to the cart items of the user
-          setCartItems(response.data.cart);
-        } 
-        catch (error) {
-          // if there is an error, catch the error and log it to the console
-          console.error("Error fetching cart items:", error);
+          // Fetch cart from backend for logged-in users
+          const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
+          setBasicCart(response.data.cart);
+        } catch (error) {
+          console.error("Error fetching cart from backend:", error);
         }
-      } 
-      else {
-        // if the last of action of user is logging out, from now on, cartItems will be fetched from the session storage which is clear because when user logged out, I clear the cart pbject in the local storage
-        const storedCart = JSON.parse(sessionStorage.getItem("cart") || "[]");
-        setCartItems(storedCart);
+      } else {
+        // Fetch cart from localStorage for non-logged-in users
+        const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        setBasicCart(storedCart);
       }
     };
-    // above local function will be called when the component mounts (in each navigation, it will run)
-    fetchCartItems();
+
+    fetchBasicCart();
   }, [isLoggedIn, userId]);
 
-  // Calculate total price
+  // Merge cart on login (only if there is a localStorage cart)
   useEffect(() => {
-    // Defined local function to calculate the total price of the items in the cart and set the state variable totalPrice to the total price
+    const mergeLocalCartWithBackend = async () => {
+      if (isLoggedIn && userId) {
+        const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        if (localCart.length > 0) {
+          try {
+            await axios.post(`${BACKEND_URL}/cart/merge`, {
+              items: localCart,
+              customer_id: userId,
+            });
+            // Clear localStorage cart after merging
+            localStorage.removeItem("cart");
+            // Re-fetch the merged cart from the backend
+            const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
+            setBasicCart(response.data.cart);
+          } catch (error) {
+            console.error("Error merging local cart with backend:", error);
+          }
+        }
+      }
+    };
+
+    mergeLocalCartWithBackend();
+  }, [isLoggedIn, userId]);
+
+  // Fetch detailed product info for each item in the basicCart
+  useEffect(() => {
+    const fetchDetailedCart = async () => {
+      try {
+        const detailedItems = await Promise.all(
+          basicCart.map(async (item) => {
+            const response = await axios.get(`${BACKEND_URL}/products/${item.product_id}`);
+            return {
+              ...response.data,
+              quantity: item.quantity,
+            };
+          })
+        );
+        setDetailedCart(detailedItems);
+      } catch (error) {
+        console.error("Error fetching detailed product info:", error);
+      }
+    };
+
+    if (basicCart.length > 0) {
+      fetchDetailedCart();
+    }
+  }, [basicCart]);
+
+  // Calculate total price based on detailedCart
+  useEffect(() => {
     const calculateTotal = () => {
-      const total = cartItems.reduce((sum, item) => sum + (item.quantity * item.price || 0), 0);
+      const total = detailedCart.reduce((sum, item) => sum + (item.quantity * item.price || 0), 0);
       setTotalPrice(total);
     };
-    // this above local function will be called when the cartItems state variable changes in each time the ShoppingCart component mounts (if no change in the cartItems, it will not run whether the component mounts or not)
     calculateTotal();
-  }, [cartItems]);
+  }, [detailedCart]);
 
-  
-  // Adjust item quantity (increase or decrease)
-  // jsx code bu fonksiyonu çağırıo ürün amount değişince - alttaki button lara tıklanınca (two options: 1 or -1)
-  // bu fonksiyon cartItems state ini güncellio, aynı zamanda local storage daki yedek cart ı güncellio + backend e doğru endpoint e istek atıp ürünün cart daki sayısını değişio.
+  // Adjust item quantity in basicCart and backend/localStorage
   const adjustQuantity = async (productId, delta) => {
-    const updatedItems = cartItems.map(item =>
+    const updatedItems = basicCart.map(item =>
       item.product_id === productId ? { ...item, quantity: item.quantity + delta } : item
     ).filter(item => item.quantity > 0);
 
-    setCartItems(updatedItems);
-    localStorage.setItem("cart", JSON.stringify(updatedItems));
+    setBasicCart(updatedItems);
 
     if (isLoggedIn && userId) {
       const endpoint = delta > 0 ? "increase_quantity" : "decrease_quantity";
       try {
-        await axios.patch(`http://127.0.0.1:8001/cart/${endpoint}`, {
+        await axios.patch(`${BACKEND_URL}/cart/${endpoint}`, {
           product_id: productId,
           customer_id: userId,
         });
       } catch (error) {
-        console.error(`Error ${delta > 0 ? "increasing" : "decreasing"} item quantity:`, error);
+        console.error(`Error ${delta > 0 ? "increasing" : "decreasing"} item quantity in backend:`, error);
       }
+    } else {
+      localStorage.setItem("cart", JSON.stringify(updatedItems));
     }
   };
 
-
-  // jsx code un da item in altındaki remove button ı tıklanınca bu fonksiyon çağrılıo product ın product id ile.
-  // bu fonksiyon backend deki doğru endpoint e request atıp user ın cart dan bu itemi çıkarıo. 
+  // Remove item from basicCart and backend/localStorage
   const removeFromCart = async (productId) => {
-    const updatedItems = cartItems.filter(item => item.product_id !== productId);
-    setCartItems(updatedItems);
-    localStorage.setItem("cart", JSON.stringify(updatedItems));
+    const updatedItems = basicCart.filter(item => item.product_id !== productId);
+    setBasicCart(updatedItems);
 
     if (isLoggedIn && userId) {
       try {
-        await axios.delete("http://127.0.0.1:8001/cart/remove", {
+        await axios.delete(`${BACKEND_URL}/cart/remove`, {
           data: {
             product_id: productId,
             customer_id: userId,
           },
         });
       } catch (error) {
-        console.error("Error removing item from cart:", error);
+        console.error("Error removing item from cart in backend:", error);
       }
+    } else {
+      localStorage.setItem("cart", JSON.stringify(updatedItems));
     }
   };
 
-
-  // if the state of the isLoggedIn changes, the component will re-render and if the user now logged in, the local shopping cart will be merged with the persistent cart
-  useEffect(() => {
-    const mergeLocalCartWithPersistentCart = async () => {
-      if (isLoggedIn && userId) {
-        const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-        if (localCart.length > 0) {
-          // Send local cart items to backend for merging
-          await axios.post(`http://127.0.0.1:8001/cart/merge`, {
-            items: localCart,
-            customer_id: userId,
-          });
-
-          // Clear local storage as it's now merged
-          localStorage.removeItem("cart");
-
-          // Fetch updated cart from backend
-          const response = await axios.get(`http://127.0.0.1:8001/cart/${userId}`);
-          setCartItems(response.data.cart);
-        }
-      }
-    };
-
-    mergeLocalCartWithPersistentCart();
-  }, [isLoggedIn, userId]);
-
   return (
     <div className="shopping-cart-container">
-      {/* Header based on cart items count */}
-      <h2>{cartItems.length > 0 ? "Shopping Cart" : "Shopping Cart is empty"}</h2>
+      <h2>{detailedCart.length > 0 ? "Shopping Cart" : "Shopping Cart is empty"}</h2>
 
       <div className="cart-items">
-        {cartItems.map(item => (
+        {detailedCart.map(item => (
           <ProductCard
             key={item.product_id}
             name={item.name}
@@ -135,6 +148,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
             quantity={item.quantity}
             distributor={item.distributor}
             imageUrl={item.image_url}
+            price={item.price}
             onIncrease={() => adjustQuantity(item.product_id, 1)}
             onDecrease={() => adjustQuantity(item.product_id, -1)}
             onRemove={() => removeFromCart(item.product_id)}
@@ -143,7 +157,6 @@ function ShoppingCart({ isLoggedIn, userId }) {
       </div>
       <div className="cart-summary">
         <h3>Total Price: ${totalPrice.toFixed(2)}</h3>
-        {/* Redirect to checkout page -> TO DO LATER */}
         <button onClick={() => alert("Redirect to checkout")}>
           Proceed to Checkout
         </button>
