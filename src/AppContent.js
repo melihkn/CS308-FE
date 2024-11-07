@@ -7,7 +7,9 @@ import Register from './register';
 import HomePage from './HomePage';
 import Profile from './profile';
 import ShoppingCart from './ShoppingCart';
+import SearchResults from './search-results';
 import axios from 'axios';
+
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -105,6 +107,7 @@ function AppContent() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
+        <Route path="/search-results" element={<SearchResults />} /> {/* Add this */}
       </Routes>
     </>
   );
