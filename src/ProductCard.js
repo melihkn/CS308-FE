@@ -10,6 +10,10 @@ import './ProductCard.css';
 */
 
 // this will be used in HomePage.js and ShoppingCart.js
+
+// backend url of the server in which images are kept (static file)
+const BACKEND_URL = 'http://127.0.0.1:8001';
+
 const ProductCard = ({ 
   name, 
   model, 
@@ -17,17 +21,25 @@ const ProductCard = ({
   quantity, 
   distributor, 
   imageUrl, 
+  price,
   onIncrease, 
   onDecrease, 
   onRemove 
 }) => {
+  
+  const getImageUrl = (imageUrl) => {
+    // Ensure that `imageUrl` is relative to your static folder configuration
+    return `${BACKEND_URL}/static/${imageUrl}`;
+  };
+
   return (
     <div className="product-card">
-      <img src={imageUrl} alt={name} className="product-image" />
+      <img src={getImageUrl(imageUrl)} alt={name} className="product-image" />
       <div className="product-info">
         <h3>{name}</h3>
         <p><strong>Model:</strong> {model}</p>
         <p>{description}</p>
+        <p><strong>Price: </strong> {price}</p>
         <p><strong>Quantity:</strong> {quantity}</p>
         <p><strong>Distributor:</strong> {distributor}</p>
         <div className="cart-actions">
