@@ -38,6 +38,7 @@ const Profile = ({ isLoggedIn, userProfile }) => {
           <p className="profile-detail"><strong>Name:</strong> {userProfile.name} {userProfile.surname}</p>
           <p className="profile-detail"><strong>Email:</strong> {userProfile.email}</p>
           <p className="profile-detail"><strong>Phone:</strong> {userProfile.phone_number || 'N/A'}</p>
+          <p className="profile-detail"><strong>Role:</strong> {userProfile.role || 'N/A'}</p>
         </div>
       ) : (
         <p>Loading profile...</p>
