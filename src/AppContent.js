@@ -40,7 +40,11 @@ function AppContent() {
         // if the response is successful, set the isLoggedIn state to true, set the userId state to the user's id, and set the userProfile state to the user's profile information
         setIsLoggedIn(true);
         setUserId(response.data.userId);
-        setUserProfile(response.data);
+        // before: setUserProfile(response.data);
+        setUserProfile({
+          ...response.data,
+          role: response.data.role // Add role to userProfile
+        });
       } 
       // if there is an error, catch the error, remove the token from the local storage, set the isLoggedIn state to false, set the userProfile state to null, and redirect the user to the login page
       catch (error) {
