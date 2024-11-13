@@ -92,6 +92,16 @@ function ShoppingCart({ isLoggedIn, userId }) {
 
   // Adjust item quantity in basicCart and backend/localStorage
   const adjustQuantity = async (productId, delta) => {
+    // Find the product details for stock check
+    const product = detailedCart.find((item) => item.product_id === productId);
+    
+    // Check stock before increasing quantity
+    const currentQuantityInCart = basicCart.find(item => item.product_id === productId)?.quantity || 0;
+    if (delta > 0 && product && currentQuantityInCart + delta > product.quantity) {
+      alert("Not enough stock available for this product.");
+      return;
+    }
+    
     const updatedItems = basicCart.map(item =>
       item.product_id === productId ? { ...item, quantity: item.quantity + delta } : item
     ).filter(item => item.quantity > 0);
