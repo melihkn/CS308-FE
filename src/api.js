@@ -8,6 +8,10 @@ const api = axios.create({
 // Base URLs from environment variables
 const PM_SERVICE_URL = "http://localhost:8003";
 
+const PRODUCT_LIST_URL = "http://localhost:8002";
+
+const productsService = axios.create({ baseURL: PRODUCT_LIST_URL });    
+
 // Create Axios instances for each service
 const pmService = axios.create({ baseURL: PM_SERVICE_URL });
 
@@ -16,15 +20,16 @@ const getToken = () => {
     return localStorage.getItem('token');
 }
 
-// Add the Authorization header with the Bearer token to every request
-api.interceptors.request.use((config) => {
-    const token = getToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
 
+// api.interceptors.request.use((config) => {
+//     const token = getToken();
+//     if (token) {
+//         config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+// });
+
+// Add the Authorization header with the Bearer token to every request of product manager
 pmService.interceptors.request.use((config) => {
     const token = getToken();
     if (token) {
@@ -73,3 +78,17 @@ export const updateCategory = (id, data) => pmService.put(`/categories/${id}`, d
 export const deleteCategory = (id) => pmService.delete(`/categories/${id}`);
 export const fetchCategories = () => pmService.get('/categories');
 export const createCategory = (data) => pmService.post('/categories', data);
+
+export const fetchProductbyId = async (id) => {
+    console.log("Fetching product from:", "/products/"+id); // Debugging
+    try{
+        const response = await productsService.get(`/products/${id}`) // Fetch product by ID
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching product:", error.message);
+        throw error; // Re-throw for higher-level handling
+    };
+}
+
+
+  

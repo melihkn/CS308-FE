@@ -7,7 +7,7 @@ import './HomePage.css';
 const HomePage = () => {
   // products state is used to store the list of products fetched from the backend
   const [products, setProducts] = useState([]);
-  const BACKEND_URL = 'http://127.0.0.1:8000';
+  const BACKEND_URL = 'http://127.0.0.1:8002';
 
   // useEffect hook is used to fetch products from the backend when the component is mounted to the DOM (whenever, homepage is visited)
   useEffect(() => {
@@ -40,6 +40,7 @@ const HomePage = () => {
         {products.map(product => (
           <ProductCard 
             key={product.product_id}
+            id={product.product_id}  // Pass the ID to ProductCard
             name={product.name}
             model={product.model}
             description={product.description}
