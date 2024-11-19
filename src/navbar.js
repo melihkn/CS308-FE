@@ -1,6 +1,7 @@
 // Navbar.js
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 /*
   In navbar, we do not do anything with the backend. We just display the navbar with the login and register links.
@@ -36,6 +37,11 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile">Profile</Link>
                 </li>
+                  {userProfile?.role === 'product_manager' && (
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/ProductManager">Product Manager Dashboard</Link> 
+                    </li>
+                    )}
                 <li className="nav-item">
                   <Link className="nav-link" to="/cart">Shopping Cart</Link>
                 </li>
