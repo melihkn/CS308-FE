@@ -9,6 +9,7 @@ import Profile from './profile';
 import ShoppingCart from './ShoppingCart';
 import SearchResults from './search-results';
 import axios from 'axios';
+import ProductDetail from './ProductDetail';
 
 
 /*
@@ -108,6 +109,7 @@ function AppContent() {
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
         <Route path="/search-results" element={<SearchResults />} /> {/* Add this */}
+        <Route path="/product-detail/:productId" element={<ProductDetail />} /> {/* Product Detail Route */}
       </Routes>
     </>
   );
