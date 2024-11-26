@@ -1,8 +1,10 @@
 // HomePage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import './HomePage.css';
+
 
 const HomePage = () => {
   // products state is used to store the list of products fetched from the backend
@@ -38,15 +40,16 @@ const HomePage = () => {
       {/* For each of the dictionary in the response.data which is each product, is displayed using ProductCards */}
       <div className="products-grid">
         {products.map(product => (
-          <ProductCard 
-            key={product.product_id}
-            name={product.name}
-            model={product.model}
-            description={product.description}
-            quantity={product.quantity}
-            distributor={product.distributor}
-            imageUrl={getImageUrl(product.image_url)}
-          />
+          <Link to={`/product-detail/${product.product_id}`} key={product.product_id} className="product-link">
+          <div className="product-card">
+            <img src={getImageUrl(product.image_url)} alt={product.name} />
+            <h3>{product.name}</h3>
+            <p><strong>Model:</strong> {product.model}</p>
+            <p>{product.description}</p>
+            <p><strong>Price:</strong> ${product.price}</p>
+            <p><strong>Quantity:</strong> {product.quantity}</p>
+          </div>
+        </Link>
         ))}
       </div>
     </div>
