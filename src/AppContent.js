@@ -9,6 +9,8 @@ import Profile from './profile';
 import ShoppingCart from './ShoppingCart';
 import axios from 'axios';
 import ProductManagerDashboard from './ProductManagerDashboard';
+import OrderPage from './OrderPage';
+import CommentPage from './CommentPage';
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -105,6 +107,9 @@ function AppContent() {
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
+        <Route path="/orders" element={<OrderPage isLoggedIn={isLoggedIn} userId={userId} />} />
+        {/* Comment page is not done yet */}
+        <Route path="/comment/:orderId" element={<CommentPage />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (

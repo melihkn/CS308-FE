@@ -1,7 +1,4 @@
 // Navbar.js
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
 
 /*
   In navbar, we do not do anything with the backend. We just display the navbar with the login and register links.
@@ -22,6 +19,9 @@ import { Navigate } from 'react-router-dom';
   These are the links that are displayed on the navbar. When the user clicks on these links, the user will be redirected to the corresponding pages.
 */
 
+import React from 'react';
+import { Link } from 'react-router-dom'; 
+
 const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -37,11 +37,14 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile">Profile</Link>
                 </li>
-                  {userProfile?.role === 'product_manager' && (
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/ProductManager">Product Manager Dashboard</Link> 
-                    </li>
-                    )}
+                {userProfile?.role === 'product_manager' && (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/ProductManager">Product Manager Dashboard</Link> 
+                  </li>
+                )}
+                <li className="nav-item">
+                  <Link className="nav-link" to="/orders">Orders and Refunds</Link>
+                </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/cart">Shopping Cart</Link>
                 </li>
@@ -51,6 +54,10 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
               </>
             ) : (
               <>
+              {/* If the user is not logged in, we redirect the user login page if orders page want to be seen*/}
+              <li className="nav-item">
+                  <Link className="nav-link" to="/login">Orders and Refunds</Link>
+                </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/cart">Shopping Cart</Link>
                 </li>

@@ -1,0 +1,14 @@
+.order-item {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.order-item img {
+  width: 100px;
+  height: 100px;
+  margin-right: 20px;
+}
+
+.order-item-details {
+  flex: 1;
+}
