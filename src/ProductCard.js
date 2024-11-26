@@ -1,6 +1,8 @@
 // ProductCard.js
-import React from 'react';
-import './ProductCard.css';
+import React from "react";
+import { Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 
 /*
     ProductCard component is a reusable component that displays information about a product.
@@ -29,18 +31,43 @@ import './ProductCard.css';
 
 */
 
-const ProductCard = ({ name, model, description, quantity, distributor, imageUrl }) => {
+
+const ProductCard = ({ id, name, model, description, quantity, distributor, imageUrl }) => {
+  const navigate = useNavigate();
+
+  const handleDetailsClick = () => {
+    navigate(`/product/${id}`);
+  };
+
   return (
-    <div className="product-card">
-      <img src={imageUrl} alt={name} className="product-image" />
-      <div className="product-info">
-        <h3>{name}</h3>
-        <p><strong>Model:</strong> {model}</p>
-        <p>{description}</p>
-        <p><strong>Quantity:</strong> {quantity}</p>
-        <p><strong>Distributor:</strong> {distributor}</p>
-      </div>
-    </div>
+    <Card sx={{ maxWidth: 345, margin: 2 }}>
+      <CardMedia
+        component="img"
+        alt={name}
+        height="140"
+        image={imageUrl}
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          {name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          <strong>Model:</strong> {model}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {description}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          <strong>Quantity:</strong> {quantity}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          <strong>Distributor:</strong> {distributor}
+        </Typography>
+        <Button variant="contained" color="primary" onClick={handleDetailsClick}>
+          View Details
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
