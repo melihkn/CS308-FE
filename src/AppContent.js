@@ -10,6 +10,8 @@ import ShoppingCart from './ShoppingCart';
 import SearchResults from './search-results';
 import axios from 'axios';
 import ProductManagerDashboard from './ProductManagerDashboard';
+import ProductDetailPage from './ProductDetailPage';
+
 import OrderPage from './OrderPage';
 import CommentPage from './CommentPage';
 
@@ -116,8 +118,9 @@ function AppContent() {
         <Route path="/product-detail/:productId" element={<ProductDetail />} /> {/* Product Detail Route */}
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
-          <Route path="/ProductManager/*" element={<ProductManagerDashboard />} />
+          <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
         )}
+        <Route path="/product/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
       </Routes>
     </>
   );
