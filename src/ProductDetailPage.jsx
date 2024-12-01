@@ -145,7 +145,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
     // If the user is not logged in, add the item to the session storage cart
     else {
       // Get the cart from the session storage or create an empty cart
-      let cart = JSON.parse(sessionStorage.getItem("cart") || "[]");
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
       console.log("Cart:", cart); // Debugging
       // Find the index of the existing item in the cart
       const existingItemIndex = cart.findIndex(item => item.productId === Number(product_id));

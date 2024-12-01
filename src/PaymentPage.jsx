@@ -93,7 +93,7 @@ function PaymentPage() {
           {cartItems.map((item, index) => (
             <ListItem key={index} disableGutters>
               <ListItemText
-                primary={`Product ID: ${item.product_id}`}
+                primary={`Product Name: ${item.name}, Model: ${item.model}`}
                 secondary={`Quantity: ${item.quantity}, Price: $${item.price.toFixed(2)}`}
               />
             </ListItem>
