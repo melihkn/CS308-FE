@@ -40,7 +40,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
     if (isLoggedIn && userId) {
       try {
         // Send a POST request to the server to add the item to the cart
-        await axios.post("http://127.0.0.1:8000/cart/add", {
+        await axios.post("http://127.0.0.1:8001/cart/add", {
           product_id: productId,
           quantity: quantity,
           customer_id: userId,
@@ -100,4 +100,5 @@ function ShoppingCart({ isLoggedIn, userId }) {
 }
 
 export default ShoppingCart;
+
 

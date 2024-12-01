@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
+  IconButton,
   Box,
   Typography,
   Container,
@@ -14,9 +15,12 @@ import {
   Stack,
   CircularProgress,
 } from "@mui/material";
-import { fetchProductbyId } from "./api";
 
-const ProductDetailPage = () => {
+import { Add, Remove } from "@mui/icons-material"; // For increment/decrement buttons
+import { fetchProductbyId, addReview, fetchReviewsByProductId } from "./api";
+import axios from "axios";
+
+const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,13 +29,26 @@ const ProductDetailPage = () => {
   const [reviews, setReviews] = useState([]); // Reviews
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [quantity, setQuantity] = useState(1); // Quantity counter
+  const [cartItems, setCartItems] = useState([]); // Cart items
 
   useEffect(() => {
     const loadProduct = async () => {
       try {
+
+        const newId = {
+          product_id: id
+        };
+
+
+        console.log("Fetching product from:", `/products/${id}`); // Debugging
         const data = await fetchProductbyId(id);
         setProduct(data);
-        setReviews(data.reviews || []); // Assuming reviews are part of the product data
+        console.log("Product fetched:", data); // Debugging
+        console.log("Fetching reviews for product:", id); // Debugging
+        const reviews = await fetchReviewsByProductId(id);
+        console.log("Reviews fetched:", reviews); // Debugging
+        setReviews(reviews || []); // Assuming reviews are part of the product data
       } catch (err) {
         console.error("Error fetching product:", err.response?.data || err);
         setError("Failed to load product data.");
@@ -53,42 +70,100 @@ const ProductDetailPage = () => {
       return;
     }
 
-    const newReview = {
-      productId: id,
-      rating,
-      comment,
-      user: "Anonymous", // Replace with logged-in user's info if available
+    if (!localStorage.getItem("token")) {
+      alert("Please log in to add a review.");
+      setRating(0); // Reset rating
+      setComment(""); // Reset comment
+      return;
+    }
+    
+
+      // Construct the review payload directly
+    const reviewPayload = {
+      product_id: id, // Include the productId
+      rating : rating,
+      comment : comment,
     };
 
-    /*try {
-      const addedReview = await addReview(newReview); // Send review to backend
-      setReviews([addedReview, ...reviews]); // Update reviews
+    try {
+      console.log("Adding review:", reviewPayload); // Debugging
+      const addedReview = await addReview(reviewPayload); // Send review to backend
+      const reviews = await fetchReviewsByProductId(id); // Fetch updated reviews
+      setReviews(reviews); // Update reviews
       setRating(0); // Reset rating
       setComment(""); // Reset comment
     } catch (error) {
       console.error("Error adding review:", error.response?.data || error);
       alert("Failed to add review. Please try again.");
-    }*/
+    }
   };
 
   const handleAddToCart = async () => {
-    /*try {
-      await addToCart({ productId: id });
+    try {
+      await addToCart({ productId: id, quantity: quantity});
       alert("Product added to cart!");
     } catch (error) {
       console.error("Error adding to cart:", error.response?.data || error);
       alert("Failed to add product to cart.");
-    }*/
+    }
   };
 
   const handleAddToWishlist = async () => {
-    /*try {
-      await addToWishlist({ productId: id });
+    try {
+      //await addToWishlist({ productId: id });
       alert("Product added to wishlist!");
     } catch (error) {
       console.error("Error adding to wishlist:", error.response?.data || error);
       alert("Failed to add product to wishlist.");
-    }*/
+    }
+  }
+
+  const addToCart = async (productId, quantity) => {
+
+    // If the user is logged in, add the item to the backend cart
+    if (isLoggedIn && userId) {
+      try {
+        // Send a POST request to the server to add the item to the cart
+        await axios.post("http://127.0.0.1:8001/cart/add", {
+          product_id: productId,
+          quantity: quantity,
+          customer_id: userId,
+        });
+        console.log("Item added to backend cart.");
+      } 
+      catch (error) {
+        console.error("Error adding item to backend cart:", error);
+      }
+    } 
+    // If the user is not logged in, add the item to the session storage cart
+    else {
+      // Get the cart from the session storage or create an empty cart
+      let cart = JSON.parse(sessionStorage.getItem("cart") || "[]");
+      console.log("Cart:", cart); // Debugging
+      // Find the index of the existing item in the cart
+      const existingItemIndex = cart.findIndex(item => item.productId === productId);
+      // If the item exists in the cart, increase the quantity
+      if (existingItemIndex > -1) {
+        cart[existingItemIndex].quantity += quantity;
+      }
+      // If the item does not exist in the cart, add a new item 
+      else {
+        cart.push({ productId, quantity });
+      }
+      // Save the updated cart to the session storage
+      sessionStorage.setItem("cart", JSON.stringify(cart));
+      // Update the cart items state with the updated cart
+      setCartItems(cart);
+    }
+  };
+
+
+  const incrementQuantity = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const decrementQuantity = () => {
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1)); // Prevent quantity from going below 1
   };
 
   if (loading) return <CircularProgress />;
@@ -135,8 +210,18 @@ const ProductDetailPage = () => {
               fontWeight="bold"
               gutterBottom
             >
-              {product.price.toLocaleString("tr-TR")} TL
+              {(product.price ?? 0).toLocaleString("tr-TR")} TL
             </Typography>
+            {/* Quantity Counter */}
+            <Stack direction="row" alignItems="center" spacing={2} mt={2}>
+              <IconButton onClick={decrementQuantity} color="primary">
+                <Remove />
+              </IconButton>
+              <Typography variant="h6">{quantity}</Typography>
+              <IconButton onClick={incrementQuantity} color="primary">
+                <Add />
+              </IconButton>
+            </Stack>
             <Stack direction="row" spacing={2} mt={2}>
               <Button
                 variant="contained"

@@ -39,7 +39,7 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
                 </li>
                   {userProfile?.role === 'product_manager' && (
                     <li className="nav-item">
-                      <Link className="nav-link" to="/ProductManager">Product Manager Dashboard</Link> 
+                      <Link className="nav-link" to="/dashboards/ProductManager">Product Manager Dashboard</Link> 
                     </li>
                     )}
                 <li className="nav-item">

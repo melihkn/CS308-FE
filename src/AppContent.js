@@ -109,9 +109,9 @@ function AppContent() {
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
-          <Route path="/ProductManager/*" element={<ProductManagerDashboard />} />
+          <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
         )}
-        <Route path="/product/:id" element={<ProductDetailPage />} />
+        <Route path="/product/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
       </Routes>
     </>
   );
