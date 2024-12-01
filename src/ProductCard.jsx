@@ -39,6 +39,10 @@ const ProductCard = ({ id, name, model, description, quantity, distributor, imag
     navigate(`/product/${id}`);
   };
 
+  const handleAddToCard = () => {
+
+  }
+
   return (
     <Card sx={{ maxWidth: 345, margin: 2 }}>
       <CardMedia
@@ -65,6 +69,9 @@ const ProductCard = ({ id, name, model, description, quantity, distributor, imag
         </Typography>
         <Button variant="contained" color="primary" onClick={handleDetailsClick}>
           View Details
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleAddToCard}>
+          Add to Cart
         </Button>
       </CardContent>
     </Card>

@@ -9,9 +9,9 @@ const Sidebar = () => {
         <div className="sidebar">
             <h2>Product Manager</h2>
             <nav>
-                <Link to="/ProductManager/products">Products</Link>
-                <Link to="/ProductManager/reviews">Reviews</Link>
-                <Link to="/ProductManager/categories">Categories</Link>
+                <Link to="/dashboards/ProductManager/products">Products</Link>
+                <Link to="/dashboards/ProductManager/reviews">Reviews</Link>
+                <Link to="/dashboards/ProductManager/categories">Categories</Link>
             </nav>
         </div>
     );

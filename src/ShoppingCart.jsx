@@ -1,50 +1,20 @@
-/*
-  ShoppingCart component displays the items in the shopping cart.
-  If the user is logged in, it saves the items to the backend cart.
-  If the user is not logged in, it saves the items to the session storage cart temporarily.
-    - key is cart and value is an array (actually a dictionary -> item and count) of objects with productId and quantity properties.
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Box, Typography, Grid, Button } from "@mui/material";
+import ShoppingProductCard from "./ShoppingProductCard";
 
-
-  Props:
-    - isLoggedIn: boolean to check if the user is logged in or not
-    - userId: user id of the logged-in user (coming from the backend endpoint called /auth/status)
-
-  State:
-    - cartItems: array of objects with productId and quantity properties
-
-  Functions:
-    - addToCart: function to add an item to the cart
-      - If the user is logged in, add the item to the backend cart
-      - If the user is not logged in, add the item to the session storage cart
-
-  Side Effects:
-    - Load the items from the session storage cart when the component mounts
-
-  In jsx code:
-    - Display the items in the cart
-    - Display a button to add an example product to the cart
-    - Display a message to inform the user about the cart saving method
-*/
-
-
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import ShoppingProductCard from './ShoppingProductCard';
-import './ShoppingCart.css';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-
-const BACKEND_URL = 'http://127.0.0.1:8001';
+const BACKEND_URL = "http://127.0.0.1:8001";
 
 function ShoppingCart({ isLoggedIn, userId }) {
   const [basicCart, setBasicCart] = useState([]);
   const [detailedCart, setDetailedCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  const navigate = useNavigate(); // Initialize useNavigate
-
+  // Fetch basic cart (backend or localStorage)
   useEffect(() => {
     const fetchBasicCart = async () => {
       if (isLoggedIn && userId) {
+        // Fetch from backend
         try {
           const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
           setBasicCart(response.data.cart);
@@ -52,6 +22,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
           console.error("Error fetching cart from backend:", error);
         }
       } else {
+        // Fetch from localStorage
         const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
         setBasicCart(storedCart);
       }
@@ -60,17 +31,20 @@ function ShoppingCart({ isLoggedIn, userId }) {
     fetchBasicCart();
   }, [isLoggedIn, userId]);
 
+  // Merge localStorage cart with backend on login
   useEffect(() => {
     const mergeLocalCartWithBackend = async () => {
       if (isLoggedIn && userId) {
         const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
         if (localCart.length > 0) {
           try {
+            // Merge local cart with backend
             await axios.post(`${BACKEND_URL}/cart/merge`, {
               items: localCart,
               customer_id: userId,
             });
             localStorage.removeItem("cart");
+            // Fetch updated cart
             const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
             setBasicCart(response.data.cart);
           } catch (error) {
@@ -83,6 +57,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
     mergeLocalCartWithBackend();
   }, [isLoggedIn, userId]);
 
+  // Fetch detailed product information
   useEffect(() => {
     const fetchDetailedCart = async () => {
       try {
@@ -103,18 +78,30 @@ function ShoppingCart({ isLoggedIn, userId }) {
     }
   }, [basicCart]);
 
+  // Calculate total price
   useEffect(() => {
     const calculateTotal = () => {
-      const total = detailedCart.reduce((sum, item) => sum + (item.quantity * item.price || 0), 0);
+      const total = detailedCart.reduce(
+        (sum, item) => sum + (item.quantity * item.price || 0),
+        0
+      );
       setTotalPrice(total);
     };
     calculateTotal();
   }, [detailedCart]);
 
+  // Add to cart
+  
+
+  // Adjust quantity
   const adjustQuantity = async (productId, delta) => {
-    const updatedItems = basicCart.map(item =>
-      item.product_id === productId ? { ...item, quantity: item.quantity + delta } : item
-    ).filter(item => item.quantity > 0);
+    const updatedItems = basicCart
+      .map((item) =>
+        item.product_id === productId
+          ? { ...item, quantity: item.quantity + delta }
+          : item
+      )
+      .filter((item) => item.quantity > 0);
 
     setBasicCart(updatedItems);
 
@@ -126,15 +113,19 @@ function ShoppingCart({ isLoggedIn, userId }) {
           customer_id: userId,
         });
       } catch (error) {
-        console.error(`Error ${delta > 0 ? "increasing" : "decreasing"} item quantity in backend:`, error);
+        console.error(
+          `Error ${delta > 0 ? "increasing" : "decreasing"} item quantity in backend:`,
+          error
+        );
       }
     } else {
       localStorage.setItem("cart", JSON.stringify(updatedItems));
     }
   };
 
+  // Remove from cart
   const removeFromCart = async (productId) => {
-    const updatedItems = basicCart.filter(item => item.product_id !== productId);
+    const updatedItems = basicCart.filter((item) => item.product_id !== productId);
     setBasicCart(updatedItems);
 
     if (isLoggedIn && userId) {
@@ -150,41 +141,45 @@ function ShoppingCart({ isLoggedIn, userId }) {
     }
   };
 
-  const navigateToPayment = () => {
-    navigate('/payment', { state: { cartItems: detailedCart, userId } });
-    console.log(detailedCart)
-    console.log(userId)
-  };
-
-  
-
   return (
-    <div className="shopping-cart-container">
-      <h2>{detailedCart.length > 0 ? "Shopping Cart" : "Shopping Cart is empty"}</h2>
+    <Box sx={{ padding: "20px" }}>
+      <Typography variant="h4" gutterBottom>
+        {detailedCart.length > 0 ? "Shopping Cart" : "Shopping Cart is empty"}
+      </Typography>
 
-      <div className="cart-items">
-        {detailedCart.map(item => (
-          <ShoppingProductCard
-            key={item.product_id}
-            name={item.name}
-            model={item.model}
-            description={item.description}
-            quantity={item.quantity}
-            distributor={item.distributor}
-            imageUrl={item.image_url}
-            price={item.price}
-            onIncrease={() => adjustQuantity(item.product_id, 1)}
-            onDecrease={() => adjustQuantity(item.product_id, -1)}
-            onRemove={() => removeFromCart(item.product_id)}
-          />
+      <Grid container spacing={3}>
+        {detailedCart.map((item) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={item.product_id}>
+            <ShoppingProductCard
+              name={item.name}
+              model={item.model}
+              description={item.description}
+              quantity={item.quantity}
+              distributor={item.distributor}
+              imageUrl={item.image_url}
+              price={item.price}
+              onIncrease={() => adjustQuantity(item.product_id, 1)}
+              onDecrease={() => adjustQuantity(item.product_id, -1)}
+              onRemove={() => removeFromCart(item.product_id)}
+            />
+          </Grid>
         ))}
-      </div>
-      <div className="cart-summary">
-        <h3>Total Price: ${totalPrice.toFixed(2)}</h3>
+      </Grid>
 
-        <button onClick={navigateToPayment}>Proceed to Checkout</button>
-      </div>
-    </div>
+      {detailedCart.length > 0 && (
+        <Box sx={{ mt: 4, textAlign: "right" }}>
+          <Typography variant="h5">Total Price: ${totalPrice.toFixed(2)}</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+            onClick={() => alert("Redirect to checkout")}
+          >
+            Proceed to Checkout
+          </Button>
+        </Box>
+      )}
+    </Box>
   );
 }
 
