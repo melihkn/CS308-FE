@@ -54,8 +54,8 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout, onSearch }) => {
           sx={{
             textDecoration: "none",
             color: "white",
-            flexGrow: 1,
             fontWeight: "bold",
+            mr: 2, // Add margin to separate the logo and search bar
           }}
         >
           MyVET
@@ -65,7 +65,13 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout, onSearch }) => {
         <Box
           component="form"
           onSubmit={handleSearch}
-          sx={{ display: "flex", alignItems: "center", mx: 2 }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexGrow: 1, // Allow the search bar to grow
+            ml: 1, // Shift search bar slightly to the left
+            mr: 2, // Add spacing before the user buttons
+          }}
         >
           <TextField
             size="small"
@@ -74,6 +80,8 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout, onSearch }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             sx={{
+              flexGrow: 1, // Allow the search bar to expand
+              maxWidth: "500px", // Set a maximum width for the search bar
               backgroundColor: "white",
               borderRadius: 1,
               "& .MuiOutlinedInput-root": {
