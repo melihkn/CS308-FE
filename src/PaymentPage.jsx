@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './PaymentPage.css';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Container,
+  Paper,
+} from '@mui/material';
 
 function PaymentPage() {
   const location = useLocation();
@@ -18,13 +28,12 @@ function PaymentPage() {
       return;
     }
 
-    // Calculate total price
     const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
     const orderData = {
       customer_id: userId,
       total_price: totalPrice,
-      order_date: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
+      order_date: new Date().toISOString().split('T')[0],
       payment_status: "paid",
       invoice_link: null,
       order_status: 0,
@@ -36,7 +45,6 @@ function PaymentPage() {
     };
 
     try {
-      // Process the order
       const response = await fetch('http://127.0.0.1:8004/api/orders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -49,13 +57,9 @@ function PaymentPage() {
       }
 
       const order = await response.json();
-      alert("Payment successful and order created successfully!"); 
-      //alert(`Order created successfully! Order ID: ${order.order_id}, Total Price: $${order.total_price}`);
+      alert("Payment successful and order created successfully!");
 
-      // Clear the shopping cart
       await clearShoppingCart();
-
-      // Navigate to the orders page
       navigate('/orders');
     } catch (error) {
       console.error('Order creation failed:', error);
@@ -73,7 +77,6 @@ function PaymentPage() {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to clear shopping cart');
       }
-
     } catch (error) {
       console.error('Failed to clear shopping cart:', error);
       alert(`Failed to clear shopping cart: ${error.message}`);
@@ -81,22 +84,65 @@ function PaymentPage() {
   };
 
   return (
-    <div className="PaymentPage">
-      <h2>Payment Page</h2>
-      <ul>
-        {cartItems.map((item, index) => (
-          <li key={index}>
-            Product ID: {item.product_id}, Quantity: {item.quantity}, Price: ${item.price.toFixed(2)}
-          </li>
-        ))}
-      </ul>
-      <input type="text" placeholder="Delivery Address" value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} />
-      <input type="text" placeholder="Card Number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
-      <input type="text" placeholder="CVC" value={cvc} onChange={(e) => setCvc(e.target.value)} />
-      <input type="text" placeholder="Expiry Month" value={expiryMonth} onChange={(e) => setExpiryMonth(e.target.value)} />
-      <input type="text" placeholder="Expiry Year" value={expiryYear} onChange={(e) => setExpiryYear(e.target.value)} />
-      <button onClick={handlePayment}>Finish Payment</button>
-    </div>
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Payment Page
+        </Typography>
+        <List>
+          {cartItems.map((item, index) => (
+            <ListItem key={index} disableGutters>
+              <ListItemText
+                primary={`Product ID: ${item.product_id}`}
+                secondary={`Quantity: ${item.quantity}, Price: $${item.price.toFixed(2)}`}
+              />
+            </ListItem>
+          ))}
+        </List>
+        <Box component="form" sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
+            label="Delivery Address"
+            variant="outlined"
+            fullWidth
+            value={deliveryAddress}
+            onChange={(e) => setDeliveryAddress(e.target.value)}
+          />
+          <TextField
+            label="Card Number"
+            variant="outlined"
+            fullWidth
+            value={cardNumber}
+            onChange={(e) => setCardNumber(e.target.value)}
+          />
+          <TextField
+            label="CVC"
+            variant="outlined"
+            fullWidth
+            value={cvc}
+            onChange={(e) => setCvc(e.target.value)}
+          />
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              label="Expiry Month"
+              variant="outlined"
+              fullWidth
+              value={expiryMonth}
+              onChange={(e) => setExpiryMonth(e.target.value)}
+            />
+            <TextField
+              label="Expiry Year"
+              variant="outlined"
+              fullWidth
+              value={expiryYear}
+              onChange={(e) => setExpiryYear(e.target.value)}
+            />
+          </Box>
+          <Button variant="contained" color="primary" onClick={handlePayment} fullWidth>
+            Finish Payment
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
 }
 
