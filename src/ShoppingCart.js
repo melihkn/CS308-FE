@@ -215,6 +215,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ShoppingProductCard from './ShoppingProductCard';
 import './ShoppingCart.css';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const BACKEND_URL = 'http://127.0.0.1:8001';
 
@@ -222,6 +223,8 @@ function ShoppingCart({ isLoggedIn, userId }) {
   const [basicCart, setBasicCart] = useState([]);
   const [detailedCart, setDetailedCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const fetchBasicCart = async () => {
@@ -331,6 +334,14 @@ function ShoppingCart({ isLoggedIn, userId }) {
     }
   };
 
+  const navigateToPayment = () => {
+    navigate('/payment', { state: { cartItems: detailedCart, userId } });
+    console.log(detailedCart)
+    console.log(userId)
+  };
+
+  
+
   return (
     <div className="shopping-cart-container">
       <h2>{detailedCart.length > 0 ? "Shopping Cart" : "Shopping Cart is empty"}</h2>
@@ -354,9 +365,8 @@ function ShoppingCart({ isLoggedIn, userId }) {
       </div>
       <div className="cart-summary">
         <h3>Total Price: ${totalPrice.toFixed(2)}</h3>
-        <button onClick={() => alert("Redirect to checkout")}>
-          Proceed to Checkout
-        </button>
+
+        <button onClick={navigateToPayment}>Proceed to Checkout</button>
       </div>
     </div>
   );

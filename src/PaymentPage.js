@@ -18,28 +18,65 @@ function PaymentPage() {
       return;
     }
 
+    // Calculate total price
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+
+    const orderData = {
+      customer_id: userId,
+      total_price: totalPrice,
+      order_date: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
+      payment_status: "paid",
+      invoice_link: null,
+      order_status: 0,
+      items: cartItems.map(item => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        price_at_purchase: item.price,
+      }))
+    };
+
     try {
-      const response = await fetch('http://127.0.0.1:8004/orders/payment/process', {
+      // Process the order
+      const response = await fetch('http://127.0.0.1:8004/api/orders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          deliveryAddress,
-          paymentDetails: { cardNumber, cvc, expiryMonth, expiryYear },
-          cartItems: cartItems.map(item => ({ productId: item.productId, quantity: item.quantity })),
-        }),
+        body: JSON.stringify(orderData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Payment failed');
+        throw new Error(errorData.detail || 'Order creation failed');
       }
 
-      alert('Payment successful!');
+      const order = await response.json();
+      alert("Payment successful and order created successfully!"); 
+      //alert(`Order created successfully! Order ID: ${order.order_id}, Total Price: $${order.total_price}`);
+
+      // Clear the shopping cart
+      await clearShoppingCart();
+
+      // Navigate to the orders page
       navigate('/orders');
     } catch (error) {
-      console.error('Payment failed:', error);
-      alert(`Payment failed: ${error.message}`);
+      console.error('Order creation failed:', error);
+      alert(`Order creation failed: ${error.message}`);
+    }
+  };
+
+  const clearShoppingCart = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8001/cart/clear?customer_id=${userId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to clear shopping cart');
+      }
+
+    } catch (error) {
+      console.error('Failed to clear shopping cart:', error);
+      alert(`Failed to clear shopping cart: ${error.message}`);
     }
   };
 
@@ -49,7 +86,7 @@ function PaymentPage() {
       <ul>
         {cartItems.map((item, index) => (
           <li key={index}>
-            Product ID: {item.productId}, Quantity: {item.quantity}
+            Product ID: {item.product_id}, Quantity: {item.quantity}, Price: ${item.price.toFixed(2)}
           </li>
         ))}
       </ul>
