@@ -151,10 +151,15 @@ function ShoppingCart({ isLoggedIn, userId }) {
   };
 
   const navigateToPayment = () => {
+    if (!userId) { // Check if userId is null or undefined
+      alert("You must be logged in to proceed to payment!");
+      return;
+    }
     navigate('/payment', { state: { cartItems: detailedCart, userId } });
-    console.log(detailedCart)
-    console.log(userId)
+    console.log(detailedCart);
+    console.log(userId);
   };
+  
 
   
 
