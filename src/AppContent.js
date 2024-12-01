@@ -6,7 +6,7 @@ import Login from './login';
 import Register from './register';
 import HomePage from './HomePage';
 import Profile from './profile.jsx';
-import ShoppingCart from './ShoppingCart';
+import ShoppingCart from './ShoppingCart.jsx';
 import SearchResults from './search-results';
 import axios from 'axios';
 import ProductManagerDashboard from './ProductManagerDashboard';
