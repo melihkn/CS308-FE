@@ -100,7 +100,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
 
   const handleAddToCart = async () => {
     try {
-      await addToCart({ productId: id, quantity: quantity});
+      await addToCart({ productId: id});
       alert("Product added to cart!");
     } catch (error) {
       console.error("Error adding to cart:", error.response?.data || error);
@@ -118,17 +118,24 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
     }
   }
 
-  const addToCart = async (productId, quantity) => {
+  const addToCart = async (product_id) => {
 
     // If the user is logged in, add the item to the backend cart
     if (isLoggedIn && userId) {
       try {
         // Send a POST request to the server to add the item to the cart
-        await axios.post("http://127.0.0.1:8001/cart/add", {
-          product_id: productId,
-          quantity: quantity,
-          customer_id: userId,
-        });
+        await axios.post(
+          "http://127.0.0.1:8001/cart/add",
+          {
+            product_id: id,
+            quantity: quantity,
+          },
+          {
+            params: {
+              customer_id: userId, // Add customer_id as a query parameter
+            },
+          }
+        );
         console.log("Item added to backend cart.");
       } 
       catch (error) {
@@ -138,20 +145,21 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
     // If the user is not logged in, add the item to the session storage cart
     else {
       // Get the cart from the session storage or create an empty cart
-      let cart = JSON.parse(sessionStorage.getItem("cart") || "[]");
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
       console.log("Cart:", cart); // Debugging
       // Find the index of the existing item in the cart
-      const existingItemIndex = cart.findIndex(item => item.productId === productId);
+      const existingItemIndex = cart.findIndex(item => item.productId === Number(product_id));
+      console.log("Existing item index:", existingItemIndex); // Debugging
       // If the item exists in the cart, increase the quantity
       if (existingItemIndex > -1) {
         cart[existingItemIndex].quantity += quantity;
       }
       // If the item does not exist in the cart, add a new item 
       else {
-        cart.push({ productId, quantity });
+        cart.push({ product_id: String(id), quantity: Number(quantity) });
       }
       // Save the updated cart to the session storage
-      sessionStorage.setItem("cart", JSON.stringify(cart));
+      localStorage.setItem("cart", JSON.stringify(cart));
       // Update the cart items state with the updated cart
       setCartItems(cart);
     }

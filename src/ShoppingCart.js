@@ -1,8 +1,3 @@
-// ShoppingCart.js
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './ShoppingCart.css';
-
 /*
   ShoppingCart component displays the items in the shopping cart.
   If the user is logged in, it saves the items to the backend cart.
@@ -31,74 +26,192 @@ import './ShoppingCart.css';
     - Display a message to inform the user about the cart saving method
 */
 
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import ShoppingProductCard from './ShoppingProductCard';
+import './ShoppingCart.css';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
+const BACKEND_URL = 'http://127.0.0.1:8001';
+
 function ShoppingCart({ isLoggedIn, userId }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [basicCart, setBasicCart] = useState([]);
+  const [detailedCart, setDetailedCart] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  const addToCart = async (productId, quantity) => {
+  const navigate = useNavigate(); // Initialize useNavigate
 
-    // If the user is logged in, add the item to the backend cart
-    if (isLoggedIn && userId) {
+  useEffect(() => {
+    const fetchBasicCart = async () => {
+      if (isLoggedIn && userId) {
+        try {
+          console.log("UserID: ", userId)
+          const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
+          setBasicCart(response.data.cart);
+        } catch (error) {
+          console.error("Error fetching cart from backend:", error);
+        }
+      } else {
+        const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        console.log("Stored Cart:", storedCart)
+        setBasicCart(storedCart);
+      }
+    };
+
+    fetchBasicCart();
+  }, [isLoggedIn, userId]);
+  
+  /*
+  useEffect(() => {
+    const mergeLocalCartWithBackend = async () => {
+      if (isLoggedIn && userId) {
+        const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        if (localCart.length > 0) {
+          try {
+            console.log("Merging local cart with backend cart:", localCart);
+            console.log("localCart:", localCart)
+            await axios.post(`${BACKEND_URL}/cart/merge`, localCart,
+            {
+              params: {
+                customer_id: userId, // Add customer_id as a query parameter
+              },
+            }
+          );
+            localStorage.removeItem("cart");
+            console.log("Local cart merged successfully.");
+            const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
+            setBasicCart(response.data.cart);
+          } catch (error) {
+            console.error("Error merging local cart with backend:", error);
+          }
+        }
+      }
+    };
+
+    mergeLocalCartWithBackend();
+  }, [isLoggedIn, userId]); */
+
+  useEffect(() => {
+    const fetchDetailedCart = async () => {
       try {
-        // Send a POST request to the server to add the item to the cart
-        await axios.post("http://127.0.0.1:8001/cart/add", {
+        const detailedItems = await Promise.all(
+          basicCart.map(async (item) => {
+            const response = await axios.get(`${BACKEND_URL}/products/${item.product_id}`);
+            return { ...response.data, quantity: item.quantity };
+          })
+        );
+        setDetailedCart(detailedItems);
+      } catch (error) {
+        console.error("Error fetching detailed product info:", error);
+      }
+    };
+
+    if (basicCart.length > 0) {
+      fetchDetailedCart();
+    }
+  }, [basicCart]);
+
+  useEffect(() => {
+    const calculateTotal = () => {
+      const total = detailedCart.reduce((sum, item) => sum + (item.quantity * item.price || 0), 0);
+      setTotalPrice(total);
+    };
+    calculateTotal();
+  }, [detailedCart]);
+
+  const adjustQuantity = async (productId, delta) => {
+    const updatedItems = basicCart.map(item =>
+      item.product_id === productId ? { ...item, quantity: item.quantity + delta } : item
+    ).filter(item => item.quantity > 0);
+
+    setBasicCart(updatedItems);
+    if (updatedItems.filter(item => item.product_id === productId).length === 0) {
+      removeFromCart(productId);
+      return;
+    }
+
+    if (isLoggedIn && userId) {
+      const endpoint = delta > 0 ? "increase_quantity" : "decrease_quantity";
+      // if quantity of a product with id of product id comes to 0, remove the item from the cart
+      
+
+      try {
+        await axios.patch(`${BACKEND_URL}/cart/${endpoint}`, {
           product_id: productId,
-          quantity: quantity,
           customer_id: userId,
         });
-        console.log("Item added to backend cart.");
-      } 
-      catch (error) {
-        console.error("Error adding item to backend cart:", error);
+      } catch (error) {
+        console.error(`Error ${delta > 0 ? "increasing" : "decreasing"} item quantity in backend:`, error);
       }
-    } 
-    // If the user is not logged in, add the item to the session storage cart
-    else {
-      // Get the cart from the session storage or create an empty cart
-      let cart = JSON.parse(sessionStorage.getItem("cart") || "[]");
-      // Find the index of the existing item in the cart
-      const existingItemIndex = cart.findIndex(item => item.productId === productId);
-      // If the item exists in the cart, increase the quantity
-      if (existingItemIndex > -1) {
-        cart[existingItemIndex].quantity += quantity;
-      }
-      // If the item does not exist in the cart, add a new item 
-      else {
-        cart.push({ productId, quantity });
-      }
-      // Save the updated cart to the session storage
-      sessionStorage.setItem("cart", JSON.stringify(cart));
-      // Update the cart items state with the updated cart
-      setCartItems(cart);
+    } else {
+      localStorage.setItem("cart", JSON.stringify(updatedItems));
     }
   };
 
-  // Load the items from the session storage cart when the component mounts (ShoppingCart component is rendered)
-  useEffect(() => {
-    // Get the cart from the session storage or create an empty cart
-    const storedCart = JSON.parse(sessionStorage.getItem("cart") || "[]");
-    // Update the cart items state with the stored cart
-    setCartItems(storedCart);
-  }, []);
+  const removeFromCart = async (productId) => {
+    const updatedItems = basicCart.filter(item => item.product_id !== productId);
+    setBasicCart(updatedItems);
+
+    if (isLoggedIn && userId) {
+      try {
+        await axios.delete(`${BACKEND_URL}/cart/remove`, {
+          data: { product_id: productId, customer_id: userId },
+        
+        });
+        setBasicCart(updatedItems);
+        setDetailedCart(detailedCart.filter(item => item.product_id !== productId));
+      } catch (error) {
+        console.error("Error removing item from cart in backend:", error);
+      }
+    } else {
+      localStorage.setItem("cart", JSON.stringify(updatedItems));
+      setBasicCart(updatedItems);
+      setDetailedCart(detailedCart.filter(item => item.product_id !== productId));
+    }
+  };
+
+  const navigateToPayment = () => {
+    if (!userId) { // Check if userId is null or undefined
+      alert("You must be logged in to proceed to payment!");
+      return;
+    }
+    navigate('/payment', { state: { cartItems: detailedCart, userId } });
+    console.log(detailedCart);
+    console.log(userId);
+  };
+  
 
   
+
   return (
-    <div className='ShoppingCartMain'>
-      <h2>Shopping Cart</h2>
-      {/* Display the items in the cart as unordered*/}
-      <ul>
-        {cartItems.map((item, index) => (
-          <li key={index}>
-            Product ID: {item.productId}, Quantity: {item.quantity}
-          </li>
+    <div className="shopping-cart-container">
+      <h2>{detailedCart.length > 0 ? "Shopping Cart" : "Shopping Cart is empty"}</h2>
+
+      <div className="cart-items">
+        {detailedCart.map(item => (
+          <ShoppingProductCard
+            key={item.product_id}
+            name={item.name}
+            model={item.model}
+            description={item.description}
+            quantity={item.quantity}
+            distributor={item.distributor}
+            imageUrl={item.image_url}
+            price={item.price}
+            onIncrease={() => adjustQuantity(item.product_id, 1)}
+            onDecrease={() => adjustQuantity(item.product_id, -1)}
+            onRemove={() => removeFromCart(item.product_id)}
+          />
         ))}
-      </ul>
-      {/* Button to add an example product to the cart */}
-      <button className='add-to-cart-button' onClick={() => addToCart("example-product-id", 1)}>Add Example Product</button>
-      {isLoggedIn ? <p className='cart-message'>Your items are saved to your account's cart.</p> : <p className='cart-message'>Your items are saved temporarily for this session.</p>}
+      </div>
+      <div className="cart-summary">
+        <h3>Total Price: ${totalPrice.toFixed(2)}</h3>
+
+        <button onClick={navigateToPayment}>Proceed to Checkout</button>
+      </div>
     </div>
   );
 }
 
 export default ShoppingCart;
-
-
