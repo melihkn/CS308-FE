@@ -36,7 +36,7 @@ const ProductCard = ({ id, name, model, description, quantity, distributor, imag
   const navigate = useNavigate();
 
   const handleDetailsClick = () => {
-    navigate(`/product-detail/${id}`);
+    navigate(`/product/${id}`);
   };
 
   const handleAddToCard = () => {
