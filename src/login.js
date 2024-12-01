@@ -52,7 +52,16 @@ const Login = ({ onLogin }) => {
       // Save login state when user logs in successfully
       localStorage.setItem("isLoggedIn", true);
 
-      navigate('/');
+
+      if (profileResponse.data.role === 'product_manager') {
+        navigate('/dashboards/ProductManager');
+      }
+      else if (profileResponse.data.role === 'sales_manager') {
+        navigate('/dashboards/smapp');
+      }
+      else {
+        navigate('/');
+      }
 
     }
     // Catch any error and display an alert message to the user

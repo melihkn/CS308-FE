@@ -1,11 +1,30 @@
-// src/components/ReviewTable.js
-
 import React, { useEffect, useState } from 'react';
-import { fetchReviews, deleteReview, approveReview, disapproveReview } from './api'; // API calls for reviews
-import './Table.css';
+import { fetchReviews, deleteReview, approveReview, disapproveReview } from './api';
+import {
+    Box,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Button,
+    Typography,
+    Paper,
+    useTheme
+} from '@mui/material';
+
+import Header from './Header';
+
+import { DataGrid } from "@mui/x-data-grid";
+
+import {tokens} from './theme';
 
 const ReviewTable = () => {
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
     const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true); // Yüklenme durumu
 
     useEffect(() => {
         loadReviews();
@@ -14,9 +33,16 @@ const ReviewTable = () => {
     const loadReviews = async () => {
         try {
             const response = await fetchReviews();
-            setReviews(response);
+            const formattedReviews = response.map((review) => ({
+                id: review.review_id,
+                rating: review.rating,
+                comment: review.comment,
+                status: review.approval_status
+            }));
+            setLoading(false);
+            setReviews(formattedReviews);
         } catch (error) {
-            console.error("Error fetching reviews:", error);
+            console.error('Error fetching reviews:', error);
         }
     };
 
@@ -24,9 +50,9 @@ const ReviewTable = () => {
         try {
             await approveReview(id);
             console.log(`Review ${id} approved`);
-            loadReviews(); // Reload reviews to reflect status change
+            loadReviews();
         } catch (error) {
-            console.error("Failed to approve review:", error);
+            console.error('Failed to approve review:', error);
         }
     };
 
@@ -34,53 +60,86 @@ const ReviewTable = () => {
         try {
             await disapproveReview(id);
             console.log(`Review ${id} disapproved`);
-            loadReviews(); // Reload reviews to reflect status change
+            loadReviews();
         } catch (error) {
-            console.error("Failed to disapprove review:", error);
+            console.error('Failed to disapprove review:', error);
         }
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await deleteReview(id);
-            console.log(`Review ${id} deleted`);
-            setReviews(reviews.filter((review) => review.review_id !== id)); // Remove from state
-        } catch (error) {
-            console.error("Failed to delete review:", error);
-        }
-    };
+
+    const columns = [
+        { field: "id", headerName: "Product ID", flex: 1 },
+        { field: "rating", headerName: "Rating", type: "number", flex: 1 },
+        { field: "comment", headerName: "Comment", flex: 2 },
+        { field: "status", headerName: "Status", flex: 1 },
+        {
+            field: "approve",
+            headerName: "Approve",
+            flex: 1,
+            renderCell: (params) => (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleApprove(params.row.id)}
+              >
+                Approve
+              </Button>
+            ),
+          },
+          {
+            field: "dispprove",
+            headerName: "Disapprove",
+            flex: 1,
+            renderCell: (params) => (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleDisapprove(params.row.id)}
+              >
+                Disapprove
+              </Button>
+            ),
+          },
+    ]
+
+ 
 
     return (
-        <div className="review-table-container">
-            <h2>Reviews List</h2>
-            <table className="review-table">
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Rating</th>
-                        <th>Comment</th>
-                        <th>Approval Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {reviews.map((review) => (
-                        <tr key={review.review_id}>
-                            <td>{review.product_id}</td>
-                            <td>{review.rating}</td>
-                            <td>{review.comment}</td>
-                            <td>{review.approval_status}</td>
-                            <td>
-                                <button onClick={() => handleApprove(review.review_id)}>Approve</button>
-                                <button onClick={() => handleDisapprove(review.review_id)}>Disapprove</button>
-                                <button onClick={() => handleDelete(review.review_id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+        <Box m="20px">
+          <Header title="Reviews" subtitle="List of Reviews" />
+          <Box
+            m="40px 0 0 0"
+            height="75vh"
+            sx={{
+              "& .MuiDataGrid-root": {
+                border: "none",
+              },
+              "& .MuiDataGrid-cell": {
+                borderBottom: "none",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: colors.blueAccent[700],
+                borderBottom: "none",
+              },
+              "& .MuiDataGrid-virtualScroller": {
+                backgroundColor: colors.primary[400],
+              },
+              "& .MuiDataGrid-footerContainer": {
+                borderTop: "none",
+                backgroundColor: colors.blueAccent[700],
+              },
+            }}
+          >
+            {loading ? (
+              <Typography color="white">Loading...</Typography>
+            ) : (
+              <DataGrid rows={reviews} columns={columns} />
+            )}
+          </Box>
+    
+          
+        </Box>
+      );
 };
 
 export default ReviewTable;
