@@ -14,6 +14,7 @@ import ProductDetailPage from './ProductDetailPage';
 
 import OrderPage from './OrderPage';
 import CommentPage from './CommentPage';
+import PaymentPage from './PaymentPage';
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -115,6 +116,7 @@ function AppContent() {
         <Route path="/comment/:orderId" element={<CommentPage />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
         <Route path="/search-results" element={<SearchResults />} /> {/* Add this */}
+        <Route path="/payment" element={<PaymentPage />} /> 
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
           <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
