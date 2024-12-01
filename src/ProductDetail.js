@@ -10,13 +10,13 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/products/${productId}`);
+        const response = await axios.get(`http://127.0.0.1:8002/products/${productId}`);
         setProduct(response.data);
 
         // Fetch category info based on the product's category_id
         if (response.data.category_id) {
           const categoryResponse = await axios.get(
-            `http://127.0.0.1:8000/products/${productId}/category`
+            `http://127.0.0.1:8002/products/${productId}/category`
           );
           setCategory(categoryResponse.data);
         }
@@ -36,7 +36,7 @@ const ProductDetail = () => {
     <div className="container mt-4">
       <h2>{product.name}</h2>
       <img
-        src={`http://127.0.0.1:8000/static/${product.image_url}`}
+        src={`http://127.0.0.1:8002/static/${product.image_url}`}
         alt={product.name}
         style={{ maxWidth: "400px" }}
       />
