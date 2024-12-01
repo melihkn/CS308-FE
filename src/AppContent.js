@@ -113,7 +113,7 @@ function AppContent() {
         <Route path="/comment/:orderId" element={<CommentPage />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
         <Route path="/search-results" element={<SearchResults />} /> {/* Add this */}
-        {/* <Route path="/product-detail/:productId" element={<ProductDetail />} />  */}{/* Product Detail Route */}
+        { /*<Route path="/product-detail/:productId" element={<ProductDetail />} /> */ }{/* Product Detail Route */}
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
           <Route path="/ProductManager/*" element={<ProductManagerDashboard />} />
