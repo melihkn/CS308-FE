@@ -87,11 +87,41 @@ function AppContent() {
   }, [navigate]);
 
   // handleLogin function is defined to update the login status, user id, and user profile information to be passed to the child componnent Login
+  const handleLogin = async (loggedIn, id, profileData) => {
+    const BACKEND_URL = 'http://127.0.0.1:8001';
+    setIsLoggedIn(loggedIn);
+    setUserId(id);
+    setUserProfile(profileData);
+    // call the merge function of the cart when the user logs in
+    // Merge local cart with backend cart when the user logs in
+    if (loggedIn && id) {
+      const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (localCart.length > 0) {
+        try {
+          console.log("Merging local cart with backend cart on login:", localCart);
+          await axios.post(`${BACKEND_URL}/cart/merge`, localCart, {
+            params: { customer_id: id }, // Add customer_id as a query parameter
+          });
+          localStorage.removeItem("cart"); // Clear the local storage cart after merging
+          console.log("Local cart successfully merged with backend.");
+        } catch (error) {
+          console.error("Error merging local cart with backend:", error);
+        }
+      }
+    }
+
+  };
+
+  /*
+  // handleLogin function is defined to update the login status, user id, and user profile information to be passed to the child componnent Login
   const handleLogin = (loggedIn, id, profileData) => {
     setIsLoggedIn(loggedIn);
     setUserId(id);
     setUserProfile(profileData);
+    // call the merge function of the cart when the user logs in
+
   };
+  */
 
   // handleLogout function is defined to remove the token from local storage and update the login status, user id, and user profile information
   const handleLogout = () => {

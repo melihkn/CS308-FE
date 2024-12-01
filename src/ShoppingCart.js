@@ -46,6 +46,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
     const fetchBasicCart = async () => {
       if (isLoggedIn && userId) {
         try {
+          console.log("UserID: ", userId)
           const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
           setBasicCart(response.data.cart);
         } catch (error) {
@@ -53,24 +54,32 @@ function ShoppingCart({ isLoggedIn, userId }) {
         }
       } else {
         const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        console.log("Stored Cart:", storedCart)
         setBasicCart(storedCart);
       }
     };
 
     fetchBasicCart();
   }, [isLoggedIn, userId]);
-
+  
+  /*
   useEffect(() => {
     const mergeLocalCartWithBackend = async () => {
       if (isLoggedIn && userId) {
         const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
         if (localCart.length > 0) {
           try {
-            await axios.post(`${BACKEND_URL}/cart/merge`, {
-              items: localCart,
-              customer_id: userId,
-            });
+            console.log("Merging local cart with backend cart:", localCart);
+            console.log("localCart:", localCart)
+            await axios.post(`${BACKEND_URL}/cart/merge`, localCart,
+            {
+              params: {
+                customer_id: userId, // Add customer_id as a query parameter
+              },
+            }
+          );
             localStorage.removeItem("cart");
+            console.log("Local cart merged successfully.");
             const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
             setBasicCart(response.data.cart);
           } catch (error) {
@@ -81,7 +90,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
     };
 
     mergeLocalCartWithBackend();
-  }, [isLoggedIn, userId]);
+  }, [isLoggedIn, userId]); */
 
   useEffect(() => {
     const fetchDetailedCart = async () => {
@@ -117,9 +126,16 @@ function ShoppingCart({ isLoggedIn, userId }) {
     ).filter(item => item.quantity > 0);
 
     setBasicCart(updatedItems);
+    if (updatedItems.filter(item => item.product_id === productId).length === 0) {
+      removeFromCart(productId);
+      return;
+    }
 
     if (isLoggedIn && userId) {
       const endpoint = delta > 0 ? "increase_quantity" : "decrease_quantity";
+      // if quantity of a product with id of product id comes to 0, remove the item from the cart
+      
+
       try {
         await axios.patch(`${BACKEND_URL}/cart/${endpoint}`, {
           product_id: productId,
@@ -141,12 +157,17 @@ function ShoppingCart({ isLoggedIn, userId }) {
       try {
         await axios.delete(`${BACKEND_URL}/cart/remove`, {
           data: { product_id: productId, customer_id: userId },
+        
         });
+        setBasicCart(updatedItems);
+        setDetailedCart(detailedCart.filter(item => item.product_id !== productId));
       } catch (error) {
         console.error("Error removing item from cart in backend:", error);
       }
     } else {
       localStorage.setItem("cart", JSON.stringify(updatedItems));
+      setBasicCart(updatedItems);
+      setDetailedCart(detailedCart.filter(item => item.product_id !== productId));
     }
   };
 

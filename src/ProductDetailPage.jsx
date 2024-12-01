@@ -148,7 +148,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
       let cart = JSON.parse(sessionStorage.getItem("cart") || "[]");
       console.log("Cart:", cart); // Debugging
       // Find the index of the existing item in the cart
-      const existingItemIndex = cart.findIndex(item => item.productId === product_id);
+      const existingItemIndex = cart.findIndex(item => item.productId === Number(product_id));
       console.log("Existing item index:", existingItemIndex); // Debugging
       // If the item exists in the cart, increase the quantity
       if (existingItemIndex > -1) {
@@ -156,10 +156,10 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
       }
       // If the item does not exist in the cart, add a new item 
       else {
-        cart.push({ id, quantity });
+        cart.push({ product_id: String(id), quantity: Number(quantity) });
       }
       // Save the updated cart to the session storage
-      sessionStorage.setItem("cart", JSON.stringify(cart));
+      localStorage.setItem("cart", JSON.stringify(cart));
       // Update the cart items state with the updated cart
       setCartItems(cart);
     }
