@@ -1,8 +1,10 @@
 // HomePage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import './HomePage.css';
+
 
 const HomePage = () => {
   // products state is used to store the list of products fetched from the backend
