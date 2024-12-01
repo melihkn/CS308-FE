@@ -119,7 +119,7 @@ function AppContent() {
         {isLoggedIn && userProfile?.role === 'product_manager' && (
           <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
         )}
-        <Route path="/product/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
+        <Route path="/product-detail/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
       </Routes>
     </>
   );

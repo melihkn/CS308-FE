@@ -10,9 +10,11 @@ function ShoppingCart({ isLoggedIn, userId }) {
   const [detailedCart, setDetailedCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
+  // Fetch basic cart (backend or localStorage)
   useEffect(() => {
     const fetchBasicCart = async () => {
       if (isLoggedIn && userId) {
+        // Fetch from backend
         try {
           const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
           setBasicCart(response.data.cart);
@@ -20,6 +22,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
           console.error("Error fetching cart from backend:", error);
         }
       } else {
+        // Fetch from localStorage
         const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
         setBasicCart(storedCart);
       }
@@ -28,17 +31,20 @@ function ShoppingCart({ isLoggedIn, userId }) {
     fetchBasicCart();
   }, [isLoggedIn, userId]);
 
+  // Merge localStorage cart with backend on login
   useEffect(() => {
     const mergeLocalCartWithBackend = async () => {
       if (isLoggedIn && userId) {
         const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
         if (localCart.length > 0) {
           try {
+            // Merge local cart with backend
             await axios.post(`${BACKEND_URL}/cart/merge`, {
               items: localCart,
               customer_id: userId,
             });
             localStorage.removeItem("cart");
+            // Fetch updated cart
             const response = await axios.get(`${BACKEND_URL}/cart/${userId}`);
             setBasicCart(response.data.cart);
           } catch (error) {
@@ -51,6 +57,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
     mergeLocalCartWithBackend();
   }, [isLoggedIn, userId]);
 
+  // Fetch detailed product information
   useEffect(() => {
     const fetchDetailedCart = async () => {
       try {
@@ -71,6 +78,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
     }
   }, [basicCart]);
 
+  // Calculate total price
   useEffect(() => {
     const calculateTotal = () => {
       const total = detailedCart.reduce(
@@ -82,6 +90,10 @@ function ShoppingCart({ isLoggedIn, userId }) {
     calculateTotal();
   }, [detailedCart]);
 
+  // Add to cart
+  
+
+  // Adjust quantity
   const adjustQuantity = async (productId, delta) => {
     const updatedItems = basicCart
       .map((item) =>
@@ -111,6 +123,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
     }
   };
 
+  // Remove from cart
   const removeFromCart = async (productId) => {
     const updatedItems = basicCart.filter((item) => item.product_id !== productId);
     setBasicCart(updatedItems);

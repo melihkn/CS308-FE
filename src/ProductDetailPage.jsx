@@ -100,7 +100,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
 
   const handleAddToCart = async () => {
     try {
-      await addToCart({ productId: id, quantity: quantity});
+      await addToCart({ productId: id});
       alert("Product added to cart!");
     } catch (error) {
       console.error("Error adding to cart:", error.response?.data || error);
@@ -118,17 +118,24 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
     }
   }
 
-  const addToCart = async (productId, quantity) => {
+  const addToCart = async (product_id) => {
 
     // If the user is logged in, add the item to the backend cart
     if (isLoggedIn && userId) {
       try {
         // Send a POST request to the server to add the item to the cart
-        await axios.post("http://127.0.0.1:8001/cart/add", {
-          product_id: productId,
-          quantity: quantity,
-          customer_id: userId,
-        });
+        await axios.post(
+          "http://127.0.0.1:8001/cart/add",
+          {
+            product_id: id,
+            quantity: quantity,
+          },
+          {
+            params: {
+              customer_id: userId, // Add customer_id as a query parameter
+            },
+          }
+        );
         console.log("Item added to backend cart.");
       } 
       catch (error) {
@@ -141,14 +148,15 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
       let cart = JSON.parse(sessionStorage.getItem("cart") || "[]");
       console.log("Cart:", cart); // Debugging
       // Find the index of the existing item in the cart
-      const existingItemIndex = cart.findIndex(item => item.productId === productId);
+      const existingItemIndex = cart.findIndex(item => item.productId === product_id);
+      console.log("Existing item index:", existingItemIndex); // Debugging
       // If the item exists in the cart, increase the quantity
       if (existingItemIndex > -1) {
         cart[existingItemIndex].quantity += quantity;
       }
       // If the item does not exist in the cart, add a new item 
       else {
-        cart.push({ productId, quantity });
+        cart.push({ id, quantity });
       }
       // Save the updated cart to the session storage
       sessionStorage.setItem("cart", JSON.stringify(cart));

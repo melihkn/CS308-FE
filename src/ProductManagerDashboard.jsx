@@ -20,7 +20,7 @@ const ProductManagerDashboard = () => {
     }}
   >
     {/* Sidebar */}
-    <SideNavbar />
+    <SideNavbar role={localStorage.getItem("token").role}/>
 
     {/* Main Content */}
     <Box

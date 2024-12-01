@@ -51,6 +51,7 @@ const Login = ({ onLogin }) => {
       alert('Login successful');
       // Save login state when user logs in successfully
       localStorage.setItem("isLoggedIn", true);
+      sessionStorage.setItem("cart", [])
 
 
       if (profileResponse.data.role === 'product_manager') {

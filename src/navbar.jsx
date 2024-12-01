@@ -135,6 +135,14 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
           </>
         ) : (
           <>
+            <Button
+              component={Link}
+              to="/cart"
+              sx={{ color: "white" }}
+              startIcon={<ShoppingCartIcon />}
+            >
+              Cart
+            </Button>
             <Button component={Link} to="/login" sx={{ color: "white" }}>
               Login
             </Button>
