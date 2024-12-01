@@ -4,7 +4,7 @@ import { useLocation, Link } from 'react-router-dom';
 const SearchResults = () => {
   const location = useLocation();
   const results = location.state?.results || []; // Default to an empty array if undefined
-  const BACKEND_URL = 'http://127.0.0.1:8000';
+  const BACKEND_URL = 'http://127.0.0.1:8002';
   const [sortedResults, setSortedResults] = useState(results);
   const [sortCriteria, setSortCriteria] = useState(''); // Track selected sort option
 
