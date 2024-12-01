@@ -1,0 +1,14 @@
+.layout-container {
+    display: flex;
+    height: 100%;
+}
+
+.sidebar {
+    width: 250px; /* Adjust as needed */
+    flex-shrink: 0;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 16px; /* Add padding if needed */
+}

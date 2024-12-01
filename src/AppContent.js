@@ -5,13 +5,16 @@ import Navbar from './navbar';
 import Login from './login';
 import Register from './register';
 import HomePage from './HomePage';
-import Profile from './profile';
-import ShoppingCart from './ShoppingCart';
+import Profile from './profile.jsx';
+import ShoppingCart from './ShoppingCart.js';
 import SearchResults from './search-results';
 import axios from 'axios';
 import ProductManagerDashboard from './ProductManagerDashboard';
+import ProductDetailPage from './ProductDetailPage';
+
 import OrderPage from './OrderPage';
 import CommentPage from './CommentPage';
+import PaymentPage from './PaymentPage.jsx';
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -84,11 +87,41 @@ function AppContent() {
   }, [navigate]);
 
   // handleLogin function is defined to update the login status, user id, and user profile information to be passed to the child componnent Login
+  const handleLogin = async (loggedIn, id, profileData) => {
+    const BACKEND_URL = 'http://127.0.0.1:8001';
+    setIsLoggedIn(loggedIn);
+    setUserId(id);
+    setUserProfile(profileData);
+    // call the merge function of the cart when the user logs in
+    // Merge local cart with backend cart when the user logs in
+    if (loggedIn && id) {
+      const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (localCart.length > 0) {
+        try {
+          console.log("Merging local cart with backend cart on login:", localCart);
+          await axios.post(`${BACKEND_URL}/cart/merge`, localCart, {
+            params: { customer_id: id }, // Add customer_id as a query parameter
+          });
+          localStorage.removeItem("cart"); // Clear the local storage cart after merging
+          console.log("Local cart successfully merged with backend.");
+        } catch (error) {
+          console.error("Error merging local cart with backend:", error);
+        }
+      }
+    }
+
+  };
+
+  /*
+  // handleLogin function is defined to update the login status, user id, and user profile information to be passed to the child componnent Login
   const handleLogin = (loggedIn, id, profileData) => {
     setIsLoggedIn(loggedIn);
     setUserId(id);
     setUserProfile(profileData);
+    // call the merge function of the cart when the user logs in
+
   };
+  */
 
   // handleLogout function is defined to remove the token from local storage and update the login status, user id, and user profile information
   const handleLogout = () => {
@@ -113,11 +146,12 @@ function AppContent() {
         <Route path="/comment/:orderId" element={<CommentPage />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
         <Route path="/search-results" element={<SearchResults />} /> {/* Add this */}
-        <Route path="/product-detail/:productId" element={<ProductDetail />} /> {/* Product Detail Route */}
+        <Route path="/payment" element={<PaymentPage />} /> 
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
-          <Route path="/ProductManager/*" element={<ProductManagerDashboard />} />
+          <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
         )}
+        <Route path="/product-detail/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
       </Routes>
     </>
   );

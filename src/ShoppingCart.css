@@ -1,69 +1,90 @@
 /* ShoppingCart.css */
-
-.ShoppingCartMain {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px;
-    background-color: #f7f7f7;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-}
-
-.ShoppingCartMain h2 {
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-.ShoppingCartMain ul {
-    list-style: none;
-    align-content: center;
-    padding: 0;
-    margin: 0;
-}
-
-.ShoppingCartMain li {
+.shopping-cart-container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    padding: 20px;
+  }
+  
+  .cart-items {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .cart-summary {
+    width: 25%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
     text-align: center;
-    padding: 12px;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 16px;
-    color: #555;
-}
-
-.ShoppingCartMain li:last-child {
-    border-bottom: none;
-}
-
-.ShoppingCartMain .add-to-cart-button {
-    display: block;
-    width: 100%;
-    max-width: 200px;
-    margin: 20px auto;
-    padding: 10px;
-    background-color: #007bff;
+  }
+  
+  .cart-summary h3 {
+    margin-bottom: 20px;
+  }
+  
+  .cart-summary button {
+    background-color: #ff9900;
+    border: none;
+    padding: 10px 20px;
     color: white;
     font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    border: none;
-    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+    border-radius: 4px;
+  }
+  
+  .cart-summary button:hover {
+    background-color: #e68a00;
+  }
+  
+  /* ProductCard.css */
 
-.ShoppingCartMain .add-to-cart-button:hover {
-    background-color: #0056b3;
-}
-
-.ShoppingCartMain .cart-message {
-    text-align: center;
-    color: #666;
-    font-size: 16px;
-    margin-top: 10px;
-}
+.product-card {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 10px;
+    align-items: center;
+    gap: 15px;
+  
+    /* Set a wider width for the product card */
+    width: 100%; /* Or set to a fixed width like 80% or 600px */
+    max-width: 800px; /* Optional: to restrict the max width */
+    box-sizing: border-box;
+  }
+  
+  .product-image {
+    width: 150px; /* Adjust as needed */
+    height: 150px; /* Adjust as needed */
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  .product-info {
+    flex: 1; /* Take up remaining space */
+  }
+  
+  .product-info h3 {
+    margin: 0 0 5px;
+  }
+  
+  .cart-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .cart-actions button {
+    background-color: #0073e6;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .cart-actions button:hover {
+    background-color: #005bb5;
+  }

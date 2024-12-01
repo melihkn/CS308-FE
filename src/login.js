@@ -49,7 +49,20 @@ const Login = ({ onLogin }) => {
       
       // Redirect to the home page after successful login and display an alert message to the user as google does
       alert('Login successful');
-      navigate('/');
+      // Save login state when user logs in successfully
+      localStorage.setItem("isLoggedIn", true);
+      
+
+
+      if (profileResponse.data.role === 'product_manager') {
+        navigate('/dashboards/ProductManager');
+      }
+      else if (profileResponse.data.role === 'sales_manager') {
+        navigate('/dashboards/smapp');
+      }
+      else {
+        navigate('/');
+      }
 
     }
     // Catch any error and display an alert message to the user
