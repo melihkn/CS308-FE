@@ -12,6 +12,8 @@ import {
   Button,
 } from "@mui/material";
 
+import ProductCard from "./ProductCard";
+
 /*
   Enhanced HomePage Component with Material-UI
   
@@ -21,8 +23,9 @@ import {
     - Uses Material-UI components for a modern look.
 */
 
-const HomePage = () => {
+const HomePage = ({ userId, isLoggedIn }) => {
   const [products, setProducts] = useState([]);
+  const [product_id, setProduct_id] = useState(null);
   const BACKEND_URL = "http://127.0.0.1:8002";
 
   useEffect(() => {
@@ -53,42 +56,18 @@ const HomePage = () => {
       {/* Products Grid */}
       <Grid container spacing={4} sx={{ mt: 3 }}>
         {products.map((product) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={product.product_id}>
-            <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-              <CardMedia
-                component="img"
-                image={getImageUrl(product.image_url)}
-                alt={product.name}
-                sx={{ height: 200 }}
-              />
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {product.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  <strong>Model:</strong> {product.model}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
-                  {product.description}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Price:</strong> ${product.price}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  <strong>Quantity:</strong> {product.quantity}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  component={Link}
-                  to={`/product-detail/${product.product_id}`}
-                  size="small"
-                  color="primary"
-                >
-                  View Details
-                </Button>
-              </CardActions>
-            </Card>
+          <Grid item key={product.id} xs={12} sm={6} md={4}>
+            <ProductCard
+              userId={userId}
+              isLoggedIn={isLoggedIn}
+              id={product.product_id}
+              name={product.name}
+              model={product.model}
+              description={product.description}
+              quantity={product.quantity}
+              distributor={product.distributor}
+              imageUrl={getImageUrl(product.image_url)}
+            />
           </Grid>
         ))}
       </Grid>

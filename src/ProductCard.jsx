@@ -2,7 +2,7 @@
 import React from "react";
 import { Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 
 /*
     ProductCard component is a reusable component that displays information about a product.
@@ -31,20 +31,82 @@ import { useNavigate } from "react-router-dom";
 
 */
 
-
-const ProductCard = ({ id, name, model, description, quantity, distributor, imageUrl }) => {
+const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantity, distributor, imageUrl }) => {
   const navigate = useNavigate();
+  const [cartItems, setCartItems] = React.useState([]);
 
-  const handleDetailsClick = () => {
-    navigate(`/product/${id}`);
+  const handleCardClick = () => {
+    navigate(`/product-detail/${id}`);
   };
 
-  const handleAddToCard = () => {
+  const addToCart = async (product_id) => {
 
-  }
+    // If the user is logged in, add the item to the backend cart
+    if (isLoggedIn && userId) {
+      try {
+        // Send a POST request to the server to add the item to the cart
+        await axios.post(
+          "http://127.0.0.1:8001/cart/add",
+          {
+            product_id: product_id,
+            quantity: 1,
+          },
+          {
+            params: {
+              customer_id: userId, // Add customer_id as a query parameter
+            },
+          }
+        );
+        console.log("Item added to backend cart.");
+      } 
+      catch (error) {
+        console.error("Error adding item to backend cart:", error);
+      }
+    } 
+    // If the user is not logged in, add the item to the session storage cart
+    else {
+      // Get the cart from the session storage or create an empty cart
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      console.log("Cart:", cart); // Debugging
+      // Find the index of the existing item in the cart
+      const existingItemIndex = cart.findIndex(
+        item => item.product_id.trim() === String(product_id).trim()
+      );
+      console.log("Existing item index:", existingItemIndex); // Debugging
+      // If the item exists in the cart, increase the quantity
+      if (existingItemIndex > -1) {
+        cart[existingItemIndex].quantity += 1;
+      }
+      // If the item does not exist in the cart, add a new item 
+      else {
+        cart.push({ product_id: String(id), quantity: Number(1) });
+      }
+      // Save the updated cart to the session storage
+      localStorage.setItem("cart", JSON.stringify(cart));
+      // Update the cart items state with the updated cart
+      setCartItems(cart);
+    }
+  };
+
+  const handleAddToCart = () => {
+    // Add logic for adding product to the cart
+    addToCart(id)
+    console.log(`${name} added to cart.`);
+  };
 
   return (
-    <Card sx={{ maxWidth: 345, margin: 2 }}>
+    <Card
+      sx={{
+        maxWidth: 345,
+        margin: 2,
+        transition: "transform 0.3s ease-in-out",
+        cursor: "pointer",
+        "&:hover": {
+          transform: "scale(1.05)"
+        }
+      }}
+      onClick={handleCardClick}
+    >
       <CardMedia
         component="img"
         alt={name}
@@ -67,10 +129,15 @@ const ProductCard = ({ id, name, model, description, quantity, distributor, imag
         <Typography variant="body2" color="text.secondary">
           <strong>Distributor:</strong> {distributor}
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleDetailsClick}>
-          View Details
-        </Button>
-        <Button variant="contained" color="primary" onClick={handleAddToCard}>
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={quantity <= 0} // Disable button if quantity is 0
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering the card click event
+            handleAddToCart();
+          }}
+        >
           Add to Cart
         </Button>
       </CardContent>

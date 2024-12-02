@@ -137,7 +137,7 @@ function AppContent() {
     <>
       <Navbar isLoggedIn={isLoggedIn} userProfile={userProfile} onLogout={handleLogout} />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage userId={userId}/>} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
@@ -145,7 +145,7 @@ function AppContent() {
         {/* Comment page is not done yet */}
         <Route path="/comment/:orderId" element={<CommentPage />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
-        <Route path="/search-results" element={<SearchResults />} /> {/* Add this */}
+        <Route path="/search-results" element={<SearchResults userId={userId} isLoggedIn={isLoggedIn}/>} /> {/* Add this */}
         <Route path="/payment" element={<PaymentPage />} /> 
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
