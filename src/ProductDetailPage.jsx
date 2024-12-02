@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 
 import { Add, Remove } from "@mui/icons-material"; // For increment/decrement buttons
-import { fetchProductbyId, addReview, fetchReviewsByProductId } from "./api";
+import { fetchProductbyId, addReview, fetchReviewsByProductId, fetchAverageRating } from "./api";
 import axios from "axios";
 
 const ProductDetailPage = ({ isLoggedIn, userId }) => {
@@ -31,6 +31,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const [comment, setComment] = useState("");
   const [quantity, setQuantity] = useState(1); // Quantity counter
   const [cartItems, setCartItems] = useState([]); // Cart items
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -49,6 +50,9 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
         const reviews = await fetchReviewsByProductId(id);
         console.log("Reviews fetched:", reviews); // Debugging
         setReviews(reviews || []); // Assuming reviews are part of the product data
+        const avrgRating = await fetchAverageRating(id);
+        setAverageRating(avrgRating.average_rating);
+        console.log("Average rating fetched:", avrgRating); // Debugging
       } catch (err) {
         console.error("Error fetching product:", err.response?.data || err);
         setError("Failed to load product data.");
@@ -65,10 +69,6 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   };
 
   const handleAddReview = async () => {
-    if (!rating || !comment.trim()) {
-      alert("Please provide a rating and a comment.");
-      return;
-    }
 
     if (!localStorage.getItem("token")) {
       alert("Please log in to add a review.");
@@ -89,6 +89,9 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
       console.log("Adding review:", reviewPayload); // Debugging
       const addedReview = await addReview(reviewPayload); // Send review to backend
       const reviews = await fetchReviewsByProductId(id); // Fetch updated reviews
+      const new_average = (averageRating * (reviews.length-1) + rating) / (reviews.length);
+      console.log("New average rating:", new_average); // Debugging
+      setAverageRating(new_average);
       setReviews(reviews); // Update reviews
       setRating(0); // Reset rating
       setComment(""); // Reset comment
@@ -100,11 +103,26 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
 
   const handleAddToCart = async () => {
     try {
-      await addToCart({ productId: id});
+      const result = await addToCart({ productId: id});
+      console.log("Result:", result);
+      if (result !== "Could not add item to cart.")
       alert("Product added to cart!");
-    } catch (error) {
-      console.error("Error adding to cart:", error.response?.data || error);
-      alert("Failed to add product to cart.");
+    } catch (httpError) {
+      // Differentiate error responses based on status codes or messages
+      const errorDetail = httpError.response?.data?.detail;
+
+      if (httpError.response?.status === 400 && errorDetail === "Stock is not enough.") {
+        alert("Stock is not enough! Please reduce the quantity or try again later.");
+      } else if (httpError.response?.status === 400) {
+        alert("Bad Request: " + (errorDetail || "Invalid request."));
+      } else if (httpError.response?.status === 404) {
+        alert("Product not found!");
+      } else if (httpError.response?.status === 500) {
+        alert("Internal server error! Please try again later.");
+      } else {
+        alert("Failed to add product to cart: " + (errorDetail || httpError.message));
+      }
+      console.error("Error adding to cart:", httpError.response?.data || httpError);
     }
   };
 
@@ -122,25 +140,20 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
 
     // If the user is logged in, add the item to the backend cart
     if (isLoggedIn && userId) {
-      try {
-        // Send a POST request to the server to add the item to the cart
-        await axios.post(
-          "http://127.0.0.1:8001/cart/add",
-          {
-            product_id: id,
-            quantity: quantity,
+      // Send a POST request to the server to add the item to the cart
+      await axios.post(
+        "http://127.0.0.1:8001/cart/add",
+        {
+          product_id: id,
+          quantity: quantity,
+        },
+        {
+          params: {
+            customer_id: userId, // Add customer_id as a query parameter
           },
-          {
-            params: {
-              customer_id: userId, // Add customer_id as a query parameter
-            },
-          }
-        );
-        console.log("Item added to backend cart.");
-      } 
-      catch (error) {
-        console.error("Error adding item to backend cart:", error);
-      }
+        }
+      );
+      console.log("Item added to backend cart.");
     } 
     // If the user is not logged in, add the item to the session storage cart
     else {
@@ -206,6 +219,9 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
             <Typography variant="h4" gutterBottom>
               {product.name}
             </Typography>
+            <Typography variant="h6" gutterBottom>
+              {averageRating}
+            </Typography>
             <Typography variant="body1" gutterBottom>
               {product.description}
             </Typography>
@@ -234,6 +250,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
               <Button
                 variant="contained"
                 color="primary"
+                disabled={product.quantity <= 0} // Disable button if quantity is 0
                 onClick={handleAddToCart}
               >
                 Add to Cart
@@ -309,13 +326,13 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
               {reviews.length > 0 ? (
                 reviews.map((review) => (
                   <Paper
-                    key={review.id}
+                    key={review.review_id}
                     sx={{ padding: 2, marginBottom: 2 }}
                   >
                     <Stack direction="row" alignItems="center" spacing={2}>
                       <Rating value={review.rating} precision={0.1} readOnly />
                       <Typography variant="body1">
-                        {review.user}: {review.comment}
+                        {review.comment}
                       </Typography>
                     </Stack>
                   </Paper>

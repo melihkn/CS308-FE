@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import ProductCard from './ProductCard';
+import { Grid } from '@mui/material';
 
-const SearchResults = () => {
+const SearchResults = ({userId, isLoggedIn}) => {
   const location = useLocation();
   const results = location.state?.results || []; // Default to an empty array if undefined
   const BACKEND_URL = 'http://127.0.0.1:8002';
@@ -65,6 +67,7 @@ const SearchResults = () => {
 
       {sortedResults && sortedResults.length > 0 ? (
         <div
+        
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -72,49 +75,19 @@ const SearchResults = () => {
           }}
         >
           {sortedResults.map((result) => (
-            <Link
-              to={`/product-detail/${result.product_id}`}
-              key={result.product_id}
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <div
-                style={{
-                  border: '1px solid #ccc',
-                  borderRadius: '8px',
-                  padding: '15px',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                  textAlign: 'center',
-                }}
-              >
-                <img
-                  src={getImageUrl(result.image_url)}
-                  alt={result.name}
-                  style={{
-                    width: '100%',
-                    height: '150px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    marginBottom: '10px',
-                  }}
-                />
-                <h5 style={{ margin: '0 0 10px', fontSize: '18px', fontWeight: 'bold' }}>
-                  {result.name}
-                </h5>
-                <p style={{ margin: '0 0 5px', color: '#555' }}>{result.description}</p>
-                <p style={{ margin: '0 0 5px' }}>
-                  <strong>Price:</strong> ${result.price}
-                </p>
-                <p style={{ margin: '0 0 5px' }}>
-                  <strong>Quantity:</strong> {result.quantity}
-                </p>
-                <p style={{ margin: '0' }}>
-                  <strong>Items Sold:</strong> {result.item_sold}
-                </p>
-              </div>
-            </Link>
+            <Grid item key={result.product_id} xs={12} sm={6} md={4}>
+            <ProductCard
+              userId={userId}
+              isLoggedIn={isLoggedIn}
+              id={result.product_id}
+              name={result.name}
+              model={result.model}
+              description={result.description}
+              quantity={result.quantity}
+              distributor={result.distributor}
+              imageUrl={getImageUrl(result.image_url)}
+            />
+            </Grid>
           ))}
         </div>
       ) : (
