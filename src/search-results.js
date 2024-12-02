@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
+import { Grid } from '@mui/material';
 
 const SearchResults = ({userId, isLoggedIn}) => {
   const location = useLocation();
@@ -66,6 +67,7 @@ const SearchResults = ({userId, isLoggedIn}) => {
 
       {sortedResults && sortedResults.length > 0 ? (
         <div
+        
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -73,6 +75,7 @@ const SearchResults = ({userId, isLoggedIn}) => {
           }}
         >
           {sortedResults.map((result) => (
+            <Grid item key={result.product_id} xs={12} sm={6} md={4}>
             <ProductCard
               userId={userId}
               isLoggedIn={isLoggedIn}
@@ -84,6 +87,7 @@ const SearchResults = ({userId, isLoggedIn}) => {
               distributor={result.distributor}
               imageUrl={getImageUrl(result.image_url)}
             />
+            </Grid>
           ))}
         </div>
       ) : (

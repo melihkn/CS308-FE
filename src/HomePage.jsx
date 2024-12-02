@@ -56,7 +56,7 @@ const HomePage = ({ userId, isLoggedIn }) => {
       {/* Products Grid */}
       <Grid container spacing={4} sx={{ mt: 3 }}>
         {products.map((product) => (
-          <Grid item key={product.id} xs={12} sm={6} md={4}>
+          <Grid item key={product.product_id} xs={12} sm={6} md={4}>
             <ProductCard
               userId={userId}
               isLoggedIn={isLoggedIn}
