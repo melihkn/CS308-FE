@@ -16,6 +16,7 @@ import OrderPage from './OrderPage';
 import CommentPage from './CommentPage';
 import PaymentPage from './PaymentPage.jsx';
 
+
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
 
