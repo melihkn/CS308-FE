@@ -54,7 +54,7 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
             mr: 2,
           }}
         >
-          MyVET
+          MyTECH
         </Typography>
 
         {/* Search Bar */}

@@ -139,7 +139,7 @@ function AppContent() {
     <>
       <Navbar isLoggedIn={isLoggedIn} userProfile={userProfile} onLogout={handleLogout} />
       <Routes>
-        <Route path="/" element={<HomePage userId={userId}/>} />
+        <Route path="/" element={<HomePage userId={userId} isLoggedIn={isLoggedIn}/>} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
