@@ -58,15 +58,20 @@ function PaymentPage() {
 
       const order = await response.json();
       alert("Payment successful and order created successfully!");
-
+      navigate(`/invoice/${order.order_id}`);
       await clearShoppingCart();
-      navigate('/orders');
+      
     } catch (error) {
       console.error('Order creation failed:', error);
       alert(`Order creation failed: ${error.message}`);
     }
+
+    
+
+    //navigate('/orders');
   };
 
+  
   const clearShoppingCart = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8001/cart/clear?customer_id=${userId}`, {

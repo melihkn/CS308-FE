@@ -170,6 +170,17 @@ export const fetchReviewsByProductId = async (product_id) => {
     }
 }
 
+export const fetchAverageRating = async (product_id) => {
+    try {
+        console.log("Fetching average rating for product:", product_id); // Debugging
+        const response = await reviewsService.get(`/reviews/calculate_rating/${product_id}`); // Fetch average rating by product ID
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching average rating:", error);
+        throw error;
+    }
+}
+
 
 
   

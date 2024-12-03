@@ -32,6 +32,13 @@ const Order = ({ order }) => {
     navigate(`/comment/${order.order_id}`);
   };
 
+  // Function to handle invoice download
+  const handleViewInvoice = () => {
+    //window.open(`http://127.0.0.1:8004/api/orders/invoice/${order.order_id}`, "_blank");
+    console.log("Navigating to invoice with ID:", order.order_id);
+    navigate(`/invoice/${order.order_id}`);
+  };
+
   return (
     <div
       style={{
@@ -65,22 +72,37 @@ const Order = ({ order }) => {
           purchase_price={item.price}
         />
       ))}
-      {/* Add the Comment button */}
-      <button
-        style={{
-          marginTop: "15px",
-          padding: "5px 10px",
-          backgroundColor: "#ffaa00",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontSize: "14px",
-        }}
-        onClick={handleCommentRedirect}
-      >
-        Make a comment about product
-      </button>
+      {/* Add the Invoice and Comment buttons */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
+        <button
+          style={{
+            padding: "5px 10px",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
+          }}
+          onClick={handleViewInvoice}
+        >
+          View Invoice
+        </button>
+        <button
+          style={{
+            padding: "5px 10px",
+            backgroundColor: "#ffaa00",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
+          }}
+          onClick={handleCommentRedirect}
+        >
+          Make a comment about product
+        </button>
+      </div>
     </div>
   );
 };
