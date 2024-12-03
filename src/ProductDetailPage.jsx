@@ -51,7 +51,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
         console.log("Reviews fetched:", reviews); // Debugging
         setReviews(reviews || []); // Assuming reviews are part of the product data
         const avrgRating = await fetchAverageRating(id);
-        setAverageRating(avrgRating.average_rating);
+        setAverageRating(avrgRating);
         console.log("Average rating fetched:", avrgRating); // Debugging
       } catch (err) {
         console.error("Error fetching product:", err.response?.data || err);
