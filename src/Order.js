@@ -34,7 +34,9 @@ const Order = ({ order }) => {
 
   // Function to handle invoice download
   const handleViewInvoice = () => {
-    window.open(`http://127.0.0.1:8004/api/orders/invoice/${order.order_id}`, "_blank");
+    //window.open(`http://127.0.0.1:8004/api/orders/invoice/${order.order_id}`, "_blank");
+    console.log("Navigating to invoice with ID:", order.order_id);
+    navigate(`/invoice/${order.order_id}`);
   };
 
   return (

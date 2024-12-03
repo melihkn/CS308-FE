@@ -40,9 +40,9 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
   };
 
   const addToCart = async (product_id) => {
-
+    console.log("User login: ", isLoggedIn, "User ID: ", userId);
     // If the user is logged in, add the item to the backend cart
-    if (isLoggedIn && userId) {
+    if (userId) {
       try {
         // Send a POST request to the server to add the item to the cart
         await axios.post(

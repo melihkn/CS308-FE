@@ -14,6 +14,7 @@ import ProductDetailPage from './ProductDetailPage';
 
 import OrderPage from './OrderPage';
 import CommentPage from './CommentPage';
+import InvoiceViewer from './InvoiceViewer.jsx';
 import PaymentPage from './PaymentPage.jsx';
 
 
@@ -153,6 +154,7 @@ function AppContent() {
           <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
         )}
         <Route path="/product-detail/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
+        <Route path="/invoice/:invoiceId" element={<InvoiceViewer />} />
       </Routes>
     </>
   );
