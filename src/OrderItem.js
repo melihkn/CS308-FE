@@ -22,7 +22,7 @@ const OrderItem = ({ productId, quantity, purchase_price }) => {
         const productData = response.data;
 
         // Prefix the image URL
-        const image_url_prefix = "http://127.0.0.1:8000/static/";
+        const image_url_prefix = "http://127.0.0.1:8001/static/";
         const fullImageUrl = image_url_prefix + productData.image_url;
         setProduct({ ...productData, image_url: fullImageUrl });
       } catch (error) {

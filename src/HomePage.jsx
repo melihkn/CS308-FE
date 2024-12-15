@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Typography, Container, Grid } from "@mui/material";
-
 import ProductCard from "./ProductCard";
-import CategorySidebar from "./CategorySideBar";
 
 const HomePage = ({isLoggedIn, userId}) => {
   const [products, setProducts] = useState([]); // Ürünleri tutar
@@ -29,12 +27,10 @@ const HomePage = ({isLoggedIn, userId}) => {
 
   const getImageUrl = (imageUrl) => `${BACKEND_URL}/static/${imageUrl}`;
 
+  // <Container maxWidth="lg" sx={{ padding: "20px", display: "flex" }}> <CategorySidebar setSelectedCategory={setSelectedCategory} /> silindi
   return (
     <Container maxWidth="lg" sx={{ padding: "20px", display: "flex" }}>
-      {/* Sidebar */}
-      <CategorySidebar setSelectedCategory={setSelectedCategory} />
-
-      <div style={{ flex: 1, marginLeft: "260px" }}>
+      <div style={{flex: 1}}>
         {/* Welcome Section */}
         <Typography variant="h3" align="center" gutterBottom>
           Welcome to MyTech!

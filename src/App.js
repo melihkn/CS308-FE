@@ -1,19 +1,25 @@
 // App.js
 import React from 'react';
-import { ThemeProvider, CssBaseline } from '@mui/material';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AppContent from './AppContent';
-import theme from './theme/theme'; // Import the custom theme
+
+import { ColorModeContext, useMode } from './theme.js';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+// theme provider will allow us to change the theme of the application
 
 function App() {
-  return (
+  const [theme, colorMode] = useMode(); // get the theme and color mode from the useMode hook
+
+  return(
     <ThemeProvider theme={theme}>
-      <CssBaseline /> {/* Resets default browser styles */}
+      <CssBaseline />
       <Router>
-        <AppContent />
+        <ColorModeContext.Provider value={colorMode}>
+          <AppContent />
+        </ColorModeContext.Provider>
       </Router>
     </ThemeProvider>
-  );
+  )
 }
 
 export default App;

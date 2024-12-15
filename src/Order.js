@@ -11,6 +11,8 @@ Functionalities of the Order component:
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import OrderItem from "./OrderItem";
+import { useTheme } from "@mui/material/styles"; // To access theme properties
+import { Box, Button, Typography } from "@mui/material";
 
 // Define the ORDER_STATUS_MAP object
 const ORDER_STATUS_MAP = {
@@ -23,7 +25,10 @@ const ORDER_STATUS_MAP = {
 };
 
 const Order = ({ order }) => {
-  // bu variable ile order ın status unu text olarak user a yansıtabilicez. 
+  const theme = useTheme(); // Access current theme
+  const colors = theme.palette; // Extract palette from theme
+
+  // Map order status to text
   const orderStatusText = ORDER_STATUS_MAP[order.order_status] || "Unknown Status";
 
   // useNavigate hook to navigate to the comment page
@@ -32,38 +37,38 @@ const Order = ({ order }) => {
     navigate(`/comment/${order.order_id}`);
   };
 
-  // Function to handle invoice download
+  // Function to handle invoice view
   const handleViewInvoice = () => {
-    //window.open(`http://127.0.0.1:8004/api/orders/invoice/${order.order_id}`, "_blank");
     console.log("Navigating to invoice with ID:", order.order_id);
     navigate(`/invoice/${order.order_id}`);
   };
 
   return (
-    <div
-      style={{
-        border: "1px solid #ddd",
+    <Box
+      sx={{
+        border: `1px solid ${colors.neutral.main}`,
         marginBottom: "20px",
         padding: "20px",
         borderRadius: "8px",
-        backgroundColor: "#f9f9f9",
-        fontFamily: "Arial, sans-serif",
+        backgroundColor: colors.background.default,
+        fontFamily: theme.typography.fontFamily,
+        color: colors.text?.primary || colors.neutral.main, // Ensure text visibility
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-        <div>
+      <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
+        <Typography>
           <strong>Order Date:</strong> {new Date(order.order_date).toLocaleDateString()}
-        </div>
-        <div>
+        </Typography>
+        <Typography>
           <strong>Total Price:</strong> ${order.total_price.toFixed(2)}
-        </div>
-        <div>
+        </Typography>
+        <Typography>
           <strong>Payment Status:</strong> {order.payment_status}
-        </div>
-        <div>
+        </Typography>
+        <Typography>
           <strong>Order Status:</strong> {orderStatusText}
-        </div>
-      </div>
+        </Typography>
+      </Box>
       {order.items.map((item) => (
         <OrderItem
           key={item.product_id}
@@ -72,38 +77,36 @@ const Order = ({ order }) => {
           purchase_price={item.price}
         />
       ))}
-      {/* Add the Invoice and Comment buttons */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
-        <button
-          style={{
+      {/* Invoice and Comment buttons */}
+      <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
+        <Button
+          sx={{
             padding: "5px 10px",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
+            backgroundColor: colors.primary.main,
+            color: theme.palette.getContrastText(theme.palette.primary.main),
+            "&:hover": {
+              backgroundColor: colors.primary.dark,
+            },
           }}
           onClick={handleViewInvoice}
         >
           View Invoice
-        </button>
-        <button
-          style={{
+        </Button>
+        <Button
+          sx={{
             padding: "5px 10px",
-            backgroundColor: "#ffaa00",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
+            backgroundColor: colors.secondary.main,
+            color: colors.text?.primary || "#fff",
+            "&:hover": {
+              backgroundColor: colors.secondary.dark,
+            },
           }}
           onClick={handleCommentRedirect}
         >
-          Make a comment about product
-        </button>
-      </div>
-    </div>
+          Make a Comment About Product
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
