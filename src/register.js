@@ -1,11 +1,8 @@
-// Register.js
 import React, { useState } from 'react';
-import axios from 'axios'; // axios is for sending http requests to the server in usually event handler functions
-//import { Link } from 'react-router-dom'; // link is used to navigate to different pages like login and register in the navbar
-import './register.css'; // Import your CSS file
-import { useNavigate } from 'react-router-dom'; // import useNavigate hook to navigate to different pages
+import axios from 'axios';
+import { TextField, Button, Box, Container, Typography, CssBaseline } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-// Register component is a functional component that renders the registration form of the application.
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -16,35 +13,16 @@ const Register = () => {
     phone_number: '',
   });
 
-   // Initialize useNavigate hook to navigate to different pages
   const navigate = useNavigate();
 
-
-  /*
-  handleRegister function is used to handle the registration form submission.
-
-  It takes an event object as a parameter which is used to prevent the default form submission. 
-  It sends a post request to the server with the form data entered by the user -> register endpoint.
-
-  Then, it displays the success message if the registration is successful on top of the web page. 
-  */
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-        // it sends a post request to the server (running on host 127.0.0.1 and port 8000) with the form data entered by the user -> register endpoint
       const response = await axios.post('http://127.0.0.1:8000/register', formData);
-        // response is the response from the server which can be a success message or an error message
-
-      // Display success message on the top of the page as an google alert
-      alert(response.data.message); 
-      
-      // navigate the user to home page after successful registration
-      navigate('/'); 
-
+      alert(response.data.message);
+      navigate('/');
     } catch (error) {
-      // Display error message on the top of the page as an google alert
-      alert(error.response.data.detail); 
-      // if there is an error, the user stays on the same page but every field is cleared
+      alert(error.response?.data?.detail || 'An error occurred');
       setFormData({
         name: '',
         middlename: '',
@@ -56,11 +34,6 @@ const Register = () => {
     }
   };
 
-  /*
-  handleChange function is used to update the state of the form data when the user types in the input fields.
-
-  It takes an event object as a parameter which contains the name and value of the input field that the user types in.
-  */
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -68,96 +41,99 @@ const Register = () => {
     });
   };
 
-/*
-    The following JSX code (a type of html code in JavaScript) is returned to render the registration form.
-    It contains input fields for name, middle name, surname, email, password, and phone number.
-    When the user submits the form, the handleRegister function is called.
-    The handleChange function is called when the user types in the input fields.
-    The value of the input fields is set to the corresponding values in the formData state.
-
-*/
   return (
-    <div className="container">
-      <h2 className = "center-text-add-padding">Register</h2>
-      <form onSubmit={handleRegister}>
-
-
-        <div className="mb-3">
-          <label>Name</label>
-          <input
-            type="text"
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          Register
+        </Typography>
+        <Box component="form" onSubmit={handleRegister} sx={{ mt: 3 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="Name"
             name="name"
-            className="form-control"
+            autoComplete="name"
+            autoFocus
             value={formData.name}
             onChange={handleChange}
           />
-        </div>
-
-
-        <div className="mb-3">
-          <label>Middle Name (Optional)</label>
-          <input
-            type="text"
+          <TextField
+            margin="normal"
+            fullWidth
+            id="middlename"
+            label="Middle Name (Optional)"
             name="middlename"
-            className="form-control"
+            autoComplete="middlename"
             value={formData.middlename}
             onChange={handleChange}
           />
-        </div>
-
-
-        <div className="mb-3">
-          <label>Surname</label>
-          <input
-            type="text"
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="surname"
+            label="Surname"
             name="surname"
-            className="form-control"
+            autoComplete="surname"
             value={formData.surname}
             onChange={handleChange}
           />
-        </div>
-
-
-        <div className="mb-3">
-          <label>Email</label>
-          <input
-            type="email"
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
             name="email"
-            className="form-control"
+            autoComplete="email"
+            type="email"
             value={formData.email}
             onChange={handleChange}
           />
-        </div>
-
-        <div className="mb-3">
-          <label>Password</label>
-          <input
-            type="password"
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="password"
+            label="Password"
             name="password"
-            className="form-control"
+            autoComplete="password"
+            type="password"
             value={formData.password}
             onChange={handleChange}
           />
-        </div>
-
-
-        <div className="mb-3">
-          <label>Phone Number (Optional)</label>
-          <input
-            type="text"
+          <TextField
+            margin="normal"
+            fullWidth
+            id="phone_number"
+            label="Phone Number (Optional)"
             name="phone_number"
-            className="form-control"
+            autoComplete="tel"
             value={formData.phone_number}
             onChange={handleChange}
           />
-        </div>
-
-        <div className='button-div'>
-        <button type="submit" className="btn btn-primary">Register</button>
-        </div>
-
-      </form>
-    </div>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Register
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
