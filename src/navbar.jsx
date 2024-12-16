@@ -63,16 +63,20 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout, toggleSidebar }) => {
                 <Button component={Link} to="/" variant="contained" color="primary">
                     Home
                 </Button>
-                <Button component={Link} to="/orders" variant="contained" color="primary">
-                    Orders
-                </Button>
+                {isLoggedIn ? (
+                    <Button component={Link} to="/orders" variant="contained" color="primary">
+                        Orders
+                    </Button>) : null
+                }
+                
                 <Button component={Link} to="/cart" variant="contained" color="primary">
                     Cart
                 </Button>
-
-                <Button component={Link} to="/profile" variant="contained" color="primary">
-                    Profile
-                </Button>
+                {isLoggedIn ? (
+                    <Button component={Link} to="/profile" variant="contained" color="primary">
+                        Profile
+                    </Button>) : null
+                }
 
                 {isLoggedIn ? (
                     <Button onClick={onLogout} variant="contained" color="primary">

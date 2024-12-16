@@ -119,17 +119,6 @@ function AppContent() {
 
   };
 
-  /*
-  // handleLogin function is defined to update the login status, user id, and user profile information to be passed to the child componnent Login
-  const handleLogin = (loggedIn, id, profileData) => {
-    setIsLoggedIn(loggedIn);
-    setUserId(id);
-    setUserProfile(profileData);
-    // call the merge function of the cart when the user logs in
-
-  };
-  */
-
   // handleLogout function is defined to remove the token from local storage and update the login status, user id, and user profile information
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -143,7 +132,10 @@ function AppContent() {
 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null); // Selected category state
+  // this selectedCategory will be passed to the HomePage component
+  // when selectedCategory is changed from the sidebar, HomePage component will be re-rendered with the new selected category
 
+  // toggleSidebar function is defined to open and close the sidebar
   const toggleSidebar = (open) => () => {
         setSidebarOpen(open);
   };
@@ -167,7 +159,16 @@ function AppContent() {
       />
 
       <Routes>
-        <Route path="/" element={<HomePage userId={userId} isLoggedIn={isLoggedIn}/>} />
+        <Route
+          path="/"
+          element={
+            <HomePage
+              userId={userId}
+              isLoggedIn={isLoggedIn}
+              selectedCategory={selectedCategory} // Pass the selected category
+            />
+          }
+        />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
@@ -193,13 +194,3 @@ function AppContent() {
 }
 
 export default AppContent;
-
-/* 
-  Functionalities of the App:
-    navbar is not a route. It is a component that is displayed on every page.
-    http://localhost:3000/ will display the Home Page component
-    http://localhost:3000/register will display the Register component
-    http://localhost:3000/login will display the Login component
-
-    We need to use Routes and Route components to map URLs to specific pages.
-*/
