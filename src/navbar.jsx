@@ -87,6 +87,14 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout, toggleSidebar }) => {
                         Login
                     </Button>
                 )}
+
+                {isLoggedIn ? (
+                    null
+                ) : (
+                    <Button component={Link} to="/register" variant="contained" color="primary">
+                        Register
+                    </Button>
+                )}
             </Box>
         </Box>
     );
