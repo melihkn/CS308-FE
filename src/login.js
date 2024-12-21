@@ -87,7 +87,7 @@ const Login = ({ onLogin }) => {
       setEmailError('');
     }
 
-    if (!password || password.length < 6) {
+    if (!password || password.length < 1) {
       setPasswordError('Password must be at least 6 characters long.');
       isValid = false;
     } else {

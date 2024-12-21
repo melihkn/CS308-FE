@@ -11,6 +11,7 @@ Functionality of OrderItem component:
 */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Box, Typography, Chip } from "@mui/material";
 
 const OrderItem = ({ productId, quantity, purchase_price }) => {
   const [product, setProduct] = useState(null);
@@ -39,20 +40,15 @@ const OrderItem = ({ productId, quantity, purchase_price }) => {
   const safePrice = purchase_price ?? 0; // Default to 0 if purchase_price is undefined or null
 
   return (
-    <div style={{ display: "flex", marginBottom: "10px", borderBottom: "1px solid #ddd", paddingBottom: "10px" }}>
-      <img
-        src={product.image_url}
-        alt={product.name}
-        style={{ width: "100px", height: "100px", marginRight: "20px", borderRadius: "5px" }}
-      />
-      <div>
-        <h4 style={{ margin: 0 }}>{product.name}</h4>
-        <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>{product.description}</p>
-        <p style={{ margin: "5px 0" }}>
-          Quantity: {quantity} | Price at Purchase: ${safePrice.toFixed(2)}
-        </p>
-      </div>
-    </div>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+      <Typography variant="body2">
+        Product ID: {productId}
+      </Typography>
+      <Chip label={`Qty: ${quantity}`} size="small" />
+      <Typography variant="body2">
+        ${purchase_price.toFixed(2)}
+      </Typography>
+    </Box>
   );
 };
 

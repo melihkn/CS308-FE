@@ -12,9 +12,13 @@ const PRODUCT_LIST_URL = "http://localhost:8002";
 
 const REVIEWS_URL = "http://localhost:8031";
 
+const ORDER_URL = "http://localhost:8004/api/orders";
+
 const reviewsService = axios.create({ baseURL: REVIEWS_URL });
 
-const productsService = axios.create({ baseURL: PRODUCT_LIST_URL });    
+const productsService = axios.create({ baseURL: PRODUCT_LIST_URL });   
+
+const orderService = axios.create({ baseURL: ORDER_URL });
 
 // Create Axios instances for each service
 const pmService = axios.create({ baseURL: PM_SERVICE_URL });
@@ -35,6 +39,14 @@ const getToken = () => {
 
 // Add the Authorization header with the Bearer token to every request of product manager
 pmService.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+orderService.interceptors.request.use((config) => {
     const token = getToken();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -178,6 +190,26 @@ export const fetchAverageRating = async (product_id) => {
     } catch (error) {
         console.error("Error fetching average rating:", error);
         throw error;
+    }
+}
+
+
+export const requestRefund = async (refundRequest) => {
+    try {
+        console.log("Refund request submitted:", refundRequest);
+        const response = await orderService.post("/refund", refundRequest);
+        
+        return response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            console.error("API error response:", error.response.data);
+          } else if (error.request) {
+            console.error("No response from API:", error.request);
+          } else {
+            console.error("Unexpected error:", error.message);
+          }
+          throw error; // Re-throw error for higher-level handling
     }
 }
 
