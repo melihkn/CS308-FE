@@ -22,6 +22,7 @@ import Navbar from './navbar.jsx';
 import Sidebar from './sidebar.jsx';
 import WishlistPage from "./WishlistPage";
 import WishlistItemsPage from "./WishlistItemsPage";
+import SpecificOrderPage from './SpecificOrderPage.jsx';
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -188,6 +189,7 @@ function AppContent() {
         <Route path="/wishlists" element={<WishlistPage userId={userId} />} />
         {/* This is the path for showing the products in one wish list */}
         <Route path="/wishlist/:wishlistId" element={<WishlistItemsPage />} />
+        <Route path="/order/:orderId" element={<SpecificOrderPage  />} />
       </Routes>
     </>
   );
