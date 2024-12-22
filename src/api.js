@@ -12,9 +12,13 @@ const PRODUCT_LIST_URL = "http://localhost:8002";
 
 const REVIEWS_URL = "http://localhost:8031";
 
+const REFUND_CANCEL_URL = "http://localhost:8004";
+
 const reviewsService = axios.create({ baseURL: REVIEWS_URL });
 
-const productsService = axios.create({ baseURL: PRODUCT_LIST_URL });    
+const productsService = axios.create({ baseURL: PRODUCT_LIST_URL });   
+
+const refundCancelService = axios.create({ baseURL: REFUND_CANCEL_URL });
 
 // Create Axios instances for each service
 const pmService = axios.create({ baseURL: PM_SERVICE_URL });
@@ -35,6 +39,14 @@ const getToken = () => {
 
 // Add the Authorization header with the Bearer token to every request of product manager
 pmService.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+refundCancelService.interceptors.request.use((config) => {
     const token = getToken();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -178,6 +190,73 @@ export const fetchAverageRating = async (product_id) => {
     } catch (error) {
         console.error("Error fetching average rating:", error);
         throw error;
+    }
+}
+
+
+export const requestRefund = async (refundRequest) => {
+    try {
+        console.log("Refund request submitted:", refundRequest);
+        const response = await refundCancelService.post("/refund", refundRequest, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+                
+        });
+        
+        return response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            console.error("API error response:", error.response.data);
+          } else if (error.request) {
+            console.error("No response from API:", error.request);
+          } else {
+            console.error("Unexpected error:", error.message);
+          }
+          throw error; // Re-throw error for higher-level handling
+    }
+}
+
+export const refundStatusCall = async (order_id, product_id) => {
+    try {
+        console.log("Refund status requested:", order_id, product_id);
+        const response = await refundCancelService.get(`/refund-status/${order_id}/${product_id}`);
+    
+        return response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            console.error("API error response:", error.response.data);
+          } else if (error.request) {
+            console.error("No response from API:", error.request);
+          } else {
+            console.error("Unexpected error:", error.message);
+          }
+          throw error; // Re-throw error for higher-level handling
+    }
+
+}
+
+export const cancelOrder = async (cancelRequest) => {
+    try{
+        console.log("Cancel request submitted:", cancelRequest);
+        const response = await refundCancelService.post("/cancel", cancelRequest, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            console.error("API error response:", error.response.data);
+          } else if (error.request) {
+            console.error("No response from API:", error.request);
+          } else {
+            console.error("Unexpected error:", error.message);
+          }
+          throw error; // Re-throw error for higher-level handling
     }
 }
 
