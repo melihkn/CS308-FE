@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import OrderItem from "./OrderItem";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -19,6 +20,7 @@ import {
   ShoppingCart as ShoppingCartIcon,
   Comment as CommentIcon,
   Receipt as ReceiptIcon,
+  Cancel as CancelIcon,
 } from "@mui/icons-material";
 
 const ORDER_STATUS_MAP = {
@@ -30,7 +32,7 @@ const ORDER_STATUS_MAP = {
   5: { text: "Returned", color: "secondary" },
 };
 
-const Order = ({ order }) => {
+const Order = ({ order, onOrderUpdate }) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -42,7 +44,6 @@ const Order = ({ order }) => {
 
   const handleOrderClick = () => {
     navigate(`/order/${order.order_id}`);
-    console.log(`Navigating to order details page: ${order.order_id}`);
   };
 
   const handleCommentRedirect = (e) => {
@@ -55,13 +56,22 @@ const Order = ({ order }) => {
     navigate(`/invoice/${order.order_id}`);
   };
 
-  const handleProductClick = (e, productId) => {
-    e.stopPropagation(); // Prevent parent click event
-    navigate(`/product-detail/${productId}`);
+  const handleCancelOrder = async (e) => {
+    e.stopPropagation();
+    try {
+      await axios.post(`http://127.0.0.1:8004/cancel-order/${order.order_id}`);
+      alert("Order cancelled successfully");
+      if (onOrderUpdate) {
+        onOrderUpdate(order.order_id);
+      }
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert("Failed to cancel order");
+    }
   };
 
   return (
-    <Card sx={{ mb: 3, cursor: "pointer" }} onClick={handleOrderClick}>
+    <Card sx={{ mb: 3, cursor: 'pointer' }} onClick={handleOrderClick}>
       <CardContent>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={6}>
@@ -115,12 +125,21 @@ const Order = ({ order }) => {
         >
           Comment
         </Button>
+        <Button
+          size="small"
+          startIcon={<CancelIcon />}
+          onClick={handleCancelOrder}
+          color="secondary"
+          disabled={order.order_status !== 0}
+        >
+          Cancel Order
+        </Button>
         <IconButton
           sx={{
-            marginLeft: "auto",
-            transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+            marginLeft: 'auto',
+            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: (theme) =>
-              theme.transitions.create("transform", {
+              theme.transitions.create('transform', {
                 duration: theme.transitions.duration.shortest,
               }),
           }}
@@ -134,23 +153,15 @@ const Order = ({ order }) => {
           <ExpandMoreIcon />
         </IconButton>
       </CardActions>
-      <Collapse
-        in={expanded}
-        timeout="auto"
-        unmountOnExit
-        onClick={(e) => e.stopPropagation()}
-      >
+      <Collapse in={expanded} timeout="auto" unmountOnExit onClick={(e) => e.stopPropagation()}>
         <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Order Items:
-          </Typography>
+          <Typography variant="h6" gutterBottom>Order Items:</Typography>
           {order.items.map((item) => (
             <OrderItem
               key={item.product_id}
               productId={item.product_id}
               quantity={item.quantity}
               purchase_price={item.price}
-              onProductClick={(e) => handleProductClick(e, item.product_id)}
             />
           ))}
         </CardContent>
@@ -160,3 +171,4 @@ const Order = ({ order }) => {
 };
 
 export default Order;
+

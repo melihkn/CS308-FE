@@ -111,6 +111,7 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
         component="img"
         alt={name}
         height="140"
+        objectFit="contain"
         image={imageUrl}
       />
       <CardContent>

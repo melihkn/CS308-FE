@@ -1,20 +1,11 @@
-// OrderItem.js
-
-/*
-
-Functionality of OrderItem component:
-    - The OrderItem component is a functional component that displays the details of an item in an order.
-    - It fetches the product details from the product listing service using the product ID.
-    - It displays the product image, name, description, quantity, and purchase price of the item in the order.
-    - It fetches the image from the authentication service mounted images but url is gotten from the product listing service.
-
-*/
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Typography, Chip } from "@mui/material";
+import { Box, Typography, Chip, Button, CardMedia } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const OrderItem = ({ productId, quantity, purchase_price }) => {
   const [product, setProduct] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -36,18 +27,55 @@ const OrderItem = ({ productId, quantity, purchase_price }) => {
 
   if (!product) return <p>Loading product details...</p>;
 
-  // in some orders, there might not be items, to avoid some errors
-  const safePrice = purchase_price ?? 0; // Default to 0 if purchase_price is undefined or null
+  // Ensure purchase_price is safe to display
+  const safePrice = purchase_price ?? 0;
+
+  const handleProductClick = () => {
+    navigate(`/product-detail/${productId}`);
+  };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-      <Typography variant="body2">
-        Product ID: {productId}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        mb: 2,
+        p: 1,
+        border: "1px solid #ccc",
+        borderRadius: 2,
+      }}
+    >
+      {/* Product Image */}
+      <CardMedia
+        component="img"
+        image={product.image_url}
+        alt={product.name}
+        sx={{ width: 50, height: 50, objectFit: "contain", mr: 2 }}
+      />
+
+      {/* Product Name and Quantity */}
+      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <Typography variant="body1" fontWeight="bold">
+          {product.name}
+        </Typography>
+        <Chip label={`Qty: ${quantity}`} size="small" sx={{ mt: 0.5 }} />
+      </Box>
+
+      {/* Product Price */}
+      <Typography variant="body2" sx={{ mx: 2 }}>
+        ${safePrice.toFixed(2)}
       </Typography>
-      <Chip label={`Qty: ${quantity}`} size="small" />
-      <Typography variant="body2">
-        ${purchase_price.toFixed(2)}
-      </Typography>
+
+      {/* Button to Product Detail */}
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={handleProductClick}
+        sx={{ textTransform: "none" }}
+      >
+        View Details
+      </Button>
     </Box>
   );
 };
