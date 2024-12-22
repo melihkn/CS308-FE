@@ -14,6 +14,12 @@ import {
   Divider,
   IconButton,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
@@ -22,6 +28,8 @@ import {
   Receipt as ReceiptIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
+
+import { cancelOrder } from "./api";
 
 const ORDER_STATUS_MAP = {
   0: { text: "Pending", color: "warning" },
@@ -32,9 +40,11 @@ const ORDER_STATUS_MAP = {
   5: { text: "Returned", color: "secondary" },
 };
 
-const Order = ({ order, onOrderUpdate }) => {
+const Order = ({ order, onOrderUpdate}) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
+  const [openCancelModal, setOpenCancelModal] = React.useState(false);
+  const [cancelReason, setCancelReason] = React.useState("");
 
   const orderStatus = ORDER_STATUS_MAP[order.order_status] || { text: "Unknown Status", color: "default" };
 
@@ -56,10 +66,14 @@ const Order = ({ order, onOrderUpdate }) => {
     navigate(`/invoice/${order.order_id}`);
   };
 
-  const handleCancelOrder = async (e) => {
+  const handleCancelOrder = (e) => {
     e.stopPropagation();
+    setOpenCancelModal(true);
+  };
+
+  const handleConfirmCancel = async () => {
     try {
-      await axios.post(`http://127.0.0.1:8004/cancel-order/${order.order_id}`);
+      const response = await cancelOrder({order_id: order.order_id, reason: cancelReason});
       alert("Order cancelled successfully");
       if (onOrderUpdate) {
         onOrderUpdate(order.order_id);
@@ -67,6 +81,9 @@ const Order = ({ order, onOrderUpdate }) => {
     } catch (error) {
       console.error("Error cancelling order:", error);
       alert("Failed to cancel order");
+    } finally {
+      setOpenCancelModal(false);
+      setCancelReason("");
     }
   };
 
@@ -130,7 +147,6 @@ const Order = ({ order, onOrderUpdate }) => {
           startIcon={<CancelIcon />}
           onClick={handleCancelOrder}
           color="secondary"
-          disabled={order.order_status !== 0}
         >
           Cancel Order
         </Button>
@@ -166,6 +182,31 @@ const Order = ({ order, onOrderUpdate }) => {
           ))}
         </CardContent>
       </Collapse>
+      <Dialog open={openCancelModal} onClose={() => setOpenCancelModal(false)} onClick={(e) => e.stopPropagation()}>
+        <DialogTitle>Cancel Order</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please provide a reason for cancelling this order:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="cancel-reason"
+            label="Cancellation Reason"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCancelModal(false)}>Back</Button>
+          <Button onClick={handleConfirmCancel} color="secondary">
+            Confirm Cancellation
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };

@@ -63,6 +63,7 @@ const SpecificOrderPage = () => {
         console.log(response.data);
         setOrderDetails(response.data);
         // Fetch refund status for each product
+        console.log("Initialization:", response.data.items);
         const refundStatusPromises = response.data.items.map(item =>
           refundStatusCall(orderId, item.product_id)
         );
@@ -110,8 +111,10 @@ const SpecificOrderPage = () => {
 
   const handleRefundSubmit = async () => {
     try {
+      console.log("Submitting refund requests for products:", selectedProducts);
+      console.log("Sonuc:", refundStatus);
       selectedProducts.forEach(productId => {
-        if (refundStatus[productId] != "PENDING" || refundStatus[productId] != "APPROVED" || refundStatus[productId] != "REJECTED") {
+        if (refundStatus[productId] !== "N/A") {
           throw new Error("Tekrar deneyin");
         }
       });
@@ -337,7 +340,7 @@ const SpecificOrderPage = () => {
                 <TextField
                   margin="dense"
                   id={`refund-reason-${productId}`}
-                  label={`Refund Reason for ${product.name}`}
+                  label={`Refund Reason for ${productId}`}
                   type="text"
                   fullWidth
                   variant="outlined"
