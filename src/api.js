@@ -116,11 +116,39 @@ export const fetchReviews = async (productId) => {
 };
 export const updateReview = (id, data) => pmService.put(`/ProductManager/reviews/${id}`, data);
 // Category APIs
-export const fetchCategory = (id) => pmService.get(`/categories/${id}`);
-export const updateCategory = (id, data) => pmService.put(`/categories/${id}`, data);
-export const deleteCategory = (id) => pmService.delete(`/categories/${id}`);
-export const fetchCategories = () => pmService.get('/categories');
-export const createCategory = (data) => pmService.post('/categories', data);
+export const fetchCategory = (id) => pmService.get(`/ProductManager/categories/${id}`);
+export const updateCategory = async (id, data) => {
+    try {
+        const response = pmService.put(`/ProductManager/categories/${id}`, data);
+        return response.data
+    }
+    catch (error) {
+        console.error("Error updating category:", error);
+        throw error;
+    }
+}
+export const deleteCategory = async (id) => {
+
+    try {
+        const response = pmService.delete(`/ProductManager/categories/${id}`);
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error deleting category:", error);
+        throw error;
+    }
+}
+export const fetchCategories =  async () => {
+    try {
+        const response = await pmService.get('/ProductManager/categories');
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+    }
+}
+export const createCategory = (data) => pmService.post('/ProductManager/categories', data);
 
 export const fetchProductbyId = async (data) => {
     console.log("Fetching product from:", `/products/${data}`); // Debugging

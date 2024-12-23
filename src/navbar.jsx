@@ -78,6 +78,12 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout, toggleSidebar }) => {
                     </Button>) : null
                 }
 
+                {isLoggedIn && userProfile?.role === "product_manager" ? (
+                    <Button component={Link} to="/dashboards/ProductManager/" variant="contained" color="primary">
+                        Dashboard
+                    </Button>
+                ) : null}
+
                 {isLoggedIn ? (
                     <Button onClick={onLogout} variant="contained" color="primary">
                         Logout
