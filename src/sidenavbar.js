@@ -94,7 +94,8 @@ const menuItems = [
     items: [
       { title: 'Products', icon: <InventoryIcon />, path: '/dashboards/ProductManager/products' },
       { title: 'Reviews', icon: <StarIcon />, path: '/dashboards/ProductManager/reviews' },
-      { title: 'Categories', icon: <CategoryIcon />, path: '/dashboards/ProductManager/categories' }
+      { title: 'Categories', icon: <CategoryIcon />, path: '/dashboards/ProductManager/categories' },
+      { title: 'Orders', icon: <ReceiptIcon />, path: '/dashboards/ProductManager/orders' },
     ]
   }
 ];
