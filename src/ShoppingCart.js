@@ -224,8 +224,10 @@ function ShoppingCart({ isLoggedIn, userId }) {
   useEffect(() => {
     const fetchDetailedCart = async () => {
       try {
+        
         const detailedItems = await Promise.all(
           basicCart.map(async (item) => {
+            console.log(item);
             const response = await axios.get(`${BACKEND_URL}/products/${item.product_id}`);
             return { ...response.data, quantity: item.quantity };
           })

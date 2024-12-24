@@ -13,7 +13,15 @@ import {
   Button,
   TextField,
   Stack,
+  Snackbar,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 
 import { Add, Remove } from "@mui/icons-material"; // For increment/decrement buttons
@@ -25,6 +33,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [tabValue, setTabValue] = useState(0); // For tabs
   const [reviews, setReviews] = useState([]); // Reviews
   const [rating, setRating] = useState(0);
@@ -32,7 +41,9 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const [quantity, setQuantity] = useState(1); // Quantity counter
   const [cartItems, setCartItems] = useState([]); // Cart items
   const [averageRating, setAverageRating] = useState(0);
-
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [wishlistDialogOpen, setWishlistDialogOpen] = useState(false);
+  const [wishlists, setWishlists] = useState([]);
   useEffect(() => {
     const loadProduct = async () => {
       try {
@@ -127,14 +138,39 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   };
 
   const handleAddToWishlist = async () => {
-    try {
-      //await addToWishlist({ productId: id });
-      alert("Product added to wishlist!");
-    } catch (error) {
-      console.error("Error adding to wishlist:", error.response?.data || error);
-      alert("Failed to add product to wishlist.");
+    if (!isLoggedIn) {
+      console.error("User is not logged in", isLoggedIn);
+      setSnackbarMessage("User must be logged in");
+      setSnackbarOpen(true);
+      return;
     }
-  }
+    
+    try {
+      const response = await axios.get(`http://127.0.0.1:8005/api/wishlists/get/${localStorage.getItem("token")}`);
+      setWishlists(response.data);
+      setWishlistDialogOpen(true);
+    } catch (error) {
+      console.error("Error fetching wishlists:", error.response?.data || error);
+      setSnackbarMessage("Failed to fetch wishlists.");
+      setSnackbarOpen(true);
+    }
+  };
+  const handleSelectWishlist = async (wishlistId) => {
+    try {
+      await axios.post(`http://127.0.0.1:8005/api/wishlist_items/create`, {
+        wishlist_id: wishlistId,
+        product_id: id
+      });
+      setSnackbarMessage("Product added to wishlist successfully!");
+      setSnackbarOpen(true);
+      setWishlistDialogOpen(false);
+    } catch (error) {
+      console.error("Error adding product to wishlist:", error.response?.data || error);
+      setSnackbarMessage("Failed to add product to wishlist. It may already exist in the wishlist");
+      console.log(error.response.data)
+      setSnackbarOpen(true);
+    }
+  };
 
   const addToCart = async (product_id) => {
 
@@ -178,6 +214,42 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
     }
   };
 
+  const [newWishlistName, setNewWishlistName] = useState("");
+
+  const handleCreateWishlist = async () => {
+    if (!newWishlistName.trim()) return;
+  
+    try {
+      // Create the new wishlist
+      const response = await axios.post("http://127.0.0.1:8005/api/wishlists/create", {
+        name: newWishlistName,
+        customer_id: localStorage.getItem("token"),
+        wishlist_status: "active",
+      });
+  
+      const newWishlist = response.data; // Get the new wishlist details
+      setWishlists([...wishlists, newWishlist]); // Update the wishlist list
+      setNewWishlistName(""); // Clear the input field
+  
+      // Automatically add the product to the new wishlist
+      await axios.post("http://127.0.0.1:8005/api/wishlist_items/create", {
+        wishlist_id: newWishlist.wishlist_id,
+        product_id: id,
+      });
+  
+      setSnackbarMessage("Wishlist created and product added successfully!");
+      setSnackbarOpen(true);
+  
+      setWishlistDialogOpen(false); // Close the dialog
+    } catch (error) {
+      console.log(error)
+      console.error("Error creating wishlist or adding product:", error.response?.data || error);
+      setSnackbarMessage("Failed to create wishlist or add product.",error);
+      setSnackbarOpen(true);
+    }
+  };
+  
+
 
   const incrementQuantity = () => {
     setQuantity((prev) => prev + 1);
@@ -186,7 +258,9 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const decrementQuantity = () => {
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1)); // Prevent quantity from going below 1
   };
-
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
   if (loading) return <CircularProgress />;
   if (error)
     return (
@@ -219,9 +293,12 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
             <Typography variant="h4" gutterBottom>
               {product.name}
             </Typography>
-            <Typography variant="h6" gutterBottom>
-              {averageRating}
-            </Typography>
+            <Box display="flex" alignItems="center" mb={1}>
+              <Rating value={averageRating} precision={0.1} readOnly />
+              <Typography variant="body1" ml={1}>
+                ({averageRating.toFixed(1)})
+              </Typography>
+            </Box>
             <Typography variant="body1" gutterBottom>
               {product.description}
             </Typography>
@@ -230,7 +307,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
             </Typography>
             <Typography
               variant="h5"
-              color="primary"
+              color="theme.palette.primary.light"
               fontWeight="bold"
               gutterBottom
             >
@@ -238,11 +315,11 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
             </Typography>
             {/* Quantity Counter */}
             <Stack direction="row" alignItems="center" spacing={2} mt={2}>
-              <IconButton onClick={decrementQuantity} color="primary">
+              <IconButton onClick={decrementQuantity} color="secondary">
                 <Remove />
               </IconButton>
               <Typography variant="h6">{quantity}</Typography>
-              <IconButton onClick={incrementQuantity} color="primary">
+              <IconButton onClick={incrementQuantity} color="secondary">
                 <Add />
               </IconButton>
             </Stack>
@@ -262,6 +339,12 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
               >
                 Add to Wishlist
               </Button>
+              <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={1500}
+                    onClose={handleCloseSnackbar}
+                    message={snackbarMessage}
+                  />
             </Stack>
           </Grid>
         </Grid>
@@ -272,8 +355,8 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="primary.light"
           variant="fullWidth"
         >
           <Tab label="Product Description" />
@@ -318,7 +401,6 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
                 Submit Review
               </Button>
             </Stack>
-
             <Box mt={4}>
               <Typography variant="h6" gutterBottom>
                 Reviews
@@ -344,8 +426,76 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
           </Box>
         )}
       </Paper>
+      <Dialog
+        open={wishlistDialogOpen}
+        onClose={() => setWishlistDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Select or Create Wishlist</DialogTitle>
+        <DialogContent>
+          {/* List of Existing Wishlists */}
+          <Typography variant="h6" gutterBottom>
+            Your Wishlists
+          </Typography>
+          <List>
+            {wishlists.map((wishlist) => (
+              <ListItem
+                button
+                key={wishlist.wishlist_id}
+                onClick={() => handleSelectWishlist(wishlist.wishlist_id)}
+              >
+                <ListItemText primary={wishlist.name || "Unnamed Wishlist"} />
+              </ListItem>
+            ))}
+          </List>
+
+          {/* Divider */}
+          <Box mt={2} mb={2} textAlign="center">
+            <Typography variant="body2" color="textSecondary">
+              or
+            </Typography>
+          </Box>
+
+          {/* Create New Wishlist Section */}
+          <Typography variant="h6" gutterBottom>
+            Create a New Wishlist
+          </Typography>
+          <Box component="form" onSubmit={(e) => e.preventDefault()} mt={2}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Wishlist Name"
+              value={newWishlistName}
+              onChange={(e) => setNewWishlistName(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCreateWishlist}
+              disabled={!newWishlistName.trim()} // Disable button if input is empty
+            >
+              Create Wishlist and Add Product
+            </Button>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setWishlistDialogOpen(false)}>Cancel</Button>
+        </DialogActions>
+    </Dialog>
+
+      <Snackbar
+     open={snackbarOpen}
+     autoHideDuration={1500}
+     onClose={handleCloseSnackbar}
+     message={snackbarMessage}
+   />
     </Container>
+
+    
   );
 };
 
 export default ProductDetailPage;
+

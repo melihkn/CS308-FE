@@ -71,6 +71,24 @@ const WishlistItemsPage = () => {
       <Typography variant="h4" gutterBottom>
         Wishlist Items
       </Typography>
+      {detailedItems.length === 0 ? (
+          <>
+              <Typography
+                variant="h6"
+                color="text.secondary"
+                sx={{ textAlign: "center", marginTop: 4 }}
+              >
+                Ohh, it's a quite place...
+              </Typography>
+              <Typography
+                variant="h6"
+                color="text.secondary"
+                sx={{ textAlign: "center", marginTop: 4 }}
+              >
+              You do not have any product in your wishlist.
+              </Typography>
+            </>
+      ) : (
       <Grid container spacing={3}>
         {detailedItems.map((item) => (
           <Grid item xs={12} sm={6} md={4} key={item.wishlist_item_id}>
@@ -112,6 +130,7 @@ const WishlistItemsPage = () => {
           </Grid>
         ))}
       </Grid>
+      )}
     </Box>
   );
 };

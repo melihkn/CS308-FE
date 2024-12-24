@@ -76,15 +76,18 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
       // If the item exists in the cart, increase the quantity
       if (existingItemIndex > -1) {
         cart[existingItemIndex].quantity += 1;
+        console.log(cart[existingItemIndex].product_id);
       }
       // If the item does not exist in the cart, add a new item 
       else {
+        console.log(product_id);
         cart.push({ product_id: String(id), quantity: Number(1) });
       }
       // Save the updated cart to the session storage
       localStorage.setItem("cart", JSON.stringify(cart));
       // Update the cart items state with the updated cart
       setCartItems(cart);
+      
     }
   };
 
