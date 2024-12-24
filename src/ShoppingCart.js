@@ -227,7 +227,8 @@ function ShoppingCart({ isLoggedIn, userId }) {
         
         const detailedItems = await Promise.all(
           basicCart.map(async (item) => {
-            console.log(item);
+            //localStorage.clear()
+            console.log(item,localStorage);
             const response = await axios.get(`${BACKEND_URL}/products/${item.product_id}`);
             return { ...response.data, quantity: item.quantity };
           })
