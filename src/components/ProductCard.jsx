@@ -30,7 +30,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, CardContent, CardMedia, Typography, Box, Rating } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { fetchAverageRating } from "./api";
+import { fetchAverageRating } from "../api";
 
 const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantity, distributor, imageUrl }) => {
   const navigate = useNavigate();

@@ -1,8 +1,8 @@
 // src/components/CategoryTable.js
 
 import React, { useEffect, useState } from 'react';
-import { fetchCategories, deleteCategory } from './api'; // API calls for categories
-import CategoryForm from './CategoryForm';
+import { fetchCategories, deleteCategory } from '../api'; // API calls for categories
+import CategoryForm from '../CategoryForm';
 import './Table.css';
 
 const CategoryTable = () => {

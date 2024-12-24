@@ -1,7 +1,7 @@
 // src/components/ProductTable.js
 
 import React, { useEffect, useState } from 'react';
-import { fetchProducts, deleteProduct, createProduct, updateProduct } from './api';
+import { fetchProducts, deleteProduct, createProduct, updateProduct } from '../api';
 import {
     Box,
     Modal,
@@ -22,7 +22,7 @@ import Header from './Header';
 
 import { DataGrid } from "@mui/x-data-grid";
 
-import {tokens} from './theme';
+import {tokens} from '../theme';
 
 const ProductTable = () => {
     const theme = useTheme();

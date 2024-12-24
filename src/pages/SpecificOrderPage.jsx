@@ -30,8 +30,8 @@ import {
   TextField,
 } from "@mui/material";
 import { LocalShipping, AttachMoney, CalendarToday, LocationOn, Cancel as CancelIcon } from "@mui/icons-material";
-import { requestRefund, refundStatusCall, cancelOrder} from "./api";
-import SpecificOrderItem from "./SpecificOrderItem";
+import { requestRefund, refundStatusCall, cancelOrder} from "../api";
+import SpecificOrderItem from "../components/SpecificOrderItem";
 
 const ORDER_STATUS_MAP = {
   0: { text: "Pending", color: "warning" },

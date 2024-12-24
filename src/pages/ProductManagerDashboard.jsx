@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import SideNavbar from './sidenavbar';
-import Sidebar from './Sidebar';
-import ProductTable from './ProductTable';
-import ReviewTable from './ReviewTable';
+import SideNavbar from '../sidenavbar';
+import Sidebar from '../Sidebar';
+import ProductTable from '../components/ProductTable';
+import ReviewTable from '../ReviewTable';
 import CategoryTable from './CategoryTable';
 import './Dashboard.css';
 import { Box } from '@mui/material';

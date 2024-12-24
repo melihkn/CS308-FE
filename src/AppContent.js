@@ -2,27 +2,27 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 //import Navbar from './navbar';
-import Login from './login';
-import Register from './register';
-import HomePage from './HomePage';
-import Profile from './profile.jsx';
-import ShoppingCart from './ShoppingCart.js';
-import SearchResults from './search-results';
+import Login from './pages/login';
+import Register from './pages/register';
+import HomePage from './pages/HomePage';
+import Profile from './pages/profile.jsx';
+import ShoppingCart from './pages/ShoppingCart.js';
+import SearchResults from './pages/search-results.js';
 import axios from 'axios';
-import ProductManagerDashboard from './ProductManagerDashboard';
-import ProductDetailPage from './ProductDetailPage';
+import ProductManagerDashboard from './pages/ProductManagerDashboard';
+import ProductDetailPage from './pages/ProductDetailPage';
 
-import OrderPage from './OrderPage';
-import CommentPage from './CommentPage';
-import InvoiceViewer from './InvoiceViewer.jsx';
-import PaymentPage from './PaymentPage.jsx';
+import OrderPage from './pages/OrderPage';
+import CommentPage from './pages/CommentPage.js';
+import InvoiceViewer from './pages/InvoiceViewer.jsx';
+import PaymentPage from './pages/PaymentPage.jsx';
 
 // yeni eklenenler
 import Navbar from './navbar.jsx';
 import Sidebar from './sidebar.jsx';
-import WishlistPage from "./WishlistPage";
-import WishlistItemsPage from "./WishlistItemsPage";
-import SpecificOrderPage from './SpecificOrderPage.jsx';
+import WishlistPage from "./pages/WishlistPage";
+import WishlistItemsPage from "./pages/WishlistItemsPage";
+import SpecificOrderPage from './pages/SpecificOrderPage.jsx';
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
