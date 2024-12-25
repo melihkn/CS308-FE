@@ -16,6 +16,7 @@ import OrderPage from './pages/OrderPage.jsx';
 import CommentPage from './pages/CommentPage.js';
 import InvoiceViewer from './pages/InvoiceViewer.jsx';
 import PaymentPage from './pages/PaymentPage.jsx';
+import MainContent from './scenes/mainContent';
 
 // yeni eklenenler
 // import Navbar from './navbar.jsx';
@@ -188,11 +189,11 @@ function AppContent() {
       <Routes>
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
-          <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
+          <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard onLogout={handleLogout} userProfile={userProfile}/>} />
         )}
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'sales_manager' && (
-          <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
+          <Route path="/dashboards/smapp/*" element={<MainContent onLogout={handleLogout} userProfile={userProfile}/>} />
         )}
 
       </Routes>

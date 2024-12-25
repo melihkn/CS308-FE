@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, useTheme } from "@mui/material";
-import { fetchRefunds } from "../smapi/smAPI"; // Refundları almak için API fonksiyonu
+import { fetchRefunds } from "../api/smAPI"; // Refundları almak için API fonksiyonu
 import { tokens } from "../theme";
 
 const PendingRefunds = () => {

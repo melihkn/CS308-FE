@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, useTheme, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { fetchRefundsWithProductNames, updateRefundStatus } from "../../smapi/smAPI"; // API.js'den import
+import { fetchRefundsWithProductNames, updateRefundStatus } from "../../api/smAPI"; // API.js'den import
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
 

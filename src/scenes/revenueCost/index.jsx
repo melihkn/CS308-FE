@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import { fetchProductRevenueAndCost } from '../../smapi/smAPI'; // API fonksiyonu
+import { fetchProductRevenueAndCost } from '../../api/smAPI'; // API fonksiyonu
 import Header from '../../components/Header';
 import RevenueCostBarChart from '../../components/Bar'; // Bar Chart Component
 import { tokens } from '../../theme';

@@ -23,7 +23,7 @@ function ColorModeToggle() {
   );
 }
 
-const ProductManagerDashboard = () => {
+const ProductManagerDashboard = ({ onLogout, userProfile }) => {
   const [mode, setMode] = React.useState('light');
   const colorMode = React.useMemo(
     () => ({

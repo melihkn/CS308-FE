@@ -36,7 +36,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
   );
 };
 
-const SideNavbar = () => {
+const SideNavbar = ({ userProfile }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -100,7 +100,7 @@ const SideNavbar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  username
+                  {userProfile.name}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   Sales Manager

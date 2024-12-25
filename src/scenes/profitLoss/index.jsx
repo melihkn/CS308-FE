@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, useTheme } from "@mui/material";
-import { fetchTotalRevenueAndCost } from "../../smapi/smAPI"; // API fonksiyonunu import ediyoruz
+import { fetchTotalRevenueAndCost } from "../../api/smAPI"; // API fonksiyonunu import ediyoruz
 import Header from "../../components/Header";
 import ProfitLossChart from "../../components/Pie"; // Pie Chart Component
 import { tokens } from "../../theme";

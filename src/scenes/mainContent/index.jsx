@@ -11,11 +11,11 @@ import ProfitLossPage from "../profitLoss";
 import RevenueCostPage from "../revenueCost";
 import Dashboard from "../dashboard";
 
-function MainContent() {
+function MainContent({ onLogout, userProfile }) {
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       {/* Sidebar */}
-      <SideNavbar />
+      <SideNavbar userProfile={userProfile}/>
 
       {/* Main Content */}
       <div
@@ -25,7 +25,7 @@ function MainContent() {
         }}
       >
         <CssBaseline />
-        <Topbar />
+        <Topbar onLogout={onLogout}/>
         <Routes>
           <Route path="" element={<Dashboard />} />
           <Route path="customers" element={<Contacts />} />

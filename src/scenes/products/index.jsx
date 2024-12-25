@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, useTheme, Button, Modal, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { fetchProducts, setProductPriceAPI } from "../../smapi/smAPI"; // API fonksiyonlarını içeren dosya
+import { fetchProducts, setProductPriceAPI } from "../../api/smAPI"; // API fonksiyonlarını içeren dosya
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
 

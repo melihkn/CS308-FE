@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { fetchDiscounts, fetchProducts, createDiscount } from "../../smapi/smAPI";
+import { fetchDiscounts, fetchProducts, createDiscount } from "../../api/smAPI";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
 
