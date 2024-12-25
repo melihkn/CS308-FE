@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCategories, deleteCategory, updateCategory, createCategory } from './api'; // API calls for categories
+import { fetchCategories, deleteCategory, updateCategory, createCategory } from '../api/api'; // API calls for categories
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';

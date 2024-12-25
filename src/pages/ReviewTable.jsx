@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchReviews, approveReview, disapproveReview } from './api';
+import { fetchReviews, approveReview, disapproveReview } from '../api/api';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';

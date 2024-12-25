@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchProducts, deleteProduct, createProduct, updateProduct } from './api';
+import { fetchProducts, deleteProduct, createProduct, updateProduct } from '../api/api';
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';

@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Box, IconButton, InputBase, Button, Menu, MenuItem, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Search as SearchIcon, DarkModeOutlined, LightModeOutlined, ShoppingCart, Person as PersonIcon } from "@mui/icons-material";
-import { ColorModeContext, tokens } from "./theme";
+import { ColorModeContext, tokens } from "../../theme";
 import axios from "axios";
 
 const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {

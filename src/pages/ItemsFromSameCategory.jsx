@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Typography, Container, Grid, Box } from "@mui/material";
-import ProductCard from "./ProductCard";
+import ProductCard from "../components/ProductCard";
 import { useParams } from "react-router-dom";
 
 const ItemsFromSameCategory = ({ isLoggedIn, userId }) => {

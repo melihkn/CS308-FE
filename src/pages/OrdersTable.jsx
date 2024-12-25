@@ -35,7 +35,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-import { fetchOrders, updateOrderStatus, fetchInvoice } from './api'; // Replace './apiService' with the actual path to your Axios functions
+import { fetchOrders, updateOrderStatus, fetchInvoice } from '../api/api'; // Replace './apiService' with the actual path to your Axios functions
 import { Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 

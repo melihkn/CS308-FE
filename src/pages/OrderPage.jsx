@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Typography } from "@mui/material";
-import Order from "./Order";
+import Order from "../components/Order";
 import axios from "axios";
 
 const OrderPage = ({ userId }) => {

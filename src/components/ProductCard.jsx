@@ -27,10 +27,11 @@
 */
 
 import React, { useEffect, useState } from "react";
-import { Button, Card, CardContent, CardMedia, Typography, Box, Rating } from "@mui/material";
+import { Button, Card, CardContent, CardMedia, Typography, Box, Rating, IconButton } from "@mui/material";
+import { ShoppingCart } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { fetchAverageRating } from "./api";
+import { fetchAverageRating } from "../api/api";
 
 const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantity, distributor, imageUrl }) => {
   const navigate = useNavigate();
@@ -130,17 +131,17 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
             readOnly
             sx={{ marginRight: 2 }}
           />
-          <Button
-            variant="contained"
-            color="primary"
+
+          <IconButton
             disabled={quantity <= 0}
             onClick={(e) => {
               e.stopPropagation();
               handleAddToCart();
             }}
           >
-            Add to Cart
-          </Button>
+             <ShoppingCart />
+          </IconButton>
+          
         </Box>
       </CardContent>
     </Card>

@@ -67,7 +67,7 @@ export default HomePage;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Typography, Container, Grid } from "@mui/material";
-import ProductCard from "./ProductCard";
+import ProductCard from "../components/ProductCard";
 
 const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
   const [products, setProducts] = useState([]);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllProducts } from "./api";
-import ProductCard from "./ProductCard";
+import { fetchAllProducts } from "../api";
+import ProductCard from "../components/ProductCard";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 

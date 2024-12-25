@@ -31,7 +31,7 @@ import {
   Cancel as CancelIcon,
 } from "@mui/icons-material";
 
-import { cancelOrder } from "./api";
+import { cancelOrder } from "../api/api";
 
 const ORDER_STATUS_MAP = {
   0: { text: "Pending", color: "warning" },

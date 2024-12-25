@@ -25,7 +25,7 @@ import {
 } from "@mui/material";
 
 import { Add, Remove } from "@mui/icons-material"; // For increment/decrement buttons
-import { fetchProductbyId, addReview, fetchReviewsByProductId, fetchAverageRating } from "./api";
+import { fetchProductbyId, addReview, fetchReviewsByProductId, fetchAverageRating } from "../api/api";
 import axios from "axios";
 
 const ProductDetailPage = ({ isLoggedIn, userId }) => {

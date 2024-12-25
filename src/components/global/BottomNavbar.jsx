@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Box, Button, Menu, MenuItem, CircularProgress, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ColorModeContext, tokens } from "./theme";
+import { ColorModeContext, tokens } from "../../theme";
 
 const BottomNavbar = () => {
   const [categories, setCategories] = useState([]);
