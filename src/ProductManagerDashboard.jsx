@@ -1,46 +1,86 @@
-// ProductManagerDashboard.js
-
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import { CssBaseline, Box, Typography, IconButton } from '@mui/material';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import SideNavbar from './sidenavbar';
-import Sidebar from './Sidebar';
 import ProductTable from './ProductTable';
 import ReviewTable from './ReviewTable';
 import CategoryTable from './CategoryTable';
-import './Dashboard.css';
-import { Box } from '@mui/material';
+import OrdersTable from './OrdersTable';
+
+const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+
+function ColorModeToggle() {
+  const { toggleColorMode } = React.useContext(ColorModeContext);
+  const theme = useTheme();
+
+  return (
+    <IconButton onClick={toggleColorMode} color="inherit" size="small">
+      {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+    </IconButton>
+  );
+}
 
 const ProductManagerDashboard = () => {
-  return (
-    <Box
-    sx={{
-      display: 'flex',
-      height: '100vh', // Ensures the dashboard fills the viewport height
-      overflow: 'hidden', // Prevents scrollbars caused by unnecessary spacing
-    }}
-  >
-    {/* Sidebar */}
-    <SideNavbar role={localStorage.getItem("token").role}/>
+  const [mode, setMode] = React.useState('light');
+  const colorMode = React.useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+      },
+    }),
+    [],
+  );
 
-    {/* Main Content */}
-    <Box
-      sx={{
-        flexGrow: 1, // Makes the main content take the remaining space
-        padding: '20px', // Adds padding to the main content
-        margin: 0, // Removes any unnecessary margin
-        overflowY: 'auto', // Enables vertical scrolling if content overflows
-      }}
-    >
-      <Routes>
-        <Route path="products" element={<ProductTable />} />
-        <Route path="reviews" element={<ReviewTable />} />
-        <Route path="categories" element={<CategoryTable />} />
-      </Routes>
-    </Box>
-  </Box>
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+        },
+      }),
+    [mode],
+  );
+
+  return (
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+          <SideNavbar role={localStorage.getItem("token").role} />
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              p: { xs: 2, md: 3 },
+              overflow: 'auto',
+            }}
+          >
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              mb: 3,
+              mt: 2
+            }}>
+              <Typography variant="h5" component="h1" sx={{ fontWeight: 'medium' }}>
+                Product Manager Dashboard
+              </Typography>
+              <ColorModeToggle />
+            </Box>
+            <Routes>
+              <Route path="products" element={<ProductTable />} />
+              <Route path="reviews" element={<ReviewTable />} />
+              <Route path="categories" element={<CategoryTable />} />
+              <Route path="orders" element={<OrdersTable/>} />
+            </Routes>
+          </Box>
+        </Box>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 };
 
 export default ProductManagerDashboard;
-
-/**/ 

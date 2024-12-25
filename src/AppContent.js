@@ -173,7 +173,7 @@ function AppContent() {
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
-        <Route path="/orders" element={<OrderPage isLoggedIn={isLoggedIn} userId={userId} />} />
+        <Route path="/orders" element={<OrderPage userId={userId} />} />
         {/* Comment page is not done yet */}
         <Route path="/comment/:orderId" element={<CommentPage />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />

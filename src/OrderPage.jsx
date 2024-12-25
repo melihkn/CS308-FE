@@ -10,6 +10,7 @@ const OrderPage = ({ userId }) => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
+        console.log("Fetching orders for user ID:", userId);
         const response = await axios.get(`http://127.0.0.1:8004/api/orders/customer/${userId}`);
         if (response.data && Array.isArray(response.data)) {
           setOrders(response.data);
