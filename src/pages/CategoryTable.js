@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { fetchCategories, deleteCategory } from '../api'; // API calls for categories
-import CategoryForm from '../CategoryForm';
-import './Table.css';
+import '../Table.css';
 
 const CategoryTable = () => {
     const [categories, setCategories] = useState([]);
@@ -75,12 +74,6 @@ const CategoryTable = () => {
                 </tbody>
             </table>
 
-            {isModalOpen && (
-                <CategoryForm
-                    category={editingCategory}
-                    onClose={handleCloseForm}
-                />
-            )}
         </div>
     );
 };

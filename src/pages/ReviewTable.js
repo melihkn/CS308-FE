@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchReviews, deleteReview, approveReview, disapproveReview } from './api';
+import { fetchReviews, deleteReview, approveReview, disapproveReview } from '../api';
 import {
     Box,
     Table,
@@ -14,11 +14,11 @@ import {
     useTheme
 } from '@mui/material';
 
-import Header from './Header';
+import Header from '../components/Header';
 
 import { DataGrid } from "@mui/x-data-grid";
 
-import {tokens} from './theme';
+import {tokens} from '../theme';
 
 const ReviewTable = () => {
     const theme = useTheme();
