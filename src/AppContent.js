@@ -18,11 +18,15 @@ import InvoiceViewer from './InvoiceViewer.jsx';
 import PaymentPage from './PaymentPage.jsx';
 
 // yeni eklenenler
-import Navbar from './navbar.jsx';
-import Sidebar from './sidebar.jsx';
+// import Navbar from './navbar.jsx';
+// import Sidebar from './sidebar.jsx';
 import WishlistPage from "./WishlistPage";
 import WishlistItemsPage from "./WishlistItemsPage";
 import SpecificOrderPage from './SpecificOrderPage.jsx';
+
+import TopNavbar from './TopNavbar.jsx';
+import BottomNavbar from './BottomNavbar.jsx';
+import ItemsFromSameCategory from './ItemsFromSameCategory.jsx';
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -141,24 +145,12 @@ function AppContent() {
         setSidebarOpen(open);
   };
 
-  // old navbar: <Navbar isLoggedIn={isLoggedIn} userProfile={userProfile} onLogout={handleLogout} />
-  return (
-    <>
-      <Sidebar
-                isOpen={isSidebarOpen}
-                toggleSidebar={toggleSidebar}
-                isLoggedIn={true} // Replace with actual login state
-                userProfile={{}} // Replace with actual user profile
-                onLogout={handleLogout}
-                setSelectedCategory={setSelectedCategory}
-      />
-      <Navbar
-                isLoggedIn={isLoggedIn}
-                userProfile={userProfile}
-                onLogout={handleLogout}
-                toggleSidebar={toggleSidebar(true)}
-      />
 
+  return (
+    <>  
+    <TopNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} userProfile={userProfile} />
+    <BottomNavbar />
+  
       <Routes>
         <Route
           path="/"
@@ -190,6 +182,8 @@ function AppContent() {
         {/* This is the path for showing the products in one wish list */}
         <Route path="/wishlist/:wishlistId" element={<WishlistItemsPage />} />
         <Route path="/order/:orderId" element={<SpecificOrderPage  />} />
+        <Route path="/items-from-same-category/:categoryId" element={<ItemsFromSameCategory />} />
+
       </Routes>
     </>
   );

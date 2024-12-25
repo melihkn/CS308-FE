@@ -1,3 +1,4 @@
+// ARTIK KULLANMIYORUZ
 import { Box, Button, useTheme, IconButton, InputBase } from "@mui/material"; // To use the box, button, and icon button components
 import { Link, useNavigate } from "react-router-dom"; // To use the link component and navigate hook
 import { useState, useContext } from "react";
@@ -35,13 +36,13 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout, toggleSidebar }) => {
 
     return (
         <Box display="flex" justifyContent="space-between" p={2} alignItems="center">
-            {/* Sidebar Toggle Button */}
+            
             <IconButton onClick={toggleSidebar} sx={{ p: 1 }}>
                 <MenuIcon />
             </IconButton>
             
 
-            {/* Search Bar */}
+ 
             <Box display="flex" backgroundColor={colors.background} borderRadius={4} p={1}>
                 <InputBase
                     sx={{flex: 1}}
@@ -54,9 +55,9 @@ const Navbar = ({ isLoggedIn, userProfile, onLogout, toggleSidebar }) => {
                 </IconButton>
             </Box>
 
-            {/* Navigation Buttons */}
+
             <Box display="flex" gap={2}>
-                {/* Toggle Color Mode Button */}
+  
                 <IconButton onClick={colorMode.toggleColorMode} sx={{ p: 1 }}>
                     {theme.palette.mode === "dark" ? <LightModeOutlined /> : <DarkModeOutlined />}
                 </IconButton>
