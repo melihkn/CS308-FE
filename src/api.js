@@ -12,9 +12,13 @@ const PRODUCT_LIST_URL = "http://localhost:8002";
 
 const REVIEWS_URL = "http://localhost:8031";
 
+const REFUND_CANCEL_URL = "http://localhost:8004";
+
 const reviewsService = axios.create({ baseURL: REVIEWS_URL });
 
-const productsService = axios.create({ baseURL: PRODUCT_LIST_URL });    
+const productsService = axios.create({ baseURL: PRODUCT_LIST_URL });   
+
+const refundCancelService = axios.create({ baseURL: REFUND_CANCEL_URL });
 
 // Create Axios instances for each service
 const pmService = axios.create({ baseURL: PM_SERVICE_URL });
@@ -35,6 +39,14 @@ const getToken = () => {
 
 // Add the Authorization header with the Bearer token to every request of product manager
 pmService.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+refundCancelService.interceptors.request.use((config) => {
     const token = getToken();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -104,11 +116,39 @@ export const fetchReviews = async (productId) => {
 };
 export const updateReview = (id, data) => pmService.put(`/ProductManager/reviews/${id}`, data);
 // Category APIs
-export const fetchCategory = (id) => pmService.get(`/categories/${id}`);
-export const updateCategory = (id, data) => pmService.put(`/categories/${id}`, data);
-export const deleteCategory = (id) => pmService.delete(`/categories/${id}`);
-export const fetchCategories = () => pmService.get('/categories');
-export const createCategory = (data) => pmService.post('/categories', data);
+export const fetchCategory = (id) => pmService.get(`/ProductManager/categories/${id}`);
+export const updateCategory = async (id, data) => {
+    try {
+        const response = pmService.put(`/ProductManager/categories/${id}`, data);
+        return response.data
+    }
+    catch (error) {
+        console.error("Error updating category:", error);
+        throw error;
+    }
+}
+export const deleteCategory = async (id) => {
+
+    try {
+        const response = pmService.delete(`/ProductManager/categories/${id}`);
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error deleting category:", error);
+        throw error;
+    }
+}
+export const fetchCategories =  async () => {
+    try {
+        const response = await pmService.get('/ProductManager/categories');
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+    }
+}
+export const createCategory = (data) => pmService.post('/ProductManager/categories', data);
 
 export const fetchProductbyId = async (data) => {
     console.log("Fetching product from:", `/products/${data}`); // Debugging
@@ -121,6 +161,49 @@ export const fetchProductbyId = async (data) => {
         throw error; // Re-throw for higher-level handling
     };
 }
+
+
+export const fetchOrders = async () => {
+    try {
+        const response = await pmService.get('/ProductManager/orders');
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error fetching orders:", error);
+        throw error;
+    }
+}
+
+export const updateOrderStatus = async (data) => {
+    try {
+        const response = await pmService.put(`/ProductManager/orders`, data, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        console.log("Order status updated:", response.data); // Debugging
+        return response.data;
+    } catch (error) {
+        console.error("Error updating order status:", error);
+        throw error;
+    }
+}
+
+export const fetchInvoice = async (orderId) => {
+    try {
+        const baseUrl = "http://127.0.0.1:8004"; // Replace with your FastAPI URL
+        const response = await fetch(`${baseUrl}/api/orders/invoice/${orderId}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        return response;
+    } catch (error) {
+        console.error("Error fetching invoice:", error);
+        throw error;
+    }
+}   
 
 
 export const addReview = async (reviewData) => {
@@ -178,6 +261,73 @@ export const fetchAverageRating = async (product_id) => {
     } catch (error) {
         console.error("Error fetching average rating:", error);
         throw error;
+    }
+}
+
+
+export const requestRefund = async (refundRequest) => {
+    try {
+        console.log("Refund request submitted:", refundRequest);
+        const response = await refundCancelService.post("/refund", refundRequest, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+                
+        });
+        
+        return response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            console.error("API error response:", error.response.data);
+          } else if (error.request) {
+            console.error("No response from API:", error.request);
+          } else {
+            console.error("Unexpected error:", error.message);
+          }
+          throw error; // Re-throw error for higher-level handling
+    }
+}
+
+export const refundStatusCall = async (order_id, product_id) => {
+    try {
+        console.log("Refund status requested:", order_id, product_id);
+        const response = await refundCancelService.get(`/refund-status/${order_id}/${product_id}`);
+    
+        return response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            console.error("API error response:", error.response.data);
+          } else if (error.request) {
+            console.error("No response from API:", error.request);
+          } else {
+            console.error("Unexpected error:", error.message);
+          }
+          throw error; // Re-throw error for higher-level handling
+    }
+
+}
+
+export const cancelOrder = async (cancelRequest) => {
+    try{
+        console.log("Cancel request submitted:", cancelRequest);
+        const response = await refundCancelService.post("/cancel", cancelRequest, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            console.error("API error response:", error.response.data);
+          } else if (error.request) {
+            console.error("No response from API:", error.request);
+          } else {
+            console.error("Unexpected error:", error.message);
+          }
+          throw error; // Re-throw error for higher-level handling
     }
 }
 

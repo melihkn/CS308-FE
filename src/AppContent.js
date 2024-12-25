@@ -1,7 +1,7 @@
 // AppContent.js
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import Navbar from './navbar';
+//import Navbar from './navbar';
 import Login from './login';
 import Register from './register';
 import HomePage from './HomePage';
@@ -17,6 +17,12 @@ import CommentPage from './CommentPage';
 import InvoiceViewer from './InvoiceViewer.jsx';
 import PaymentPage from './PaymentPage.jsx';
 
+// yeni eklenenler
+import Navbar from './navbar.jsx';
+import Sidebar from './sidebar.jsx';
+import WishlistPage from "./WishlistPage";
+import WishlistItemsPage from "./WishlistItemsPage";
+import SpecificOrderPage from './SpecificOrderPage.jsx';
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -114,17 +120,6 @@ function AppContent() {
 
   };
 
-  /*
-  // handleLogin function is defined to update the login status, user id, and user profile information to be passed to the child componnent Login
-  const handleLogin = (loggedIn, id, profileData) => {
-    setIsLoggedIn(loggedIn);
-    setUserId(id);
-    setUserProfile(profileData);
-    // call the merge function of the cart when the user logs in
-
-  };
-  */
-
   // handleLogout function is defined to remove the token from local storage and update the login status, user id, and user profile information
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -135,15 +130,50 @@ function AppContent() {
     navigate('/');
   };
 
+
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null); // Selected category state
+  // this selectedCategory will be passed to the HomePage component
+  // when selectedCategory is changed from the sidebar, HomePage component will be re-rendered with the new selected category
+
+  // toggleSidebar function is defined to open and close the sidebar
+  const toggleSidebar = (open) => () => {
+        setSidebarOpen(open);
+  };
+
+  // old navbar: <Navbar isLoggedIn={isLoggedIn} userProfile={userProfile} onLogout={handleLogout} />
   return (
     <>
-      <Navbar isLoggedIn={isLoggedIn} userProfile={userProfile} onLogout={handleLogout} />
+      <Sidebar
+                isOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+                isLoggedIn={true} // Replace with actual login state
+                userProfile={{}} // Replace with actual user profile
+                onLogout={handleLogout}
+                setSelectedCategory={setSelectedCategory}
+      />
+      <Navbar
+                isLoggedIn={isLoggedIn}
+                userProfile={userProfile}
+                onLogout={handleLogout}
+                toggleSidebar={toggleSidebar(true)}
+      />
+
       <Routes>
-        <Route path="/" element={<HomePage userId={userId}/>} />
+        <Route
+          path="/"
+          element={
+            <HomePage
+              userId={userId}
+              isLoggedIn={isLoggedIn}
+              selectedCategory={selectedCategory} // Pass the selected category
+            />
+          }
+        />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
-        <Route path="/orders" element={<OrderPage isLoggedIn={isLoggedIn} userId={userId} />} />
+        <Route path="/orders" element={<OrderPage userId={userId} />} />
         {/* Comment page is not done yet */}
         <Route path="/comment/:orderId" element={<CommentPage />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
@@ -155,19 +185,14 @@ function AppContent() {
         )}
         <Route path="/product-detail/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
         <Route path="/invoice/:invoiceId" element={<InvoiceViewer />} />
+        {/* This is the path to show all wishlist */}
+        <Route path="/wishlists" element={<WishlistPage userId={userId} />} />
+        {/* This is the path for showing the products in one wish list */}
+        <Route path="/wishlist/:wishlistId" element={<WishlistItemsPage />} />
+        <Route path="/order/:orderId" element={<SpecificOrderPage  />} />
       </Routes>
     </>
   );
 }
 
 export default AppContent;
-
-/* 
-  Functionalities of the App:
-    navbar is not a route. It is a component that is displayed on every page.
-    http://localhost:3000/ will display the Home Page component
-    http://localhost:3000/register will display the Register component
-    http://localhost:3000/login will display the Login component
-
-    We need to use Routes and Route components to map URLs to specific pages.
-*/

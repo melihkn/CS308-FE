@@ -1,19 +1,11 @@
-// OrderItem.js
-
-/*
-
-Functionality of OrderItem component:
-    - The OrderItem component is a functional component that displays the details of an item in an order.
-    - It fetches the product details from the product listing service using the product ID.
-    - It displays the product image, name, description, quantity, and purchase price of the item in the order.
-    - It fetches the image from the authentication service mounted images but url is gotten from the product listing service.
-
-*/
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Box, Typography, Chip, Button, CardMedia } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const OrderItem = ({ productId, quantity, purchase_price }) => {
   const [product, setProduct] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -22,7 +14,7 @@ const OrderItem = ({ productId, quantity, purchase_price }) => {
         const productData = response.data;
 
         // Prefix the image URL
-        const image_url_prefix = "http://127.0.0.1:8000/static/";
+        const image_url_prefix = "http://127.0.0.1:8001/static/";
         const fullImageUrl = image_url_prefix + productData.image_url;
         setProduct({ ...productData, image_url: fullImageUrl });
       } catch (error) {
@@ -35,24 +27,56 @@ const OrderItem = ({ productId, quantity, purchase_price }) => {
 
   if (!product) return <p>Loading product details...</p>;
 
-  // in some orders, there might not be items, to avoid some errors
-  const safePrice = purchase_price ?? 0; // Default to 0 if purchase_price is undefined or null
+  // Ensure purchase_price is safe to display
+  const safePrice = purchase_price ?? 0;
+
+  const handleProductClick = () => {
+    navigate(`/product-detail/${productId}`);
+  };
 
   return (
-    <div style={{ display: "flex", marginBottom: "10px", borderBottom: "1px solid #ddd", paddingBottom: "10px" }}>
-      <img
-        src={product.image_url}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        mb: 2,
+        p: 1,
+        border: "1px solid #ccc",
+        borderRadius: 2,
+      }}
+    >
+      {/* Product Image */}
+      <CardMedia
+        component="img"
+        image={product.image_url}
         alt={product.name}
-        style={{ width: "100px", height: "100px", marginRight: "20px", borderRadius: "5px" }}
+        sx={{ width: 50, height: 50, objectFit: "contain", mr: 2 }}
       />
-      <div>
-        <h4 style={{ margin: 0 }}>{product.name}</h4>
-        <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>{product.description}</p>
-        <p style={{ margin: "5px 0" }}>
-          Quantity: {quantity} | Price at Purchase: ${safePrice.toFixed(2)}
-        </p>
-      </div>
-    </div>
+
+      {/* Product Name and Quantity */}
+      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <Typography variant="body1" fontWeight="bold">
+          {product.name}
+        </Typography>
+        <Chip label={`Quantity: ${quantity}`} size="small" sx={{ mt: 0.5 }} />
+      </Box>
+
+      {/* Product Price */}
+      <Typography variant="body2" sx={{ mx: 2 }}>
+        ${safePrice.toFixed(2)}
+      </Typography>
+
+      {/* Button to Product Detail */}
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={handleProductClick}
+        sx={{ textTransform: "none" }}
+      >
+        View Details
+      </Button>
+    </Box>
   );
 };
 

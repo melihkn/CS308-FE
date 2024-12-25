@@ -8,6 +8,10 @@ const InvoiceViewer = () => {
     const [pdfUrl, setPdfUrl] = useState("");
     const [error, setError] = useState("");
 
+    useEffect(() => {
+        fetchInvoice();
+    }, []);
+
     
     const fetchInvoice = async () => {
         try {
@@ -35,7 +39,6 @@ const InvoiceViewer = () => {
     return (
         <div>
           <h1>Invoice</h1>
-          <button onClick={fetchInvoice}>Fetch Invoice</button>
           <iframe
             src={pdfUrl}
             title="Invoice PDF"

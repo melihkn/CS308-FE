@@ -1,105 +1,164 @@
-// Login.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './login.css';
+import axios from 'axios';
+import { styled } from '@mui/material/styles';
+import {
+  Box,
+  Button,
+  Checkbox,
+  CssBaseline,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  TextField,
+  Typography,
+  Card as MuiCard,
+  Stack,
+  Link,
+  Divider,
+} from '@mui/material';
 
-/*
-    Login component is a form that takes email and password as input.
-    When the form is submitted, it sends a POST request to the server to authenticate the user.
-    If the authentication is successful, it saves the JWT token coming from the backend to local storage and updates the login state in App.js.
+// Styled components
+const Card = styled(MuiCard)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  maxWidth: '450px',
+  margin: 'auto',
+  padding: theme.spacing(4),
+  gap: theme.spacing(2),
+  boxShadow: theme.shadows[3],
+}));
 
-    From now on, in AppContent.js, isLoggedIn state will be true and userProfile state will be updated with the user's profile information.
-    
-    Props:
-        - onLogin: function to update the login state in App.js. It is passed from AppContent.js. It returns the login status, user id, and user profile information to AppContent.js.
-
-    State:
-        - email: input value for email
-        - password: input value for password
-
-    Redirects:
-        - Redirects to '/' after successful login which is home page
-*/
+const Container = styled(Stack)(({ theme }) => ({
+  minHeight: '100vh',
+  padding: theme.spacing(2),
+  justifyContent: 'center',
+  alignItems: 'center',
+  background: theme.palette.background.default,
+}));
 
 const Login = ({ onLogin }) => {
-  // State variables
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
 
-  // Login function
   const handleLogin = async (e) => {
-    // Prevent the default form submission behavior (refreshing the page)
     e.preventDefault();
+    if (!validateInputs()) return;
 
-    // Send a POST request to the server to authenticate the user with email and password
     try {
       const response = await axios.post('http://127.0.0.1:8000/login', { email, password });
-      // Save the JWT token coming from the backend to local storage to keep the user logged in with the key 'token' 
-      localStorage.setItem('token', response.data.access_token);
+      const { access_token } = response.data;
+      localStorage.setItem('token', access_token);
 
-      // Send a GET request by passing the token in the header to the server to get the user's profile information (using the /auth/status endpoint)
       const profileResponse = await axios.get('http://127.0.0.1:8000/auth/status', {
-        headers: { 'Authorization': `Bearer ${response.data.access_token}` }
+        headers: { Authorization: `Bearer ${access_token}` },
       });
 
-      // Update the login state in App.js with the login status, user id, and user profile information
-      onLogin(true, profileResponse.data.userId, profileResponse.data);
-      
-      // Redirect to the home page after successful login and display an alert message to the user as google does
+      const { userId, role } = profileResponse.data;
+
+      onLogin(true, userId, profileResponse.data);
       alert('Login successful');
-      // Save login state when user logs in successfully
-      localStorage.setItem("isLoggedIn", true);
-      
+      localStorage.setItem('isLoggedIn', true);
 
-
-      if (profileResponse.data.role === 'product_manager') {
+      // Navigate based on role
+      if (role === 'product_manager') {
         navigate('/dashboards/ProductManager');
-      }
-      else if (profileResponse.data.role === 'sales_manager') {
+      } else if (role === 'sales_manager') {
         navigate('/dashboards/smapp');
-      }
-      else {
+      } else {
         navigate('/');
       }
-
-    }
-    // Catch any error and display an alert message to the user
-    catch (error) {
+    } catch (error) {
       alert(error.response?.data?.detail || 'Login failed');
     }
   };
 
+  const validateInputs = () => {
+    let isValid = true;
+
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('Please enter a valid email address.');
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!password || password.length < 1) {
+      setPasswordError('Password must be at least 6 characters long.');
+      isValid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    return isValid;
+  };
+
   return (
-    <div className="container">
-      <h2 className="center-text">Login</h2>
-      <form onSubmit={handleLogin}>
-        <div className="mb-3">
-          <label>Email</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+    <Container>
+      <CssBaseline />
+      <Card>
+        <Typography variant="h4" align="center">
+          Login
+        </Typography>
+        <Box component="form" onSubmit={handleLogin} noValidate>
+          <FormControl fullWidth margin="normal">
+            <FormLabel>Email</FormLabel>
+            <TextField
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!emailError}
+              helperText={emailError}
+              placeholder="your@email.com"
+              variant="outlined"
+              required
+            />
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <FormLabel>Password</FormLabel>
+            <TextField
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={!!passwordError}
+              helperText={passwordError}
+              placeholder="••••••••"
+              type="password"
+              variant="outlined"
+              required
+            />
+          </FormControl>
+          <FormControlLabel
+            control={<Checkbox color="primary" />}
+            label="Remember me"
           />
-        </div>
-        <div className="mb-3">
-          <label>Password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Login</button>
-      </form>
-    </div>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Login
+          </Button>
+        </Box>
+        <Divider sx={{ my: 2 }}>or</Divider>
+        <Box>
+          <Button fullWidth variant="outlined">
+            Login with Google
+          </Button>
+        </Box>
+        <Typography align="center" sx={{ mt: 2 }}>
+          Don&apos;t have an account?{' '}
+          <Link href="/register" underline="hover">
+            Sign up
+          </Link>
+        </Typography>
+      </Card>
+    </Container>
   );
 };
 
 export default Login;
-
