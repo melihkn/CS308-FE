@@ -27,7 +27,7 @@ const OrderPage = ({ userId }) => {
     };
 
     fetchOrders();
-  }, [userId, cancelOrder]); // Add dependency array
+  }, [userId]); // Add dependency array
 
   if (loading) return <p>Loading orders...</p>;
 
