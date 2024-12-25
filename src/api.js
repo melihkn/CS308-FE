@@ -163,6 +163,28 @@ export const fetchProductbyId = async (data) => {
 }
 
 
+export const fetchOrders = async () => {
+    try {
+        const response = await pmService.get('/ProductManager/orders');
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error fetching orders:", error);
+        throw error;
+    }
+}
+
+export const updateOrderStatus = async (data) => {
+    try {
+        const response = await pmService.put(`/ProductManager/orders/`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating order status:", error);
+        throw error;
+    }
+}
+
+
 export const addReview = async (reviewData) => {
     try {
         const token = localStorage.getItem("token"); // Retrieve the token from localStorage (or wherever you're storing it)

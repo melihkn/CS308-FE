@@ -1,26 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  DataGrid, 
-  GridToolbar
+import {
+  DataGrid,
+  GridToolbar,
 } from '@mui/x-data-grid';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  TextField, 
-  FormControlLabel, 
-  Checkbox,
-  CircularProgress,
+import {
+  Box,
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Snackbar,
-  Alert
+  Alert,
+  Modal,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-
-const API_URL = 'https://your-api-url.com/api/orders'; // Replace with your actual API URL
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import { fetchOrders, updateOrderStatus } from './api'; // Replace './apiService' with the actual path to your Axios functions
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('en-US', {
@@ -32,30 +42,43 @@ const formatCurrency = (value) => {
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [productsModalOpen, setProductsModalOpen] = useState(false);
+  const [selectedOrderProducts, setSelectedOrderProducts] = useState([]);
+  const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
+  const [selectedInvoiceUrl, setSelectedInvoiceUrl] = useState('');
+  const [loadingInvoice, setLoadingInvoice] = useState(false);
 
+  // Fetch orders on mount
   useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(API_URL);
-      if (!response.ok) {
-        throw new Error('Failed to fetch orders');
+    const loadOrders = async () => {
+      try {
+        const fetchedOrders = await fetchOrders();
+        setOrders(
+          fetchedOrders.map((order, index) => ({
+            id: index + 1,
+            ...order,
+            totalPrice: order.price,
+            deliveryAddress: order.address,
+            products: order.products.map((product) => ({
+              productId: product.product_id,
+              name: product.product_name,
+              quantity: product.quantity,
+              price: product.price_at_purchase,
+            })),
+          }))
+        );
+      } catch (error) {
+        setSnackbar({ open: true, message: 'Failed to fetch orders', severity: 'error' });
+      } finally {
+        setLoading(false);
       }
-      const data = await response.json();
-      setOrders(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    loadOrders();
+  }, []);
 
   const handleEditClick = (order) => {
     setEditingOrder(order);
@@ -70,71 +93,55 @@ const OrdersTable = () => {
   const handleSaveOrder = async () => {
     if (editingOrder) {
       try {
-        const method = editingOrder.id ? 'PUT' : 'POST';
-        const url = editingOrder.id ? `${API_URL}/${editingOrder.id}` : API_URL;
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(editingOrder),
-        });
-        if (!response.ok) {
-          throw new Error('Failed to save order');
-        }
-        await fetchOrders();
+        await updateOrderStatus({ order_id: editingOrder.orderId, status: editingOrder.status });
+        setOrders(
+          orders.map((order) =>
+            order.id === editingOrder.id ? { ...order, status: editingOrder.status } : order
+          )
+        );
+        setSnackbar({ open: true, message: 'Order status updated successfully', severity: 'success' });
+      } catch (error) {
+        setSnackbar({ open: true, message: 'Failed to update order status', severity: 'error' });
+      } finally {
         handleCloseDialog();
-        setSnackbar({ open: true, message: 'Order saved successfully', severity: 'success' });
-      } catch (err) {
-        setSnackbar({ open: true, message: err.message, severity: 'error' });
       }
     }
   };
 
-  const handleInputChange = (e) => {
-    if (editingOrder) {
-      setEditingOrder({
-        ...editingOrder,
-        [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value
-      });
-    }
+  const handleStatusChange = (e) => {
+    setEditingOrder({
+      ...editingOrder,
+      status: e.target.value,
+    });
   };
 
-  const handleDeleteOrder = async (id) => {
-    try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete order');
-      }
-      await fetchOrders();
-      setSnackbar({ open: true, message: 'Order deleted successfully', severity: 'success' });
-    } catch (err) {
-      setSnackbar({ open: true, message: err.message, severity: 'error' });
-    }
+  const handleViewProducts = (products) => {
+    setSelectedOrderProducts(products);
+    setProductsModalOpen(true);
   };
 
   const columns = [
+    { field: 'orderId', headerName: 'Order ID', width: 130 },
     { field: 'deliveryId', headerName: 'Delivery ID', width: 130 },
-    { field: 'customerId', headerName: 'Customer ID', width: 130 },
-    { field: 'productId', headerName: 'Product ID', width: 130 },
-    { field: 'quantity', headerName: 'Quantity', type: 'number', width: 90 },
-    { 
-      field: 'totalPrice', 
-      headerName: 'Total Price', 
-      type: 'number', 
-      width: 110,
-      valueFormatter: (params) => formatCurrency(params.value),
-    },
+    { field: 'totalPrice', headerName: 'Total Price', width: 110, valueFormatter: (params) => formatCurrency(params.value) },
     { field: 'deliveryAddress', headerName: 'Delivery Address', width: 250 },
-    { field: 'isCompleted', headerName: 'Completed', type: 'boolean', width: 110 },
+    { field: 'status', headerName: 'Status', width: 120 },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 200,
+      width: 350,
       renderCell: (params) => (
         <Box>
+          <Button
+            variant="outlined"
+            color="primary"
+            size="small"
+            startIcon={<VisibilityIcon />}
+            onClick={() => handleViewProducts(params.row.products)}
+            sx={{ mr: 1 }}
+          >
+            Products
+          </Button>
           <Button
             variant="outlined"
             color="primary"
@@ -143,122 +150,55 @@ const OrdersTable = () => {
             onClick={() => handleEditClick(params.row)}
             sx={{ mr: 1 }}
           >
-            Edit
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            size="small"
-            onClick={() => handleDeleteOrder(params.row.id)}
-          >
-            Delete
+            Edit Status
           </Button>
         </Box>
       ),
     },
   ];
 
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Typography color="error">{error}</Typography>
-      </Box>
-    );
-  }
-
   return (
     <Box sx={{ height: 600, width: '100%' }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Orders Management
       </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => handleEditClick({})}
-        sx={{ mb: 2 }}
-      >
-        Add New Order
-      </Button>
-      <DataGrid
-        rows={orders}
-        columns={columns}
-        pageSize={10}
-        rowsPerPageOptions={[10, 25, 50]}
-        checkboxSelection
-        disableSelectionOnClick
-        components={{
-          Toolbar: GridToolbar,
-        }}
-      />
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <DataGrid
+          rows={orders}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[10, 25, 50]}
+          checkboxSelection
+          disableSelectionOnClick
+          components={{
+            Toolbar: GridToolbar,
+          }}
+        />
+      )}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{editingOrder && editingOrder.id ? "Edit Order" : "Add New Order"}</DialogTitle>
+        <DialogTitle>Edit Order Status</DialogTitle>
         <DialogContent>
           {editingOrder && (
-            <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-              <TextField
-                name="deliveryId"
-                label="Delivery ID"
-                value={editingOrder.deliveryId || ''}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                name="customerId"
-                label="Customer ID"
-                value={editingOrder.customerId || ''}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                name="productId"
-                label="Product ID"
-                value={editingOrder.productId || ''}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                name="quantity"
-                label="Quantity"
-                type="number"
-                value={editingOrder.quantity || ''}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                name="totalPrice"
-                label="Total Price"
-                type="number"
-                value={editingOrder.totalPrice || ''}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                name="deliveryAddress"
-                label="Delivery Address"
-                value={editingOrder.deliveryAddress || ''}
-                onChange={handleInputChange}
-                fullWidth
-                multiline
-                rows={2}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="isCompleted"
-                    checked={editingOrder.isCompleted || false}
-                    onChange={handleInputChange}
-                  />
-                }
-                label="Completed"
-              />
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+              <Typography variant="body1">Order ID: {editingOrder.orderId}</Typography>
+              <FormControl fullWidth>
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  labelId="status-label"
+                  value={editingOrder.status}
+                  onChange={handleStatusChange}
+                  label="Status"
+                >
+                  <MenuItem value="Pending">Pending</MenuItem>
+                  <MenuItem value="Shipped">Shipped</MenuItem>
+                  <MenuItem value="Delivered">Delivered</MenuItem>
+                  <MenuItem value="Cancelled">Cancelled</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
           )}
         </DialogContent>
@@ -283,4 +223,3 @@ const OrdersTable = () => {
 };
 
 export default OrdersTable;
-
