@@ -12,6 +12,8 @@ import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Close } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 
 const ProductTable = () => {
   const [products, setProducts] = useState([]);
@@ -225,7 +227,16 @@ const ProductTable = () => {
       </Box>
 
       <Dialog open={isModalOpen} onClose={handleCloseModal}>
-        <DialogTitle>{editingProduct ? "Edit Product" : "Add Product"}</DialogTitle>
+        <DialogTitle>
+          {editingProduct ? "Edit Product" : "Add Product"}
+          <IconButton
+            onClick={handleCloseModal}
+            color="error"
+            sx={{ position: "absolute", top: 5, right: 5 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          </DialogTitle>
         <DialogContent>
           {[
             { label: "Name", name: "name" },
@@ -255,7 +266,6 @@ const ProductTable = () => {
           ))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">Save</Button>
         </DialogActions>
       </Dialog>

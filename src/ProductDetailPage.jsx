@@ -44,6 +44,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [wishlistDialogOpen, setWishlistDialogOpen] = useState(false);
   const [wishlists, setWishlists] = useState([]);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
   useEffect(() => {
     const loadProduct = async () => {
       try {
@@ -99,16 +100,20 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
     try {
       console.log("Adding review:", reviewPayload); // Debugging
       const addedReview = await addReview(reviewPayload); // Send review to backend
-      const reviews = await fetchReviewsByProductId(id); // Fetch updated reviews
-      const new_average = (averageRating * (reviews.length-1) + rating) / (reviews.length);
-      console.log("New average rating:", new_average); // Debugging
+      var new_average = averageRating;
+      if (reviewPayload.comment === "") {
+        new_average = (averageRating * (reviews.length-1) + rating) / (reviews.length);
+        console.log("New average rating:", new_average); // Debugging
+        const updatedReviews = [...reviews, addedReview]; // Add the new review to the existing reviews
+        setReviews(updatedReviews); // Update the reviews state
+      }
       setAverageRating(new_average);
-      setReviews(reviews); // Update reviews
       setRating(0); // Reset rating
       setComment(""); // Reset comment
+      setSnackbar({ open: true, message: "Review added successfully", severity: "success" });
     } catch (error) {
+      setSnackbar({ open: true, message: 'Error fetching invoice', severity: 'error' });
       console.error("Error adding review:", error.response?.data || error);
-      alert("Failed to add review. Please try again.");
     }
   };
 

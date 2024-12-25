@@ -59,7 +59,7 @@ const OrderItem = ({ productId, quantity, purchase_price }) => {
         <Typography variant="body1" fontWeight="bold">
           {product.name}
         </Typography>
-        <Chip label={`Qty: ${quantity}`} size="small" sx={{ mt: 0.5 }} />
+        <Chip label={`Quantity: ${quantity}`} size="small" sx={{ mt: 0.5 }} />
       </Box>
 
       {/* Product Price */}

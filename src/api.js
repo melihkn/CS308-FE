@@ -176,13 +176,34 @@ export const fetchOrders = async () => {
 
 export const updateOrderStatus = async (data) => {
     try {
-        const response = await pmService.put(`/ProductManager/orders/`, data);
+        const response = await pmService.put(`/ProductManager/orders`, data, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        console.log("Order status updated:", response.data); // Debugging
         return response.data;
     } catch (error) {
         console.error("Error updating order status:", error);
         throw error;
     }
 }
+
+export const fetchInvoice = async (orderId) => {
+    try {
+        const baseUrl = "http://127.0.0.1:8004"; // Replace with your FastAPI URL
+        const response = await fetch(`${baseUrl}/api/orders/invoice/${orderId}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        return response;
+    } catch (error) {
+        console.error("Error fetching invoice:", error);
+        throw error;
+    }
+}   
 
 
 export const addReview = async (reviewData) => {

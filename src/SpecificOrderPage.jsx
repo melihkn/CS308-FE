@@ -53,40 +53,41 @@ const SpecificOrderPage = () => {
   const [refundReasons, setRefundReasons] = useState({});
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
+  const [refundNumber, setRefundNumber] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchOrderDetails = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`http://127.0.0.1:8004/api/orders/${orderId}`);
-        console.log(response.data);
-        setOrderDetails(response.data);
-        // Fetch refund status for each product
-        console.log("Initialization:", response.data.items);
-        const refundStatusPromises = response.data.items.map(item =>
-          refundStatusCall(orderId, item.product_id)
-        );
-        const refundStatusResponses = await Promise.all(refundStatusPromises);
-        console.log(refundStatusResponses);
-        const updatedRefundStatus = { ...refundStatus };
-
-        // Update the refund status map
-        refundStatusResponses.forEach((data) => {
-          updatedRefundStatus[data.product_id] = data.status;
-        });
-        
-        setRefundStatus(updatedRefundStatus);
-      } catch (error) {
-        console.error("Error fetching order details or refund status:", error);
-        setSnackbar({ open: true, message: "Failed to fetch order details or refund status", severity: "error" });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrderDetails();
   }, [orderId]);
+
+  const fetchOrderDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`http://127.0.0.1:8004/api/orders/${orderId}`);
+      console.log(response.data);
+      setOrderDetails(response.data);
+      // Fetch refund status for each product
+      console.log("Initialization:", response.data.items);
+      const refundStatusPromises = response.data.items.map(item =>
+        refundStatusCall(orderId, item.product_id)
+      );
+      const refundStatusResponses = await Promise.all(refundStatusPromises);
+      console.log(refundStatusResponses);
+      const updatedRefundStatus = { ...refundStatus };
+
+      // Update the refund status map
+      refundStatusResponses.forEach((data) => {
+        updatedRefundStatus[data.product_id] = data.status;
+      });
+      
+      setRefundStatus(updatedRefundStatus);
+    } catch (error) {
+      console.error("Error fetching order details or refund status:", error);
+      setSnackbar({ open: true, message: "Failed to fetch order details or refund status", severity: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleProductSelect = (productId) => {
     setSelectedProducts((prev) =>
@@ -144,9 +145,13 @@ const SpecificOrderPage = () => {
       // Update the state with the new map
       setRefundStatus(updatedRefundStatus);
 
+      setRefundNumber(refundNumber + 1);
+
       // Reset selected products and reasons
       setSelectedProducts([]);
       setRefundReasons({});
+
+      fetchOrderDetails();
     } catch (error) {
       console.error("Error processing refund:", error);
       setSnackbar({ open: true, message: "Failed to process refund requests", severity: "error" });
@@ -173,6 +178,7 @@ const SpecificOrderPage = () => {
       setSnackbar({ open: true, message: "Order cancelled successfully", severity: "success" });
       // Refresh order details
       orderDetails.order_status = response.status; // Cancelled
+      fetchOrderDetails();
     } catch (error) {
       console.error("Error cancelling order:", error);
       setSnackbar({ open: true, message: "Failed to cancel order", severity: "error" });
@@ -254,7 +260,7 @@ const SpecificOrderPage = () => {
                 variant="contained"
                 color="primary"
                 onClick={handleRefundRequest}
-                disabled={selectedProducts.length === 0 || orderDetails.order_status !== 0}
+                disabled={selectedProducts.length === 0 || orderDetails.order_status !== 3}
                 fullWidth
                 sx={{ mb: 2 }}
               >
@@ -267,7 +273,7 @@ const SpecificOrderPage = () => {
                 startIcon={<CancelIcon />}
                 fullWidth
                 sx={{ mb: 2 }}
-                disabled = {orderDetails.order_status !== 0}
+                disabled = {orderDetails.order_status !== 0 || selectedProducts.some(productId => refundStatus[productId] !== "N/A")}
               >
                 Cancel Order
               </Button>
@@ -318,6 +324,7 @@ const SpecificOrderPage = () => {
                 onProductSelect={handleProductSelect}
                 isSelected={selectedProducts.includes(item.product_id)}
                 onProductClick={handleProductClick}
+                changed = {refundNumber}
               />
             ))}
           </TableBody>

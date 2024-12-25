@@ -9,22 +9,23 @@ const SpecificOrderItem = ({
   refundStatus, 
   onProductSelect, 
   isSelected, 
-  onProductClick 
+  onProductClick,
+  changed
 }) => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await axios.get(`http://127.0.0.1:8002/products/${productId}`);
-        setProduct(response.data);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      }
-    };
-
     fetchProduct();
-  }, [productId]);
+  }, [refundStatus]);
+
+  const fetchProduct = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8002/products/${productId}`);
+      setProduct(response.data);
+    } catch (error) {
+      console.error("Error fetching product data:", error);
+    }
+  };
 
   if (!product) {
     return (

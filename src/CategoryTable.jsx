@@ -12,6 +12,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CategoryTable = () => {
   const [categories, setCategories] = useState([]);
@@ -130,7 +131,20 @@ const CategoryTable = () => {
 
       {/* Modal for Add/Edit Category */}
       <Dialog open={isModalOpen} onClose={handleCloseModal}>
-        <DialogTitle>{editingCategory ? 'Edit Category' : 'Add Category'}</DialogTitle>
+        <DialogTitle>
+          {editingCategory ? 'Edit Category' : 'Add Category'}
+          <IconButton
+            onClick={handleCloseModal}
+            color="error"
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+            }}
+          >
+            <CloseIcon /> {/* Close icon for dismissing the dialog */}
+          </IconButton>
+          </DialogTitle>
         <DialogContent>
           <TextField
             label="Category Name"
@@ -152,7 +166,6 @@ const CategoryTable = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">
             Save
           </Button>

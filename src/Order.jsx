@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import OrderItem from "./OrderItem";
 import axios from "axios";
 import {
+  Alert,
   Box,
   Button,
   Typography,
@@ -13,6 +14,7 @@ import {
   Grid,
   Divider,
   IconButton,
+  Snackbar,
   Collapse,
   Dialog,
   DialogActions,
@@ -40,13 +42,22 @@ const ORDER_STATUS_MAP = {
   5: { text: "Returned", color: "secondary" },
 };
 
-const Order = ({ order, onOrderUpdate}) => {
+const Order = ({ order, onOrderUpdate }) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
   const [openCancelModal, setOpenCancelModal] = React.useState(false);
   const [cancelReason, setCancelReason] = React.useState("");
+  const [snackbar, setSnackbar] = React.useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  const orderStatus = ORDER_STATUS_MAP[order.order_status] || { text: "Unknown Status", color: "default" };
+  const orderStatus =
+    ORDER_STATUS_MAP[order.order_status] || {
+      text: "Unknown Status",
+      color: "default",
+    };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -73,22 +84,42 @@ const Order = ({ order, onOrderUpdate}) => {
 
   const handleConfirmCancel = async () => {
     try {
-      const response = await cancelOrder({order_id: order.order_id, reason: cancelReason});
-      alert("Order cancelled successfully");
+      const response = await cancelOrder({
+        order_id: order.order_id,
+        reason: cancelReason,
+      });
       if (onOrderUpdate) {
         onOrderUpdate(order.order_id);
       }
+
+      setSnackbar({
+        open: true,
+        message: "Order cancelled successfully",
+        severity: "success",
+      });
+
     } catch (error) {
       console.error("Error cancelling order:", error);
-      alert("Failed to cancel order");
+      setSnackbar({
+        open: true,
+        message: "Failed to cancel order",
+        severity: "error",
+      });
     } finally {
       setOpenCancelModal(false);
       setCancelReason("");
     }
   };
 
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
-    <Card sx={{ mb: 3, cursor: 'pointer' }} onClick={handleOrderClick}>
+    <Card sx={{ mb: 3, cursor: "pointer" }} onClick={handleOrderClick}>
       <CardContent>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={6}>
@@ -147,15 +178,16 @@ const Order = ({ order, onOrderUpdate}) => {
           startIcon={<CancelIcon />}
           onClick={handleCancelOrder}
           color="secondary"
+          disabled={order.order_status !== 0}
         >
           Cancel Order
         </Button>
         <IconButton
           sx={{
-            marginLeft: 'auto',
-            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            marginLeft: "auto",
+            transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
             transition: (theme) =>
-              theme.transitions.create('transform', {
+              theme.transitions.create("transform", {
                 duration: theme.transitions.duration.shortest,
               }),
           }}
@@ -169,9 +201,16 @@ const Order = ({ order, onOrderUpdate}) => {
           <ExpandMoreIcon />
         </IconButton>
       </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit onClick={(e) => e.stopPropagation()}>
+      <Collapse
+        in={expanded}
+        timeout="auto"
+        unmountOnExit
+        onClick={(e) => e.stopPropagation()}
+      >
         <CardContent>
-          <Typography variant="h6" gutterBottom>Order Items:</Typography>
+          <Typography variant="h6" gutterBottom>
+            Order Items:
+          </Typography>
           {order.items.map((item) => (
             <OrderItem
               key={item.product_id}
@@ -182,7 +221,11 @@ const Order = ({ order, onOrderUpdate}) => {
           ))}
         </CardContent>
       </Collapse>
-      <Dialog open={openCancelModal} onClose={() => setOpenCancelModal(false)} onClick={(e) => e.stopPropagation()}>
+      <Dialog
+        open={openCancelModal}
+        onClose={() => setOpenCancelModal(false)}
+        onClick={(e) => e.stopPropagation()}
+      >
         <DialogTitle>Cancel Order</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -207,9 +250,22 @@ const Order = ({ order, onOrderUpdate}) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };
 
 export default Order;
-

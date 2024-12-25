@@ -27,7 +27,7 @@ const OrderPage = ({ userId }) => {
     };
 
     fetchOrders();
-  }, [userId]); // Add dependency array
+  }, [userId, cancelOrder]); // Add dependency array
 
   if (loading) return <p>Loading orders...</p>;
 
@@ -48,7 +48,7 @@ const OrderPage = ({ userId }) => {
         Your Orders
       </Typography>
       {orders.map((order) => (
-        <Order key={order.order_id} order={order} />
+        <Order key={order.order_id} order={order}/>
       ))}
     </Container>
   );
