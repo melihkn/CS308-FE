@@ -60,6 +60,9 @@ export const tokens = (mode) => ({
           800: "#2a2d64",
           900: "#151632",
         },
+        whiteAccent: {
+          100: "#ffffff",
+        },
       }
     : {
         grey: {
@@ -116,6 +119,9 @@ export const tokens = (mode) => ({
           700: "#a4a9fc",
           800: "#c3c6fd",
           900: "#e1e2fe",
+        },
+        whiteAccent: {
+          100: "#ffffff",
         },
       }),
 });
