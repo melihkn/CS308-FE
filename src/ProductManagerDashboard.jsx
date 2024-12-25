@@ -8,6 +8,7 @@ import SideNavbar from './sidenavbar';
 import ProductTable from './ProductTable';
 import ReviewTable from './ReviewTable';
 import CategoryTable from './CategoryTable';
+import OrdersTable from './OrdersTable';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -73,6 +74,7 @@ const ProductManagerDashboard = () => {
               <Route path="products" element={<ProductTable />} />
               <Route path="reviews" element={<ReviewTable />} />
               <Route path="categories" element={<CategoryTable />} />
+              <Route path="orders" element={<OrdersTable/>} />
             </Routes>
           </Box>
         </Box>
