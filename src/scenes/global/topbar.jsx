@@ -1,15 +1,11 @@
 import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../theme";
-import InputBase from "@mui/material/InputBase";
+import LogoutIcon from "@mui/icons-material/Logout";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import SearchIcon from "@mui/icons-material/Search";
-import LogoutIcon from "@mui/icons-material/Logout"
-const Topbar = (onLogout) => {
+
+const Topbar = ({ onLogout }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
@@ -26,10 +22,11 @@ const Topbar = (onLogout) => {
           )}
         </IconButton>
         <IconButton
-        onClick={() => {onLogout;}}
+          onClick={() => {
+            onLogout(); // Call the passed function
+          }}
         >
-          <LogoutIcon 
-          />
+          <LogoutIcon />
         </IconButton>
       </Box>
     </Box>

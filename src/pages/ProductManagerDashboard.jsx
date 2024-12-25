@@ -9,6 +9,7 @@ import ProductTable from './ProductTable';
 import ReviewTable from './ReviewTable';
 import CategoryTable from './CategoryTable';
 import OrdersTable from './OrdersTable';
+import Topbar from '../scenes/global/topbar';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -24,63 +25,30 @@ function ColorModeToggle() {
 }
 
 const ProductManagerDashboard = ({ onLogout, userProfile }) => {
-  const [mode, setMode] = React.useState('light');
-  const colorMode = React.useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-      },
-    }),
-    [],
-  );
-
-  const theme = React.useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode,
-        },
-      }),
-    [mode],
-  );
 
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
+    <div style={{ display: "flex", height: "100vh" }}>
+      {/* Sidebar */}
+      <SideNavbar userProfile={userProfile}/>
+
+      {/* Main Content */}
+      <div
+        style={{
+          flexGrow: 1,
+          overflow: "auto",
+        }}
+      >
         <CssBaseline />
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-          <SideNavbar role={localStorage.getItem("token").role} />
-          <Box
-            component="main"
-            sx={{
-              flexGrow: 1,
-              p: { xs: 2, md: 3 },
-              overflow: 'auto',
-            }}
-          >
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between',
-              mb: 3,
-              mt: 2
-            }}>
-              <Typography variant="h5" component="h1" sx={{ fontWeight: 'medium' }}>
-                Product Manager Dashboard
-              </Typography>
-              <ColorModeToggle />
-            </Box>
-            <Routes>
+        <Topbar onLogout={onLogout}/>
+        <Routes>
               <Route path="products" element={<ProductTable />} />
               <Route path="reviews" element={<ReviewTable />} />
               <Route path="categories" element={<CategoryTable />} />
               <Route path="orders" element={<OrdersTable/>} />
             </Routes>
-          </Box>
-        </Box>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+      </div>
+    </div>
   );
-};
+}
 
 export default ProductManagerDashboard;
