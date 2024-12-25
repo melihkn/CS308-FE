@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -19,27 +19,75 @@ import {
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 
 function PaymentPage() {
+  const location = useLocation();
+  const { cartItems = [], userId = null } = location.state || {};
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cvc, setCvc] = useState('');
+  const [expiryMonth, setExpiryMonth] = useState('');
+  const [expiryYear, setExpiryYear] = useState('');
   const navigate = useNavigate();
 
-  // State'ler
-  const [cartItems] = useState([
-    { name: 'Laptop', model: 'X1', quantity: 1, price: 1500 },
-    { name: 'Mouse', model: 'MX', quantity: 2, price: 50 },
-  ]);
-  const [deliveryAddress] = useState('1 MUI Drive, Reactville, Anytown, 99999, USA');
-  const [paymentDetails] = useState({
-    cardType: 'Visa',
-    cardHolder: 'Mr. John Smith',
-    cardNumber: 'xxxx-xxxx-xxxx-1234',
-    expiryDate: '04/2024',
-  });
+  const handlePayment = async () => {
+    if (!cartItems.length) {
+      alert('Cart is empty!');
+      return;
+    }
+
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+
+    const orderData = {
+      customer_id: userId,
+      total_price: totalPrice,
+      order_date: new Date().toISOString().split('T')[0],
+      payment_status: 'paid',
+      invoice_link: null,
+      order_status: 0,
+      items: cartItems.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        price_at_purchase: item.price,
+      })),
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:8004/api/orders/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Order creation failed');
+      }
+
+      alert('Payment successful and order created successfully!');
+      await clearShoppingCart();
+      navigate('/orders');
+    } catch (error) {
+      console.error('Order creation failed:', error);
+      alert(`Order creation failed: ${error.message}`);
+    }
+  };
+
+  const clearShoppingCart = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8001/cart/clear?customer_id=${userId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to clear shopping cart');
+      }
+    } catch (error) {
+      console.error('Failed to clear shopping cart:', error);
+      alert(`Failed to clear shopping cart: ${error.message}`);
+    }
+  };
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
-
-  const handlePayment = () => {
-    alert('Payment Successful!');
-    navigate('/orders');
-  };
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
@@ -54,10 +102,12 @@ function PaymentPage() {
             {cartItems.map((item, index) => (
               <ListItem key={index} sx={{ py: 1, px: 0 }}>
                 <ListItemText
-                  primary={`Product: ${item.name} (${item.model})`}
+                  primary={`Product: ${item.name}`}
                   secondary={`Quantity: ${item.quantity}`}
                 />
-                <Typography variant="body2">${(item.price * item.quantity).toFixed(2)}</Typography>
+                <Typography variant="body2">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </Typography>
               </ListItem>
             ))}
             <ListItem sx={{ py: 1, px: 0 }}>
@@ -77,36 +127,12 @@ function PaymentPage() {
               <Typography variant="subtitle2" gutterBottom>
                 Shipment details
               </Typography>
-              <Typography gutterBottom>John Smith</Typography>
-              <Typography gutterBottom sx={{ color: 'text.secondary' }}>
-                {deliveryAddress}
-              </Typography>
-            </div>
-            <div>
-              <Typography variant="subtitle2" gutterBottom>
-                Payment details
-              </Typography>
-              <Grid container>
-                {Object.entries(paymentDetails).map(([key, value]) => (
-                  <Stack
-                    key={key}
-                    direction="row"
-                    spacing={1}
-                    useFlexGap
-                    sx={{ width: '100%', mb: 1 }}
-                  >
-                    <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                      {key.replace(/([A-Z])/g, ' $1')}:
-                    </Typography>
-                    <Typography variant="body2">{value}</Typography>
-                  </Stack>
-                ))}
-              </Grid>
+              <Typography gutterBottom>{deliveryAddress || 'No address provided'}</Typography>
             </div>
           </Stack>
         </Stack>
 
-        {/* Ödeme Detayları */}
+        {/* Payment Bölümü */}
         <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="subtitle2">Credit Card Details</Typography>
@@ -117,10 +143,9 @@ function PaymentPage() {
             <FormLabel htmlFor="card-number">Card Number</FormLabel>
             <OutlinedInput
               id="card-number"
-              autoComplete="card-number"
               placeholder="0000 0000 0000 0000"
-              required
-              size="small"
+              value={cardNumber}
+              onChange={(e) => setCardNumber(e.target.value)}
             />
           </FormControl>
 
@@ -129,10 +154,9 @@ function PaymentPage() {
               <FormLabel htmlFor="cvv">CVV</FormLabel>
               <OutlinedInput
                 id="cvv"
-                autoComplete="cvv"
                 placeholder="123"
-                required
-                size="small"
+                value={cvc}
+                onChange={(e) => setCvc(e.target.value)}
               />
             </FormControl>
 
@@ -140,10 +164,13 @@ function PaymentPage() {
               <FormLabel htmlFor="expiration-date">Expiration Date</FormLabel>
               <OutlinedInput
                 id="expiration-date"
-                autoComplete="expiration-date"
                 placeholder="MM/YY"
-                required
-                size="small"
+                value={`${expiryMonth}/${expiryYear}`}
+                onChange={(e) => {
+                  const [month, year] = e.target.value.split('/');
+                  setExpiryMonth(month);
+                  setExpiryYear(year);
+                }}
               />
             </FormControl>
           </Box>
