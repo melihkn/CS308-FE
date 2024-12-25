@@ -5,18 +5,11 @@ import { Link } from "react-router-dom";
 import 'react-pro-sidebar/dist/css/styles.css';
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import PercentOutlinedIcon from '@mui/icons-material/PercentOutlined';
-import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
-import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import StarIcon from "@mui/icons-material/Star";
+import CategoryIcon from "@mui/icons-material/Category";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -103,7 +96,7 @@ const SideNavbar = ({ userProfile }) => {
                   {userProfile.name}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                  Sales Manager
+                  Product Manager
                 </Typography>
               </Box>
             </Box>
@@ -112,7 +105,7 @@ const SideNavbar = ({ userProfile }) => {
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Item
               title="Dashboard"
-              to="/dashboards/Product/"
+              to="/dashboards/ProductManager/"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -127,85 +120,30 @@ const SideNavbar = ({ userProfile }) => {
             </Typography>
             
             <Item
-              title="Customers Information"
-              to="/dashboards/smapp/customers"
-              icon={<ContactsOutlinedIcon />}
+              title="Products"
+              to="/dashboards/ProductManager/products"
+              icon={<InventoryIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Invoices Balances"
-              to="/dashboards/smapp/invoices"
-              icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Prices
-            </Typography>
-            <Item
-              title="Prices Form"
-              to="/dashboards/smapp/prices"
-              icon={<AttachMoneyOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Item
-              title="Discounts"
-              to="/dashboards/smapp/discounts"
-              icon={<PercentOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-<Item
-              title="Refunds"
-              to="/dashboards/smapp/refunds"
-              icon={<CurrencyExchangeIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            
-            
-
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Charts
-            </Typography>
-            <Item
-              title="Revenue/Cost"
-              to="/dashboards/smapp/revenueCost"
-              icon={<BarChartOutlinedIcon />}
+              title="Reviews"
+              to="/dashboards/ProductManager/reviews"
+              icon={<StarIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Total Profit Loss"
-              to="/dashboards/smapp/profitLoss"
-              icon={<PieChartOutlineOutlinedIcon />}
+              title="Categories"
+              to="/dashboards/ProductManager/categories"
+              icon={<CategoryIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Line Chart"
-              to="/dashboards/smapp/line"
-              icon={<TimelineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Geography Chart"
-              to="/dashboards/smapp/geography"
-              icon={<MapOutlinedIcon />}
+              title="Orders"
+              to="/dashboards/ProductManager/orders"
+              icon={<ReceiptIcon />}
               selected={selected}
               setSelected={setSelected}
             />

@@ -6,10 +6,16 @@ import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import Header from '../components/Header';
+import { tokens } from '../theme';
+import { useTheme } from '@mui/material';
+import { GridToolbar } from '@mui/x-data-grid';
 
 const ReviewTable = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     loadReviews();
@@ -67,10 +73,8 @@ const ReviewTable = () => {
       filterable: false,
       renderCell: (params) => (
         <Box>
-          <IconButton
-            color="success"
+          <IconButton sx={{ color: '#868dfb' , mr:1}}
             onClick={() => handleApprove(params.row.id)}
-            sx={{ mr: 1 }}
           >
             <CheckCircleOutlineIcon />
           </IconButton>
@@ -86,15 +90,47 @@ const ReviewTable = () => {
   ];
 
   return (
-    <Box sx={{ width: '100%', height: 500 }}>
-      <DataGrid
-        rows={reviews}
-        columns={columns}
-        loading={loading}
-        pageSize={10}
-        rowsPerPageOptions={[10, 20, 50]}
-        disableSelectionOnClick
-      />
+<Box m="20px">
+      <Header title="Refund Managements" subtitle="List of Refund Requests" />
+      <Box
+        m="40px 0 0 0"
+        height="75vh"
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+        }}
+      >
+        {loading ? (
+          <Typography color="white">Loading...</Typography>
+        ) : (
+          <DataGrid
+          rows={reviews}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[10, 25, 50]}
+          checkboxSelection
+          disableSelectionOnClick
+          components={{
+            Toolbar: GridToolbar,
+          }}
+        />
+        )}
+      </Box>
     </Box>
   );
 };

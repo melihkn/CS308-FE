@@ -13,6 +13,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import CloseIcon from '@mui/icons-material/Close';
+import { GridToolbar } from '@mui/x-data-grid';
+
+import Header from '../components/Header';
+import { tokens } from '../theme';
+import { useTheme } from '@mui/material';
 
 const CategoryTable = () => {
   const [categories, setCategories] = useState([]);
@@ -20,7 +25,8 @@ const CategoryTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [formValues, setFormValues] = useState({ category_name: '', parentcategory_id: '' });
-
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   useEffect(() => {
     loadCategories();
   }, []);
@@ -104,7 +110,7 @@ const CategoryTable = () => {
       filterable: false,
       renderCell: (params) => (
         <Box>
-          <IconButton color="primary" onClick={() => handleEdit(params.row)}>
+          <IconButton color='secondary' onClick={() => handleEdit(params.row)}>
             <EditIcon />
           </IconButton>
           <IconButton color="error" onClick={() => handleDelete(params.row.id)}>
@@ -116,18 +122,48 @@ const CategoryTable = () => {
   ];
 
   return (
-    <Box sx={{ width: '100%', height: 500 }}>
-      <Button variant="contained" color="primary" onClick={handleAdd} sx={{ mb: 2 }}>
-        + Add Category
-      </Button>
-      <DataGrid
+    <Box m="20px">
+    <Header title="Categories Managements" subtitle="List of Categories" />
+    <Box
+      m="40px 0 0 0"
+      height="75vh"
+      sx={{
+        "& .MuiDataGrid-root": {
+          border: "none",
+        },
+        "& .MuiDataGrid-cell": {
+          borderBottom: "none",
+        },
+        "& .MuiDataGrid-columnHeaders": {
+          backgroundColor: colors.blueAccent[700],
+          borderBottom: "none",
+        },
+        "& .MuiDataGrid-virtualScroller": {
+          backgroundColor: colors.primary[400],
+        },
+        "& .MuiDataGrid-footerContainer": {
+          borderTop: "none",
+          backgroundColor: colors.blueAccent[700],
+        },
+      }}
+    >
+      <Button variant='contained' color='secondary' onClick={handleAdd}>Add Category</Button>
+      {loading ? (
+        <Typography color="white">Loading...</Typography>
+      ) : (
+        <DataGrid
         rows={categories}
         columns={columns}
-        loading={loading}
         pageSize={10}
-        rowsPerPageOptions={[10, 20, 50]}
+        rowsPerPageOptions={[10, 25, 50]}
+        checkboxSelection
         disableSelectionOnClick
+        components={{
+          Toolbar: GridToolbar,
+        }}
       />
+      )}
+    </Box>
 
       {/* Modal for Add/Edit Category */}
       <Dialog open={isModalOpen} onClose={handleCloseModal}>

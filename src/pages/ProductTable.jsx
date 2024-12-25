@@ -9,11 +9,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
+import { useTheme } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Close } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
+import { tokens } from "../theme";
+import Header from "../components/Header";
 
 const ProductTable = () => {
   const [products, setProducts] = useState([]);
@@ -34,6 +38,8 @@ const ProductTable = () => {
     image_url: "",
   });
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     loadProducts();
@@ -192,7 +198,7 @@ const ProductTable = () => {
       flex: 1,
       renderCell: (params) => (
         <Box>
-          <IconButton onClick={() => handleEdit(params.row.id)} color="primary">
+          <IconButton onClick={() => handleEdit(params.row.id)} color="secondary">
             <EditIcon />
           </IconButton>
           <IconButton onClick={() => handleDelete(params.row.id)} color="error">
@@ -206,24 +212,53 @@ const ProductTable = () => {
   ];
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleAdd}
-        sx={{ mb: 2 }}
+      <Box m="20px">
+      <Header title="Products" subtitle="List of Products" />
+      <Box
+        m="40px 0 0 0"
+        height="75vh"
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+        }}
       >
-        Add New Product
-      </Button>
-      <Box sx={{ height: 500 }}>
-        <DataGrid
+
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<AddIcon />}
+          onClick={handleAdd}
+          sx={{mb:2}}
+        >
+          Add Product
+        </Button>
+        {/* Yüklenme durumu */}
+        {loading ? (
+          <Typography color="white">Loading...</Typography>
+        ) : (
+          <DataGrid
           rows={products}
           columns={columns}
           loading={loading}
           disableSelectionOnClick
           pageSize={10}
         />
+        )}
       </Box>
 
       <Dialog open={isModalOpen} onClose={handleCloseModal}>

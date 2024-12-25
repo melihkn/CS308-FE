@@ -4,7 +4,7 @@ import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { CssBaseline, Box, Typography, IconButton } from '@mui/material';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import SideNavbar from '../sidenavbar';
+import SideNavbar from '../scenes/global/pmsidenavbar';
 import ProductTable from './ProductTable';
 import ReviewTable from './ReviewTable';
 import CategoryTable from './CategoryTable';
@@ -41,11 +41,11 @@ const ProductManagerDashboard = ({ onLogout, userProfile }) => {
         <CssBaseline />
         <Topbar onLogout={onLogout}/>
         <Routes>
-              <Route path="products" element={<ProductTable />} />
-              <Route path="reviews" element={<ReviewTable />} />
-              <Route path="categories" element={<CategoryTable />} />
-              <Route path="orders" element={<OrdersTable/>} />
-            </Routes>
+          <Route path="products" element={<ProductTable />} />
+          <Route path="reviews" element={<ReviewTable />} />
+          <Route path="categories" element={<CategoryTable />} />
+          <Route path="orders" element={<OrdersTable/>} />
+        </Routes>
       </div>
     </div>
   );
