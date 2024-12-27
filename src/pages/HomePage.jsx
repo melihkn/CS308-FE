@@ -97,10 +97,12 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
                     id={product.product_id}
                     name={product.name}
                     model={product.model}
+                    price = {product.price}
                     description={product.description}
                     quantity={product.quantity}
                     distributor={product.distributor}
                     imageUrl={getImageUrl(product.image_url)}
+                    discountRate = {product.discount_rate}
                   />
                 </Grid>
               ))}
@@ -131,10 +133,12 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
                     id={product.product_id}
                     name={product.name}
                     model={product.model}
+                    price = {product.price}
                     description={product.description}
                     quantity={product.quantity}
                     distributor={product.distributor}
                     imageUrl={getImageUrl(product.image_url)}
+                    discountRate = {product.discount_rate}
                   />
                 </Grid>
               ))}
@@ -154,10 +158,12 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
               id={product.product_id}
               name={product.name}
               model={product.model}
+              price={product.price}
               description={product.description}
               quantity={product.quantity}
               distributor={product.distributor}
               imageUrl={getImageUrl(product.image_url)}
+              discountRate = {product.discount_rate}
             />
           </Grid>
         ))}
@@ -175,10 +181,12 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
               id={product.product_id}
               name={product.name}
               model={product.model}
+              price = {product.price}
               description={product.description}
               quantity={product.quantity}
               distributor={product.distributor}
               imageUrl={getImageUrl(product.image_url)}
+              discountRate = {product.discount_rate}
             />
           </Grid>
         ))}

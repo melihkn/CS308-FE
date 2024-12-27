@@ -33,7 +33,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchAverageRating } from "../api/api";
 
-const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantity, distributor, imageUrl }) => {
+const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, quantity, distributor, imageUrl, discountRate }) => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [rating, setRating] = useState(0); // State to store the rating
@@ -108,14 +108,55 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
           <strong>Model:</strong> {model}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {description}
+          <strong>Description:</strong> {description}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <strong>Quantity:</strong> {quantity}
-        </Typography>
+        {quantity === 0 ? (
+          <Typography variant="body2" color="error.main">
+            No Stock
+          </Typography>
+        ) : quantity < 30 ? (
+          <Typography variant="body2" color="error.main">
+            Last Products
+          </Typography>
+        ) : null}
         <Typography variant="body2" color="text.secondary">
           <strong>Distributor:</strong> {distributor}
         </Typography>
+        {/* Add price display */}
+        <Box sx={{ mt: 2, mb: 1 }}>
+          {discountRate > 0 ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  textDecoration: 'line-through',
+                  color: 'text.secondary',
+                  fontSize: '0.9rem'
+                }}
+              >
+                {price.toFixed(2)} $
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'error.main',
+                  fontWeight: 'bold'
+                }}
+              >
+                %{discountRate}
+              </Typography>
+            </Box>
+          ) : null}
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'primary.main',
+              fontWeight: 'bold'
+            }}
+          >
+            {(price * (1 - discountRate / 100)).toFixed(2)} $
+          </Typography>
+        </Box>
         <Box
           sx={{
             display: "flex",
@@ -141,7 +182,6 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
           >
              <ShoppingCart />
           </IconButton>
-          
         </Box>
       </CardContent>
     </Card>
