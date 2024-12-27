@@ -114,7 +114,7 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, 
           <Typography variant="body2" color="error.main">
             No Stock
           </Typography>
-        ) : quantity < 30 ? (
+        ) : quantity < 10 ? (
           <Typography variant="body2" color="error.main">
             Last Products
           </Typography>

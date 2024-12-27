@@ -60,139 +60,151 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
   return (
     <Container maxWidth="lg" sx={{ padding: "20px" }}>
       <Typography variant="h3" align="center" gutterBottom>
-        Welcome to MyTech!
+      Welcome to MyTech!
       </Typography>
       <Typography variant="subtitle1" align="center" gutterBottom>
-        Your one-stop shop for all your tech needs.
+      Your one-stop shop for all your tech needs.
       </Typography>
       <Box sx={{ marginTop: "30px", marginBottom: "30px", height: "600px" }}>
-        <Carousel
-          animation="slide"
-          navButtonsAlwaysVisible
-          indicators={false}
-          sx={{ minHeight: "400px" }}
+      <Carousel
+        animation="slide"
+        navButtonsAlwaysVisible
+        indicators={false}
+        sx={{ minHeight: "400px" }}
+      >
+        <Box
+        sx={{
+          minHeight: "500px",
+          height: "100%",
+          backgroundColor: "#e0e0e0",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          padding: "20px",
+          overflow: "visible",
+        }}
         >
-          <Box
-            sx={{
-              minHeight: "500px",
-              height: "100%",
-              backgroundColor: "#e0e0e0",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              padding: "20px",
-              overflow: "visible",
-            }}
-          >
-            <Typography variant="h4" align="center" gutterBottom>
-              Big Discounts!
-            </Typography>
-            <Grid container spacing={2} justifyContent="center">
-              {discountedProductsRate.slice(0, 3).map((product) => (
-                <Grid item key={product.product_id} xs={12} sm={4}>
-                  <ProductCard
-                    userId={userId}
-                    isLoggedIn={isLoggedIn}
-                    id={product.product_id}
-                    name={product.name}
-                    model={product.model}
-                    price = {product.price}
-                    description={product.description}
-                    quantity={product.quantity}
-                    distributor={product.distributor}
-                    imageUrl={getImageUrl(product.image_url)}
-                    discountRate = {product.discount_rate}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-          <Box
-            sx={{
-              minHeight: "500px",
-              height: "100%",
-              backgroundColor: "#d3d3d3",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              padding: "20px",
-              overflow: "visible",
-            }}
-          >
-            <Typography variant="h4" align="center" gutterBottom>
-              Limited Time Offers!
-            </Typography>
-            <Grid container spacing={2} justifyContent="center">
-              {discountedProductsEndDate.slice(0, 3).map((product) => (
-                <Grid item key={product.product_id} xs={12} sm={4}>
-                  <ProductCard
-                    userId={userId}
-                    isLoggedIn={isLoggedIn}
-                    id={product.product_id}
-                    name={product.name}
-                    model={product.model}
-                    price = {product.price}
-                    description={product.description}
-                    quantity={product.quantity}
-                    distributor={product.distributor}
-                    imageUrl={getImageUrl(product.image_url)}
-                    discountRate = {product.discount_rate}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        </Carousel>
-      </Box>
-      <Typography variant="h4" align="center" gutterBottom>
-        Popular Products
-      </Typography>
-      <Grid container spacing={4} sx={{ mt: 3 }}>
-        {popularProducts.map((product) => (
-          <Grid item key={product.product_id} xs={12} sm={6} md={4} lg={3}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Big Discounts!
+        </Typography>
+        <Grid container spacing={2} justifyContent="center">
+          {discountedProductsRate.slice(0, 3).map((product) => (
+          <Grid item key={product.product_id} xs={12} sm={4}>
             <ProductCard
-              userId={userId}
-              isLoggedIn={isLoggedIn}
-              id={product.product_id}
-              name={product.name}
-              model={product.model}
-              price={product.price}
-              description={product.description}
-              quantity={product.quantity}
-              distributor={product.distributor}
-              imageUrl={getImageUrl(product.image_url)}
-              discountRate = {product.discount_rate}
+            userId={userId}
+            isLoggedIn={isLoggedIn}
+            id={product.product_id}
+            name={product.name}
+            model={product.model}
+            price={product.price}
+            description={product.description}
+            quantity={product.quantity}
+            distributor={product.distributor}
+            imageUrl={getImageUrl(product.image_url)}
+            discountRate={product.discount_rate}
             />
           </Grid>
-        ))}
+          ))}
+        </Grid>
+        </Box>
+        <Box
+        sx={{
+          minHeight: "500px",
+          height: "100%",
+          backgroundColor: "#d3d3d3",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          padding: "20px",
+          overflow: "visible",
+        }}
+        >
+        <Typography variant="h4" align="center" gutterBottom>
+          Limited Time Offers!
+        </Typography>
+        <Grid container spacing={2} justifyContent="center">
+          {discountedProductsEndDate.slice(0, 3).map((product) => (
+          <Grid item key={product.product_id} xs={12} sm={4}>
+            <ProductCard
+            userId={userId}
+            isLoggedIn={isLoggedIn}
+            id={product.product_id}
+            name={product.name}
+            model={product.model}
+            price={product.price}
+            description={product.description}
+            quantity={product.quantity}
+            distributor={product.distributor}
+            imageUrl={getImageUrl(product.image_url)}
+            discountRate={product.discount_rate}
+            />
+          </Grid>
+          ))}
+        </Grid>
+        </Box>
+      </Carousel>
+      </Box>
+      <Typography variant="h4" align="center" gutterBottom>
+      Popular Products
+      </Typography>
+      <Grid container spacing={4} sx={{ mt: 3 }}>
+      {popularProducts.map((product) => {
+        const discountedProduct = discountedProductsRate.find(
+        (discounted) => discounted.product_id === product.product_id
+        );
+        const discountRate = discountedProduct ? discountedProduct.discount_rate : 0;
+        return (
+        <Grid item key={product.product_id} xs={12} sm={6} md={4} lg={3}>
+          <ProductCard
+          userId={userId}
+          isLoggedIn={isLoggedIn}
+          id={product.product_id}
+          name={product.name}
+          model={product.model}
+          price={product.price}
+          description={product.description}
+          quantity={product.quantity}
+          distributor={product.distributor}
+          imageUrl={getImageUrl(product.image_url)}
+          discountRate={discountRate}
+          />
+        </Grid>
+        );
+      })}
       </Grid>
 
       <Typography variant="h4" align="center" gutterBottom sx={{ mt: 5 }}>
-        All Products
+      All Products
       </Typography>
       <Grid container spacing={4} sx={{ mt: 3 }}>
-        {products.map((product) => (
-          <Grid item key={product.product_id} xs={12} sm={6} md={4} lg={3}>
-            <ProductCard
-              userId={userId}
-              isLoggedIn={isLoggedIn}
-              id={product.product_id}
-              name={product.name}
-              model={product.model}
-              price = {product.price}
-              description={product.description}
-              quantity={product.quantity}
-              distributor={product.distributor}
-              imageUrl={getImageUrl(product.image_url)}
-              discountRate = {product.discount_rate}
-            />
-          </Grid>
-        ))}
+      {products.map((product) => {
+        const discountedProduct = discountedProductsRate.find(
+        (discounted) => discounted.product_id === product.product_id
+        );
+        const discountRate = discountedProduct ? discountedProduct.discount_rate : 0;
+        return (
+        <Grid item key={product.product_id} xs={12} sm={6} md={4} lg={3}>
+          <ProductCard
+          userId={userId}
+          isLoggedIn={isLoggedIn}
+          id={product.product_id}
+          name={product.name}
+          model={product.model}
+          price={product.price}
+          description={product.description}
+          quantity={product.quantity}
+          distributor={product.distributor}
+          imageUrl={getImageUrl(product.image_url)}
+          discountRate={discountRate}
+          />
+        </Grid>
+        );
+      })}
       </Grid>
     </Container>
-  );
+    );
 };
 
 export default HomePage;
