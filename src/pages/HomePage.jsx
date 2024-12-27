@@ -1,14 +1,15 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Typography, Container, Box, Button } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import { Typography, Container, Grid, Box, Button } from "@mui/material";
 import ProductCard from "../components/ProductCard";
 import Carousel from "react-material-ui-carousel";
 
 const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
   const [products, setProducts] = useState([]);
   const [popularProducts, setPopularProducts] = useState([]);
-  const [discountedProducts, setDiscountedProducts] = useState([]);
+  const [discountedProductsRate, setDiscountedProductsByRate] = useState([]);
+  const [discountedProductsEndDate, setDiscountedProductsByEndDate] = useState([]);
   const BACKEND_URL = "http://127.0.0.1:8002";
 
   useEffect(() => {
@@ -30,18 +31,28 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
       }
     };
 
-    const fetchDiscountedProducts = async () => {
+    const fetchDiscountedProductsByRate = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/products/discounted`);
+        const response = await axios.get(`${BACKEND_URL}/products/products/discounted-by-rate`);
         const discounted = response.data;
-        setDiscountedProducts(discounted);
+        setDiscountedProductsByRate(discounted);
+      } catch (error) {
+        console.error("Error fetching discounted products:", error);
+      }
+    };
+    const fetchDiscountedProductsByEndDate = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/products/products/discounted-by-end-date`);
+        const discounted = response.data;
+        setDiscountedProductsByEndDate(discounted);
       } catch (error) {
         console.error("Error fetching discounted products:", error);
       }
     };
 
     fetchProducts();
-    fetchDiscountedProducts();
+    fetchDiscountedProductsByRate();
+    fetchDiscountedProductsByEndDate();
   }, [selectedCategory]);
 
   const getImageUrl = (imageUrl) => `${BACKEND_URL}/static/${imageUrl}`;
@@ -75,10 +86,10 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
             }}
           >
             <Typography variant="h4" align="center" gutterBottom>
-              Discounted Products
+              Big Discounts!
             </Typography>
             <Grid container spacing={2} justifyContent="center">
-              {discountedProducts.slice(0, 3).map((product) => (
+              {discountedProductsRate.slice(0, 3).map((product) => (
                 <Grid item key={product.product_id} xs={12} sm={4}>
                   <ProductCard
                     userId={userId}
@@ -109,11 +120,25 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
             }}
           >
             <Typography variant="h4" align="center" gutterBottom>
-              Promotion 2: Limited Time Offer!
+              Limited Time Offers!
             </Typography>
-            <Button variant="contained" color="primary" sx={{ marginTop: "20px" }}>
-              Shop Now
-            </Button>
+            <Grid container spacing={2} justifyContent="center">
+              {discountedProductsEndDate.slice(0, 3).map((product) => (
+                <Grid item key={product.product_id} xs={12} sm={4}>
+                  <ProductCard
+                    userId={userId}
+                    isLoggedIn={isLoggedIn}
+                    id={product.product_id}
+                    name={product.name}
+                    model={product.model}
+                    description={product.description}
+                    quantity={product.quantity}
+                    distributor={product.distributor}
+                    imageUrl={getImageUrl(product.image_url)}
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Box>
         </Carousel>
       </Box>
