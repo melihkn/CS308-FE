@@ -38,7 +38,7 @@ const InvoiceViewer = () => {
 
     return (
         <div>
-          <h1>Invoice</h1>
+          
           <iframe
             src={pdfUrl}
             title="Invoice PDF"

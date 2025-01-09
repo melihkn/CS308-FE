@@ -138,7 +138,7 @@ const Products = () => {
         <Box
           p={4}
           sx={{
-            backgroundColor: colors.primary[500],
+            backgroundColor: colors.primary[400],
             color: colors.grey[100],
             width: 400,
             margin: "100px auto",

@@ -10,6 +10,7 @@ import Refunds from "../refunds";
 import ProfitLossPage from "../profitLoss";
 import RevenueCostPage from "../revenueCost";
 import Dashboard from "../dashboard";
+import InvoiceViewer from "../../pages/InvoiceViewer.jsx"
 
 function MainContent({ onLogout, userProfile }) {
   return (
@@ -35,6 +36,7 @@ function MainContent({ onLogout, userProfile }) {
           <Route path="refunds" element={<Refunds />} />
           <Route path = "profitLoss" element = {<ProfitLossPage/>}/>
           <Route path = "revenueCost" element = {<RevenueCostPage/>}/>
+          
         </Routes>
       </div>
     </div>
