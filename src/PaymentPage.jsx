@@ -1,4 +1,3 @@
-/*
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -17,11 +16,16 @@ function PaymentPage() {
   const location = useLocation();
   const { cartItems = [], userId = null } = location.state || {};
   const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [addressType, setAddressType] = useState('Home'); // Default type
+  const [addressName, setAddressName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cvc, setCvc] = useState('');
   const [expiryMonth, setExpiryMonth] = useState('');
   const [expiryYear, setExpiryYear] = useState('');
   const navigate = useNavigate();
+
+  // Helper function to get the token from localStorage
+  const getToken = () => localStorage.getItem("token");
 
   const handlePayment = async () => {
     if (!cartItems.length) {
@@ -35,6 +39,9 @@ function PaymentPage() {
       customer_id: userId,
       total_price: totalPrice,
       order_date: new Date().toISOString().split('T')[0],
+      order_address: deliveryAddress,
+      order_address_type: addressType,
+      order_address_name: addressName || null, // Optional field
       payment_status: "paid",
       invoice_link: null,
       order_status: 0,
@@ -42,13 +49,22 @@ function PaymentPage() {
         product_id: item.product_id,
         quantity: item.quantity,
         price_at_purchase: item.price,
-      }))
+      })),
     };
 
     try {
+      const token = getToken();
+
+      if (!token) {
+        throw new Error("Authentication token is missing.");
+      }
+
       const response = await fetch('http://127.0.0.1:8004/api/orders/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Attach token to Authorization header
+        },
         body: JSON.stringify(orderData),
       });
 
@@ -66,13 +82,8 @@ function PaymentPage() {
       console.error('Order creation failed:', error);
       alert(`Order creation failed: ${error.message}`);
     }
-
-    
-
-    //navigate('/orders');
   };
 
-  
   const clearShoppingCart = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8001/cart/clear?customer_id=${userId}`, {
@@ -114,6 +125,20 @@ function PaymentPage() {
             onChange={(e) => setDeliveryAddress(e.target.value)}
           />
           <TextField
+            label="Address Type (Home, Work, etc.)"
+            variant="outlined"
+            fullWidth
+            value={addressType}
+            onChange={(e) => setAddressType(e.target.value)}
+          />
+          <TextField
+            label="Address Name (Optional)"
+            variant="outlined"
+            fullWidth
+            value={addressName}
+            onChange={(e) => setAddressName(e.target.value)}
+          />
+          <TextField
             label="Card Number"
             variant="outlined"
             fullWidth
@@ -153,8 +178,8 @@ function PaymentPage() {
 }
 
 export default PaymentPage;
-*/
 
+/*
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -323,3 +348,4 @@ function PaymentPage() {
 }
 
 export default PaymentPage;
+*/
