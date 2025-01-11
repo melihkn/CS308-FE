@@ -1,0 +1,4 @@
+-Summary'i örnekteki gibi bir sayfa yap 
+-StepIndicator Renkler ve yuvarlaklar DONE
+-Adres'in saklanmasını sağla DONE
+-Sondaki kard ** olsun DONE

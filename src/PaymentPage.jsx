@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Container, Grid, Paper, Typography } from '@mui/material';
-import AddressForm from './AddressForm';  // Adres formunu içeren bileşen
-import PaymentForm from './PaymentForm';  // Ödeme formunu içeren bileşen
-import Review from './Review';  // İnceleme ve sipariş tamamlama bileşeni
-import OrderSummary from './OrderSummary';  // Sipariş özeti bileşeni
-import StepIndicator from './StepIndicator';  // Adım göstergesi bileşeni
+import AddressForm from './AddressForm';
+import PaymentForm from './PaymentForm';
+import Review from './Review';
+import OrderSummary from './OrderSummary';
+import StepIndicator from './StepIndicator';
 
 function PaymentPage() {
   const location = useLocation();
@@ -13,9 +13,25 @@ function PaymentPage() {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
+
+  // 1. Instead of storing only a combined "deliveryAddress" string,
+  //    let's store the full address fields so we can retain them 
+  //    when the user navigates back and forth.
+  const [addressFields, setAddressFields] = useState({
+    firstName: '',
+    lastName: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: '',
+  });
+
+  // You can still store an additional "deliveryAddress" string if needed,
+  // but the addressFields object will be your source of truth for the form.
   const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [addressType, setAddressType] = useState('Home');
-  const [addressName, setAddressName] = useState('');
+
   const [cardDetails, setCardDetails] = useState({
     cardNumber: '',
     cvc: '',
@@ -30,9 +46,8 @@ function PaymentPage() {
 
   const handlePayment = () => {
     alert('Order placed successfully!');
-    // Burada ödeme işlemini gerçekleştirebilirsiniz.
-    // Ödeme başarılı olduktan sonra kullanıcıyı fatura sayfasına yönlendirebilirsiniz.
-    // navigate('/invoice');  // Örneğin, ödeme sonrası faturayı görüntülemek için
+    // Payment logic here
+    // navigate('/invoice'); 
   };
 
   const renderStep = () => {
@@ -40,12 +55,12 @@ function PaymentPage() {
       case 1:
         return (
           <AddressForm
-            address={deliveryAddress}
-            addressType={addressType}
-            addressName={addressName}
-            setAddress={setDeliveryAddress}
-            setAddressType={setAddressType}
-            setAddressName={setAddressName}
+            // 2. Pass addressFields and its setter down to the form
+            addressFields={addressFields}
+            setAddressFields={setAddressFields}
+            // 3. Also pass a function to set the combined address string 
+            //    if you still want that single string stored
+            setDeliveryAddress={setDeliveryAddress}
             onNext={() => setStep(2)}
           />
         );
@@ -62,7 +77,7 @@ function PaymentPage() {
         return (
           <Review
             address={deliveryAddress}
-            addressType={addressType}
+            addressType={addressFields.addressType}
             cartItems={cartItems}
             totalPrice={totalPrice}
             cardDetails={cardDetails}
@@ -77,15 +92,13 @@ function PaymentPage() {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <StepIndicator activeStep={step - 1} />  {/* Adım göstergesi */}
-      
+      <StepIndicator activeStep={step - 1} />
+
       <Grid container spacing={3}>
-        {/* Sol Taraf: Order Summary */}
         <Grid item xs={12} md={4}>
           <OrderSummary cartItems={cartItems} totalPrice={totalPrice} />
         </Grid>
 
-        {/* Sağ Taraf: Formlar */}
         <Grid item xs={12} md={8}>
           <Paper elevation={3} sx={{ p: 4 }}>
             <Typography variant="h4" gutterBottom>

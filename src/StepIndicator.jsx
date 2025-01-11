@@ -4,7 +4,6 @@ import { styled } from '@mui/system';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CircleIcon from '@mui/icons-material/Circle';
 
-// Stepper Bileşeni için özel stil
 const CustomStepper = styled(Stepper)(({ theme }) => ({
   padding: '10px 0',
   backgroundColor: 'transparent',
@@ -17,69 +16,105 @@ const CustomStepper = styled(Stepper)(({ theme }) => ({
 }));
 
 const StepIndicator = ({ activeStep }) => {
+  // Helper to determine icon & color states
+  const renderStepProps = (stepIndex) => {
+    // Step is "done" if activeStep > stepIndex
+    const isDone = activeStep > stepIndex;
+    // Step is "current" if activeStep === stepIndex
+    const isCurrent = activeStep === stepIndex;
+    // Step is "future" if activeStep < stepIndex
+
+    if (isDone) {
+      // Done step → green check icon
+      return {
+        icon: <CheckCircleIcon sx={{ color: 'green' }} />,
+        labelColor: 'green',
+        iconBg: 'green',
+      };
+    } else if (isCurrent) {
+      // Current step → purple circle
+      return {
+        icon: <CircleIcon sx={{ color: 'lightgrey' }} />,
+        labelColor: 'lightgrey',
+        iconBg: 'lightgrey',
+      };
+    } else {
+      // Future step → gray circle
+      return {
+        icon: <CircleIcon sx={{ color: 'gray' }} />,
+        labelColor: 'gray',
+        iconBg: 'transparent',
+      };
+    }
+  };
+
   return (
     <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Step Progress</Typography>
+      <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+        Step Progress
+      </Typography>
       <CustomStepper activeStep={activeStep} alternativeLabel>
+        {/* Step 0 */}
         <Step>
-          <StepLabel
-            icon={
-              activeStep > 0 ? (
-                <CheckCircleIcon sx={{ color: 'rgb(48, 63, 159)' }} />
-              ) : (
-                <CircleIcon sx={{ color: 'gray' }} />
-              )
-            }
-            sx={{
-              color: activeStep > 0 ? 'rgb(48, 63, 159)' : 'gray',
-              '& .MuiStepLabel-icon': {
-                backgroundColor: activeStep > 0 ? 'rgb(48, 63, 159)' : 'transparent',
-                color: 'white',
-              },
-            }}
-          >
-            Shipping address
-          </StepLabel>
+          {(() => {
+            const { icon, labelColor, iconBg } = renderStepProps(0);
+            return (
+              <StepLabel
+                icon={icon}
+                sx={{
+                  color: labelColor,
+                  '& .MuiStepLabel-icon': {
+                    backgroundColor: iconBg,
+                    color: 'white',
+                  },
+                }}
+              >
+                Shipping address
+              </StepLabel>
+            );
+          })()}
         </Step>
+
+        {/* Step 1 */}
         <Step>
-          <StepLabel
-            icon={
-              activeStep > 1 ? (
-                <CheckCircleIcon sx={{ color: 'rgb(48, 63, 159)' }} />
-              ) : (
-                <CircleIcon sx={{ color: 'gray' }} />
-              )
-            }
-            sx={{
-              color: activeStep > 1 ? 'rgb(48, 63, 159)' : 'gray',
-              '& .MuiStepLabel-icon': {
-                backgroundColor: activeStep > 1 ? 'rgb(48, 63, 159)' : 'transparent',
-                color: 'white',
-              },
-            }}
-          >
-            Payment details
-          </StepLabel>
+          {(() => {
+            const { icon, labelColor, iconBg } = renderStepProps(1);
+            return (
+              <StepLabel
+                icon={icon}
+                sx={{
+                  color: labelColor,
+                  '& .MuiStepLabel-icon': {
+                    backgroundColor: iconBg,
+                    color: 'white',
+                  },
+                }}
+              >
+                Payment details
+              </StepLabel>
+            );
+          })()}
         </Step>
+
+        {/* Step 2 */}
         <Step>
-          <StepLabel
-            icon={
-              activeStep > 2 ? (
-                <CheckCircleIcon sx={{ color: 'rgb(48, 63, 159)' }} />
-              ) : (
-                <CircleIcon sx={{ color: 'gray' }} />
-              )
-            }
-            sx={{
-              color: activeStep > 2 ? 'rgb(48, 63, 159)' : 'gray',
-              '& .MuiStepLabel-icon': {
-                backgroundColor: activeStep > 2 ? 'rgb(48, 63, 159)' : 'transparent',
-                color: 'white',
-              },
-            }}
-          >
-            Review your order
-          </StepLabel>
+          {(() => {
+            const { icon, labelColor, iconBg } = renderStepProps(2);
+            return (
+              <StepLabel
+                icon={icon}
+                sx={{
+                  color: labelColor,
+                  '& .MuiStepLabel-icon': {
+                    backgroundColor: iconBg,
+                    color: 'white',
+                  },
+                }}
+              >
+                Review your order
+              </StepLabel>
+            );
+          })()}
         </Step>
       </CustomStepper>
     </Box>
