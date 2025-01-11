@@ -4,6 +4,8 @@ import axios from "axios";
 import { Typography, Container, Grid, Box, Button } from "@mui/material";
 import ProductCard from "../components/ProductCard";
 import Carousel from "react-material-ui-carousel";
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
 
 const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
   const [products, setProducts] = useState([]);
@@ -11,6 +13,8 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
   const [discountedProductsRate, setDiscountedProductsByRate] = useState([]);
   const [discountedProductsEndDate, setDiscountedProductsByEndDate] = useState([]);
   const BACKEND_URL = "http://127.0.0.1:8002";
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -76,7 +80,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
         sx={{
           minHeight: "500px",
           height: "100%",
-          backgroundColor: "#e0e0e0",
+          backgroundColor: colors.primary,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -112,7 +116,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
         sx={{
           minHeight: "500px",
           height: "100%",
-          backgroundColor: "#d3d3d3",
+          backgroundColor: colors.blueAccent,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",

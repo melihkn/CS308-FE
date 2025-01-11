@@ -58,7 +58,7 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
       {/* Logo */}
       <Button
         onClick={() => navigate("/")}
-        sx={{ fontSize: "24px", fontWeight: "bold", color: "white" }}
+        sx={{ fontSize: "24px", fontWeight: "bold", color: colors.primary[500] }}
       >
         MyTech
       </Button>
@@ -66,19 +66,19 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
       {/* Search Bar */}
       <Box
         display="flex"
-        backgroundColor={mode === "dark" ? colors.primary[700] : colors.primary[500]}
+        backgroundColor={colors.primary[700]}
         borderRadius={4}
         p={1}
         sx={{ width: "50%" }}
       >
         <InputBase
-          sx={{ flex: 1, color: "white" }}
+          sx={{ flex: 1, color: colors.secondary }}
           placeholder="Search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <IconButton onClick={handleSearch} sx={{ p: 1 }}>
-          <SearchIcon sx={{ color: "white" }} />
+          <SearchIcon sx={{ color: colors.secondary}} />
         </IconButton>
       </Box>
 
@@ -86,7 +86,7 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
       <Box display="flex" alignItems="center" gap={2}>
         {/* Theme Toggle */}
         <IconButton onClick={colorMode.toggleColorMode}>
-          {mode === "dark" ? <LightModeOutlined sx={{ color: "white" }} /> : <DarkModeOutlined sx={{ color: "white" }} />}
+          {mode === "dark" ? <LightModeOutlined sx={{ color: colors.secondary }} /> : <DarkModeOutlined sx={{ color: "white" }} />}
         </IconButton>
 
         {/* Login/Register or Profile Dropdown */}

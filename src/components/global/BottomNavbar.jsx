@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Box, Button, Menu, MenuItem, CircularProgress, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ColorModeContext, tokens } from "../../theme";
+import { tokens } from "../../theme";
 
 const BottomNavbar = () => {
   const [categories, setCategories] = useState([]);
@@ -14,7 +14,8 @@ const BottomNavbar = () => {
   // Use theme and color mode
   const theme = useTheme();
   const mode = theme.palette.mode;
-  const colors = tokens(mode);
+
+  const colors = tokens(theme.palette.mode);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -66,8 +67,8 @@ const BottomNavbar = () => {
       display="flex"
       justifyContent="center"
       sx={{
-        backgroundColor: mode === "dark" ? colors.primary[800] : "#ffffff",
-        color: mode === "dark" ? "#ffffff" : "#000000",
+        backgroundColor: colors.secondary,
+        color: colors.primary,
         py: 1,
         boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
       }}

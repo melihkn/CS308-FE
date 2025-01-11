@@ -4,11 +4,15 @@ import { ShoppingCart } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchAverageRating } from "../api/api";
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
 
 const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, quantity, distributor, imageUrl, discountRate }) => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [rating, setRating] = useState(0);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     const fetchRating = async () => {
@@ -98,7 +102,7 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, 
           image={imageUrl}
         />
       </Box>
-      <CardContent>
+      <CardContent  sx={{ height: 220, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <Typography gutterBottom variant="h5" component="div">
           {name}
         </Typography>
@@ -140,7 +144,7 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, 
           <Typography
             variant="h6"
             sx={{
-              color: 'primary.main',
+              color: colors.primary,
               fontWeight: 'bold'
             }}
           >
