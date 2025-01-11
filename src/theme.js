@@ -20,12 +20,12 @@ export const tokens = (mode) => ({
           100: "#d0d1d5",
           200: "#a1a4ab",
           300: "#727681",
-          400: "#3a4758", // Adjusted for better readability
-          500: "#1F2A40",
-          600: "#1b2436",
-          700: "#162030",
-          800: "#101a29",
-          900: "#0b141f",
+          400: "#1F2A40",
+          500: "#141b2d",
+          600: "#101624",
+          700: "#0c101b",
+          800: "#080b12",
+          900: "#040509",
         },
         greenAccent: {
           100: "#dbf5ee",
@@ -74,11 +74,11 @@ export const tokens = (mode) => ({
           900: "#e0e0e0",
         },
         primary: {
-          100: "#f0f4ff", // Lighter blue for better light mode aesthetics
-          200: "#d6e1ff",
-          300: "#bcd0ff",
-          400: "#6495ED", // Cornflower Blue remains for accents
-          500: "#3a4758", // Neutral dark shade for balance
+          100: "#040509",
+          200: "#080b12",
+          300: "#0c101b",
+          400: "#f2f0f0", // manually changed
+          500: "#141b2d",
           600: "#1F2A40",
           700: "#727681",
           800: "#a1a4ab",
@@ -120,7 +120,7 @@ export const tokens = (mode) => ({
       }),
 });
 
-// MUI theme settings
+// mui theme settings
 export const themeSettings = (mode) => {
   const colors = tokens(mode);
   return {
@@ -128,6 +128,7 @@ export const themeSettings = (mode) => {
       mode: mode,
       ...(mode === "dark"
         ? {
+            // palette values for dark mode
             primary: {
               main: colors.primary[500],
             },
@@ -144,8 +145,9 @@ export const themeSettings = (mode) => {
             },
           }
         : {
+            // palette values for light mode
             primary: {
-              main: colors.primary[400],
+              main: colors.primary[100],
             },
             secondary: {
               main: colors.greenAccent[500],
@@ -162,7 +164,7 @@ export const themeSettings = (mode) => {
     },
     typography: {
       fontFamily: ["Source Sans 3", "sans-serif"].join(","),
-      fontSize: 14,
+      fontSize: 12,
       h1: {
         fontFamily: ["Source Sans 3", "sans-serif"].join(","),
         fontSize: 40,
@@ -181,17 +183,17 @@ export const themeSettings = (mode) => {
       },
       h5: {
         fontFamily: ["Source Sans 3", "sans-serif"].join(","),
-        fontSize: 18,
+        fontSize: 16,
       },
       h6: {
         fontFamily: ["Source Sans 3", "sans-serif"].join(","),
-        fontSize: 16,
+        fontSize: 14,
       },
     },
   };
 };
 
-// Context for color mode
+// context for color mode
 export const ColorModeContext = createContext({
   toggleColorMode: () => {},
 });

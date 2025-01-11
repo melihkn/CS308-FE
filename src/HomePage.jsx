@@ -114,6 +114,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
               quantity={product.quantity}
               distributor={product.distributor}
               imageUrl={getImageUrl(product.image_url)}
+              rating={product.average_rating}
             />
           </Grid>
         ))}
