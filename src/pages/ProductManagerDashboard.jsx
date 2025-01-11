@@ -45,6 +45,7 @@ const ProductManagerDashboard = ({ onLogout, userProfile }) => {
           <Route path="reviews" element={<ReviewTable />} />
           <Route path="categories" element={<CategoryTable />} />
           <Route path="orders" element={<OrdersTable/>} />
+          
         </Routes>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { fetchReviews, approveReview, disapproveReview } from '../api/api';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
+import { CardMedia } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
@@ -27,12 +28,14 @@ const ReviewTable = () => {
       console.log('Reviews:', response);
       const formattedReviews = response.map((review) => ({
         id: review.review_id, // Map review_id to id for DataGrid
+        image_url: review.image_url, // Include image URL
         customer_name: review.customer_name, // Include customer name
         product_name: review.product_name, // Include product name
         rating: review.rating,
         comment: review.comment,
         approval_status: review.approval_status,
       }));
+      console.log('Formatted reviews:', formattedReviews);
       setReviews(formattedReviews);
       setLoading(false);
     } catch (error) {
@@ -60,6 +63,20 @@ const ReviewTable = () => {
 
   const columns = [
     { field: 'id', headerName: 'ID', flex: 1 },
+    {
+      field: "image_url",
+      headerName: "Image",
+      width: 100,
+      renderCell: (params) => (
+        <CardMedia
+          component="img"
+          sx={{ width: 50, height: 50, objectFit: "contain" }}
+          image={`http://127.0.0.1:8001/static/${params.row.image_url}` || "/placeholder.svg"}
+          //image={`${params.value}` || "/placeholder.svg"}
+          alt={params.row.product_name}
+        />
+      ),
+    },
     { field: 'customer_name', headerName: 'Customer Name', flex: 1.5 }, // Customer Name column
     { field: 'product_name', headerName: 'Product Name', flex: 1.5 }, // Product Name column
     { field: 'rating', headerName: 'Rating', flex: 1 },
@@ -91,7 +108,7 @@ const ReviewTable = () => {
 
   return (
 <Box m="20px">
-      <Header title="Refund Managements" subtitle="List of Refund Requests" />
+      <Header title="Review Managements" subtitle="List of Review Requests" />
       <Box
         m="40px 0 0 0"
         height="75vh"

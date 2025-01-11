@@ -3,6 +3,8 @@ import {
   DataGrid,
   GridToolbar,
 } from '@mui/x-data-grid';
+
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -55,6 +57,7 @@ const INVERSE_STATUS_MAP = {
 };
 
 const OrdersTable = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
@@ -152,7 +155,12 @@ const OrdersTable = () => {
 
 
 
-  const handleViewInvoice = async (orderId) => {
+  const handleViewInvoice = (order_id) => {
+    //navigate(`/invoice/${order_id}`);
+    window.open(`/invoice/${order_id}`, '_blank');
+  };
+
+/*   const handleViewInvoice = async (orderId) => {
     setLoadingInvoice(true);
     setInvoiceModalOpen(true);
     
@@ -170,8 +178,11 @@ const OrdersTable = () => {
     } finally {
       setLoadingInvoice(false);
     }
-  };
+  }; */
 
+  const handleRowClick = (productId) => {
+    navigate(`/product-detail/${productId}`);
+  };
 
 
   const columns = [
@@ -320,6 +331,23 @@ const OrdersTable = () => {
     >
       <Box
         sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
           position: "absolute",
           top: "50%",
           left: "50%",
@@ -329,6 +357,8 @@ const OrdersTable = () => {
           boxShadow: 24,
           p: 4,
         }}
+        
+
       >
         <Typography id="modal-modal-title" variant="h6" component="h2" gutterBottom>
           Order Products
@@ -366,13 +396,23 @@ const OrdersTable = () => {
               },
               { field: "product_id", headerName: "Product ID", width: 150 },
               { field: "product_name", headerName: "Name", width: 200 },
-              { field: "quantity", headerName: "Quantity", type: "number", width: 120 },
+              { field: "quantity", headerName: "Quantity", type: "number", width: 100 },
               {
                 field: "price_at_purchase",
                 headerName: "Price",
+                type: "number",
+                width: 120,
                 flex: 1,
                 renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
               },
+              {field: 'actions', headerName: 'Actions', width: 100, renderCell: (params) => (
+                <Box>
+                  <IconButton onClick={() => handleRowClick(params.row.product_id)} sx={{ color: '#868dfb' , mr:1}}>
+                    <VisibilityIcon />
+                  </IconButton>
+                </Box>
+              )
+              }
             ]}
             pageSize={5}
             rowsPerPageOptions={[5, 10]}
