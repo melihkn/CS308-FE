@@ -1,16 +1,12 @@
 import React from "react";
 import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Box,
   Typography,
-  Slider,
   Button,
   Divider,
+  Rating,
+  Slider,
 } from "@mui/material";
-import StarRateIcon from "@mui/icons-material/StarRate";
 
 function FiltersSearch({ filters, onFilterChange, onApplyFilters, onResetFilters }) {
   const handlePriceChange = (event, newValue) => {
@@ -18,7 +14,9 @@ function FiltersSearch({ filters, onFilterChange, onApplyFilters, onResetFilters
   };
 
   const handleRatingChange = (event, newValue) => {
-    onFilterChange({ rating_min: newValue });
+    if (newValue !== null) {
+      onFilterChange({ rating_min: newValue });
+    }
   };
 
   return (
@@ -29,31 +27,20 @@ function FiltersSearch({ filters, onFilterChange, onApplyFilters, onResetFilters
       {/* Price Range Filter */}
       <Typography gutterBottom>Price Range</Typography>
       <Slider
-        value={[filters.price_min || 0, filters.price_max || 1000]}
+        value={[filters.price_min || 0, filters.price_max || 1500]}
         onChange={handlePriceChange}
         valueLabelDisplay="auto"
         min={0}
-        max={1000}
+        max={1500}
       />
 
       {/* Rating Filter */}
       <Typography gutterBottom>Minimum Rating</Typography>
-      <Slider
+      <Rating
+        name="rating-filter"
         value={filters.rating_min || 0}
         onChange={handleRatingChange}
-        valueLabelDisplay="auto"
-        step={1}
-        marks
-        min={0}
-        max={5}
-        sx={{ "& .MuiSlider-markLabel": { display: "flex", alignItems: "center" } }}
-        valueLabelFormat={(value) => (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            {Array.from({ length: value }, (_, i) => (
-              <StarRateIcon key={i} fontSize="small" color="primary" />
-            ))}
-          </Box>
-        )}
+        precision={1} // Allows selection of whole numbers only
       />
 
       <Divider />

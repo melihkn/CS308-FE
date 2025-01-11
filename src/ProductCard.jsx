@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchAverageRating } from "./api";
 
-const ProductCard = ({ userId, isLoggedIn, id, name, model, description, price, quantity, distributor, imageUrl }) => {
+const ProductCard = ({ userId, isLoggedIn, id, name, model, description, price, quantity, distributor, imageUrl, rating }) => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [rating, setRating] = useState(0); // State to store the rating
+  const [rating_, setRating] = useState(0); // State to store the rating
 
   useEffect(() => {
     // Fetch the rating when the component is mounted
+    console.log("Average rating for product", id, "is", rating);
     const fetchRating = async () => {
       const avgRating = await fetchAverageRating(id); // Fetch the average rating for this product
       setRating(avgRating); // Update the state with the fetched rating

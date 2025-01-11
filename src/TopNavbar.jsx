@@ -28,6 +28,8 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
         query: searchQuery.trim(),
       });
 
+
+      console.log(response.data);
       // Navigate to the search results page with the data
       navigate("/search-results", { state: { results: response.data } });
     } catch (error) {
