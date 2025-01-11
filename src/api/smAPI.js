@@ -1,68 +1,85 @@
 import axios from "axios";
 
-// API'den müşteri verilerini çekmek için fonksiyon
+// Axios Global Config
+axios.defaults.baseURL = "http://localhost:8003/SalesManager"; // Tüm endpoint'ler için temel URL
+
+// Token eklemek için Axios Request Interceptor
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token"); // Token'i localStorage'dan alın (veya başka bir yerden)
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Unauthorized olduğunda kullanıcıyı logout etmek için Response Interceptor
+axios.interceptors.response.use(
+  (response) => response, // Başarılı cevapları direkt dön
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.warn("Unauthorized access detected. Logging out...");
+      localStorage.removeItem("token"); // Token'i kaldırın
+      window.location.href = "/login"; // Login sayfasına yönlendirin
+    }
+    return Promise.reject(error);
+  }
+);
+
+// API fonksiyonları
+
+// Müşteri verilerini çekmek için fonksiyon
 export const fetchCustomers = async () => {
   try {
-    const response = await axios.get("http://localhost:8003/SalesManager/customers"); // Axios ile GET isteği
-    return response.data; // Gelen yanıtın data kısmını döndür
+    const response = await axios.get("/customers");
+    return response.data;
   } catch (error) {
     console.error("API'den veri alınırken bir hata oluştu:", error);
-    throw error; // Hatayı fırlat, böylece bileşen bunu işleyebilir
+    throw error;
   }
 };
 
 export const fetchDiscounts = async () => {
-
-  try{
-
-    const response = await axios.get("http://localhost:8003/SalesManager/discounts");
+  try {
+    const response = await axios.get("/discounts");
     return response.data;
-
-
-  }catch(error){
-    console.log("API'den veri alınırken bir hata oluştu:", error);
+  } catch (error) {
+    console.error("API'den veri alınırken bir hata oluştu:", error);
     throw error;
   }
-
 };
-
 
 // Yeni bir indirim oluştur
 export const createDiscount = async (discountData) => {
   try {
-    const response = await axios.post("http://localhost:8003/SalesManager/discounts", discountData);
+    const response = await axios.post("/discounts", discountData);
     return response.data;
   } catch (error) {
     console.error("Yeni indirim oluşturulurken bir hata oluştu:", error);
-    throw error; // Hata durumunda üst katmana fırlat
+    throw error;
   }
 };
-
 
 // Tüm ürünleri getir
 export const fetchProducts = async () => {
   try {
-    const response = await axios.get("http://localhost:8003/SalesManager/products"); // GET endpoint
-    return response.data; // Ürünleri döndür
+    const response = await axios.get("/products");
+    return response.data;
   } catch (error) {
     console.error("Ürünler alınırken bir hata oluştu:", error);
     throw error;
   }
 };
 
-
-
 export const setProductPriceAPI = async (productId, newPrice) => {
   try {
-    const response = await axios.patch(
-      `http://localhost:8003/SalesManager/products/${productId}/set-price`,
-      { price: newPrice }, // Body doğru formatta JSON olmalı
-      {
-        headers: {
-          "Content-Type": "application/json", // Doğru header'lar
-        },
-      }
-    );
+    const response = await axios.patch(`/products/${productId}/set-price`, {
+      price: newPrice,
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating product price:", error.response?.data || error.message);
@@ -70,171 +87,151 @@ export const setProductPriceAPI = async (productId, newPrice) => {
   }
 };
 
+// Siparişleri getir
 export const fetchOrders = async () => {
-  const response = await axios.get(`http://localhost:8003/SalesManager/orders`);
-  return response.data;
+  try {
+    const response = await axios.get(`/orders`);
+    return response.data;
+  } catch (error) {
+    console.error("Siparişler alınırken bir hata oluştu:", error);
+    throw error;
+  }
 };
 
+// Sipariş öğelerini getir
 export const fetchOrderItems = async () => {
-  const response = await axios.get(`http://localhost:8003/SalesManager/orderItems`);
-  return response.data;
+  try {
+    const response = await axios.get(`/orderItems`);
+    return response.data;
+  } catch (error) {
+    console.error("Sipariş öğeleri alınırken bir hata oluştu:", error);
+    throw error;
+  }
 };
 
+// İadeleri getir
 export const fetchRefunds = async () => {
   try {
-    const response = await axios.get("http://localhost:8003/SalesManager/refunds");
-    return response.data; // Backend'den gelen veriler
+    const response = await axios.get(`/refunds`);
+    return response.data;
   } catch (error) {
     console.error("Refunds could not be fetched:", error);
     throw error;
   }
 };
 
-// 2. Refund statüsünü güncelle (Approve veya Disapprove)
+// Refund statüsünü güncelle (Approve veya Disapprove)
 export const updateRefundStatus = async (refundId, status) => {
   try {
-    const response = await axios.put(`http://localhost:8003/SalesManager/refunds/${refundId}/${status}`, { status });
-    return response.data; // Güncellenmiş refund kaydı
+    const response = await axios.put(`/refunds/${refundId}/${status}`, { status });
+    return response.data;
   } catch (error) {
     console.error("Refund status could not be updated:", error);
     throw error;
   }
 };
 
-
-export const fetchRefundsWithProductNames = async () => {
+// Sipariş öğelerini tarih bilgisiyle getir
+export const fetchOrderItemsWithDates = async () => {
   try {
-    // Refunds, Order Items ve Products verilerini paralel olarak çek
-    const [refundsData, orderItemsData, productsData] = await Promise.all([
-      fetchRefunds(),
-      fetchOrderItems(),
-      fetchProducts(),
-    ]);
-    console.log("Refunds Data:", refundsData);
-    console.log("Order Items Data:", orderItemsData);
-    console.log("Products Data:", productsData);
+    const [orderItems, orders] = await Promise.all([fetchOrderItems(), fetchOrders()]);
 
+    const orderMap = orders.reduce((map, order) => {
+      map[order.order_id] = order.order_date;
+      return map;
+    }, {});
 
-    // Refund verilerini işleyip formatlıyoruz
-    const refundsWithProductNames = refundsData.map((refund) => {
-      // Refund'un order_item_id'sini sakla
-      const orderItemId = refund.order_item_id;
-      
-
-      // order_items tablosunda order_item_id'yi bul ve product_id'yi al
-      const orderItem = orderItemsData.find((item) => item.order_item_id === orderItemId);
-      const productId = orderItem?.product_id; // product_id bulunamazsa undefined olur
-     
-
-      // products tablosunda product_id'yi bul ve product_name'i al
-      const product = productsData.find((product) => product.product_id === productId);
-      const productName = product?.name || "Unknown Product"; // Ürün bulunamazsa varsayılan isim
-      
-
-      // Sonuçları geri döndürmek için refund objesini genişlet ve product_name ekle
-      return {
-        ...refund, // Refund'un mevcut tüm verilerini koru
-        product_name: productName, // Elde edilen ürün ismini ekle
-      };
-    });
-
-    return refundsWithProductNames; // İşlenmiş refund listesi
+    return orderItems.map((item) => ({
+      ...item,
+      order_date: orderMap[item.order_id] || null,
+    }));
   } catch (error) {
-    console.error("Refunds with Product Names could not be fetched:", error);
-    throw error; // Hata durumunda fırlat
+    console.error("Error fetching order items with dates:", error);
+    throw error;
   }
 };
 
-export const fetchProfitLossData = async () => {
+// Kar/Zarar verilerini tarih aralığına göre getir
+export const fetchProfitLossData = async (startDate = null, endDate = null) => {
   try {
-    // Order Items, Products ve Refunds verilerini çek
     const [orderItemsData, productsData, refundsData] = await Promise.all([
-      fetchOrderItems(),
+      fetchOrderItemsWithDates(),
       fetchProducts(),
       fetchRefunds(),
     ]);
 
-    // İade edilen ve "Approved" statüsüne sahip order_item_id'leri alın
     const refundedOrderItemIds = refundsData
       .filter((refund) => refund.status === "Approved")
       .map((refund) => refund.order_item_id);
 
-    // Ürün başına toplam satış miktarı ve toplam satış değerini hesaplamak için bir nesne oluştur
-    const profitLossMap = {};
+    let totalSales = 0;
+    let totalCost = 0;
 
-    // Order items üzerinden dönerek her ürün için satış verilerini topla
     orderItemsData.forEach((orderItem) => {
-      const { order_item_id, product_id, price_at_purchase, quantity } = orderItem;
+      const { order_item_id, product_id, price_at_purchase, quantity, order_date } = orderItem;
 
-      // Eğer order_item_id, iade edilmiş (Approved statüsünde) ise bu veriyi atla
+      if (startDate && endDate) {
+        const itemDate = new Date(order_date);
+        if (itemDate < new Date(startDate) || itemDate > new Date(endDate)) {
+          return;
+        }
+      }
+
       if (refundedOrderItemIds.includes(order_item_id)) {
         return;
       }
 
-      if (!profitLossMap[product_id]) {
-        profitLossMap[product_id] = {
-          product_id,
-          total_sales: 0,
-          total_quantity: 0,
-          cost: 0,
-          product_name: "Unknown Product",
-        };
-      }
+      const product = productsData.find((p) => p.product_id === product_id);
+      const productCost = product?.cost || 0;
 
-      // Mevcut ürünün satış miktarını ve satış gelirini ekle
-      profitLossMap[product_id].total_sales += price_at_purchase * quantity;
-      profitLossMap[product_id].total_quantity += quantity;
+      totalSales += price_at_purchase * quantity;
+      totalCost += productCost * quantity;
     });
 
-    // Products üzerinden geçerek ürün maliyeti ve ismini ekle
-    productsData.forEach((product) => {
-      const { product_id, cost, name } = product;
-
-      if (profitLossMap[product_id]) {
-        profitLossMap[product_id].cost = cost || 0; // Eğer `cost` eksikse `0` koy
-        profitLossMap[product_id].product_name = name || "Unknown Product"; // Eğer `name` eksikse "Unknown Product"
-      }
-    });
-
-    // Sonuçları bir array formatında döndür
-    return Object.values(profitLossMap).map((item) => {
-      const total_cost = item.cost * item.total_quantity; // Toplam maliyeti hesapla
-      const profit_loss = item.total_sales - total_cost; // Kar/zarar hesapla
-
-      return {
-        ...item,
-        total_cost,
-        profit_loss,
-      };
-    });
+    return {
+      total_sales: totalSales,
+      total_cost: totalCost,
+    };
   } catch (error) {
     console.error("Profit/Loss data could not be fetched:", error);
     throw error;
   }
 };
 
+// İade edilen ürünleri ürün isimleriyle birlikte getir
+export const fetchRefundsWithProductNames = async () => {
+  try {
+    const [refundsData, orderItemsData, productsData] = await Promise.all([
+      fetchRefunds(),
+      fetchOrderItems(),
+      fetchProducts(),
+    ]);
 
+    return refundsData.map((refund) => {
+      const orderItemId = refund.order_item_id;
+      const orderItem = orderItemsData.find((item) => item.order_item_id === orderItemId);
+      const productId = orderItem?.product_id;
+      const product = productsData.find((p) => p.product_id === productId);
+      const productName = product?.name || "Unknown Product";
 
+      return {
+        ...refund,
+        product_name: productName,
+      };
+    });
+  } catch (error) {
+    console.error("Refunds with Product Names could not be fetched:", error);
+    throw error;
+  }
+};
 
+// Toplam gelir ve maliyet verilerini getir
 export const fetchTotalRevenueAndCost = async () => {
   try {
-    // Profit/Loss verilerini al
-    const profitLossData = await fetchProfitLossData();
-    console.log("ProfitLossData:", profitLossData);
-
-    // Toplam Revenue ve Cost'u güvenli şekilde hesapla
-    const totalRevenue = profitLossData.reduce(
-      (sum, item) => sum + parseFloat(item.total_sales || 0),
-      0
-    );
-    const totalCost = profitLossData.reduce(
-      (sum, item) => sum + parseFloat(item.total_cost || 0),
-      0
-    );
-
+    const { total_sales, total_cost } = await fetchProfitLossData();
     return {
-      totalRevenue,
-      totalCost,
+      totalRevenue: total_sales,
+      totalCost: total_cost,
     };
   } catch (error) {
     console.error("Total Revenue and Cost data could not be fetched:", error);
@@ -242,29 +239,35 @@ export const fetchTotalRevenueAndCost = async () => {
   }
 };
 
-export const fetchProductRevenueAndCost = async () => {
+// Ürün bazında gelir ve maliyet verilerini getir
+export const fetchProductRevenueAndCost = async (startDate = null, endDate = null) => {
   try {
-    // Order Items, Products ve Refunds verilerini çek
     const [orderItems, products, refundsData] = await Promise.all([
-      fetchOrderItems(),
+      fetchOrderItemsWithDates(),
       fetchProducts(),
       fetchRefunds(),
     ]);
 
-    // İade edilen ve "Approved" statüsüne sahip order_item_id'leri alın
     const refundedOrderItemIds = refundsData
       .filter((refund) => refund.status === "Approved")
       .map((refund) => refund.order_item_id);
 
-    const revenueCostData = products.map((product) => {
-      // Her ürün için siparişleri filtrele
-      const productOrders = orderItems.filter(
-        (item) => 
-          item.product_id === product.product_id && 
-          !refundedOrderItemIds.includes(item.order_item_id) // İade edilen (Approved) siparişleri çıkar
-      );
+    return products.map((product) => {
+      const productOrders = orderItems.filter((item) => {
+        const itemDate = new Date(item.order_date);
 
-      // Toplam gelir ve maliyet hesapla
+        if (startDate && endDate) {
+          if (itemDate < new Date(startDate) || itemDate > new Date(endDate)) {
+            return false;
+          }
+        }
+
+        return (
+          item.product_id === product.product_id &&
+          !refundedOrderItemIds.includes(item.order_item_id)
+        );
+      });
+
       const totalRevenue = productOrders.reduce(
         (acc, item) => acc + item.price_at_purchase * item.quantity,
         0
@@ -274,17 +277,32 @@ export const fetchProductRevenueAndCost = async () => {
         0
       );
 
-      // Ürün adıyla birlikte revenue ve cost döndür
       return {
         product_name: product.name,
         revenue: totalRevenue,
         cost: totalCost,
       };
     });
-
-    return revenueCostData;
   } catch (error) {
     console.error("Error fetching product revenue and cost data:", error);
+    throw error;
+  }
+};
+
+// Özet analizi için gerekli verileri getir
+export const fetchSummaryAnalysis = async (startDate = null, endDate = null) => {
+  try {
+    const [totalRevenueAndCost, productRevenueAndCost] = await Promise.all([
+      fetchProfitLossData(startDate, endDate),
+      fetchProductRevenueAndCost(startDate, endDate),
+    ]);
+
+    return {
+      total: totalRevenueAndCost,
+      products: productRevenueAndCost,
+    };
+  } catch (error) {
+    console.error("Summary Analysis could not be fetched:", error);
     throw error;
   }
 };
