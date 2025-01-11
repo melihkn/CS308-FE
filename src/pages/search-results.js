@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import ProductCard from './ProductCard';
+import ProductCard from '../components/ProductCard';
 import { Grid } from '@mui/material';
 
 const SearchResults = ({userId, isLoggedIn}) => {

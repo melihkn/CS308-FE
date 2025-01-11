@@ -189,7 +189,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ShoppingProductCard from "./ShoppingProductCard";
+import ShoppingProductCard from "../components/ShoppingProductCard";
 import { Box, Typography, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";

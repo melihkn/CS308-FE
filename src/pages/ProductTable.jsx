@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { fetchProducts, deleteProduct, createProduct, updateProduct } from './api';
+import { fetchProducts, deleteProduct, createProduct, updateProduct } from '../api/api';
 import { DataGrid } from '@mui/x-data-grid';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
+import {CardMedia} from '@mui/material';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
+import { useTheme } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Close } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
+import { tokens } from "../theme";
+import Header from "../components/Header";
+import { Navigate } from 'react-router-dom';
 
 const ProductTable = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -34,6 +43,8 @@ const ProductTable = () => {
     image_url: "",
   });
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     loadProducts();
@@ -106,6 +117,7 @@ const ProductTable = () => {
   const handleAdd = () => {
     setEditingProduct(null);
     setFormValues({
+      image_url: "",
       name: "",
       model: "",
       description: "",
@@ -117,7 +129,7 @@ const ProductTable = () => {
       quantity: 0,
       warranty_status: null,
       distributor: "",
-      image_url: "",
+      
     });
     setModalOpen(true);
   };
@@ -170,11 +182,32 @@ const ProductTable = () => {
       console.error("Error saving product:", error.response?.data || error.message);
     }
   };
+
+
+  const handleProductPage = (id) => {
+    console.log("Navigating to product page with ID:", id);
+    navigate(`/product-detail/${id}`);
+  };
   
   
 
   const columns = [
+    {
+      field: "image_url",
+      headerName: "Image",
+      width: 100,
+      renderCell: (params) => (
+        <CardMedia
+          component="img"
+          sx={{ width: 50, height: 50, objectFit: "contain" }}
+          //image={`http://127.0.0.1:8001/static/${params.value}` || "/placeholder.svg"}
+          image={`${params.value}` || "/placeholder.svg"}
+          alt={params.row.product_name}
+        />
+      ),
+    },
     { field: 'name', headerName: 'Name', flex: 1 },
+    
     { field: 'model', headerName: 'Model', flex: 1 },
     {
       field: 'price',
@@ -192,11 +225,14 @@ const ProductTable = () => {
       flex: 1,
       renderCell: (params) => (
         <Box>
-          <IconButton onClick={() => handleEdit(params.row.id)} color="primary">
+          <IconButton onClick={() => handleEdit(params.row.id)} color="secondary">
             <EditIcon />
           </IconButton>
           <IconButton onClick={() => handleDelete(params.row.id)} color="error">
             <DeleteIcon />
+          </IconButton>
+          <IconButton onClick={() => handleProductPage(params.row.id)} color="secondary">
+            <VisibilityIcon />
           </IconButton>
         </Box>
       ),
@@ -206,24 +242,53 @@ const ProductTable = () => {
   ];
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleAdd}
-        sx={{ mb: 2 }}
+      <Box m="20px">
+      <Header title="Products" subtitle="List of Products" />
+      <Box
+        m="40px 0 0 0"
+        height="75vh"
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+        }}
       >
-        Add New Product
-      </Button>
-      <Box sx={{ height: 500 }}>
-        <DataGrid
+
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<AddIcon />}
+          onClick={handleAdd}
+          sx={{mb:2}}
+        >
+          Add Product
+        </Button>
+        {/* Yüklenme durumu */}
+        {loading ? (
+          <Typography color="white">Loading...</Typography>
+        ) : (
+          <DataGrid
           rows={products}
           columns={columns}
           loading={loading}
           disableSelectionOnClick
           pageSize={10}
         />
+        )}
       </Box>
 
       <Dialog open={isModalOpen} onClose={handleCloseModal}>

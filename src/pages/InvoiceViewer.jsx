@@ -38,11 +38,10 @@ const InvoiceViewer = () => {
 
     return (
         <div>
-          <h1>Invoice</h1>
           <iframe
             src={pdfUrl}
             title="Invoice PDF"
-            style={{ width: "100%", height: "80vh" }}
+            style={{ width: "100%", height: "100vh" }}
             frameBorder="0"
           />
         </div>

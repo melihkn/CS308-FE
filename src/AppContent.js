@@ -2,31 +2,32 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 //import Navbar from './navbar';
-import Login from './login';
-import Register from './register';
-import HomePage from './HomePage';
-import Profile from './profile.jsx';
-import ShoppingCart from './ShoppingCart.js';
-//import SearchResults from './search-results';
+import Login from './pages/login.js';
+import Register from './pages/register.js';
+import HomePage from './pages/HomePage.jsx';
+import Profile from './pages/profile.jsx';
+import ShoppingCart from './pages/ShoppingCart.js';
+import SearchResults from './pages/search-results.js';
 import axios from 'axios';
-import ProductManagerDashboard from './ProductManagerDashboard';
-import ProductDetailPage from './ProductDetailPage';
+import ProductManagerDashboard from './pages/ProductManagerDashboard.jsx';
+import ProductDetailPage from './pages/ProductDetailPage.jsx';
 
-import OrderPage from './OrderPage';
-import CommentPage from './CommentPage';
-import InvoiceViewer from './InvoiceViewer.jsx';
-import PaymentPage from './PaymentPage.jsx';
+import OrderPage from './pages/OrderPage.jsx';
+import CommentPage from './pages/CommentPage.js';
+import InvoiceViewer from './pages/InvoiceViewer.jsx';
+import PaymentPage from './pages/PaymentPage.jsx';
+import MainContent from './scenes/mainContent';
 
 // yeni eklenenler
 // import Navbar from './navbar.jsx';
 // import Sidebar from './sidebar.jsx';
-import WishlistPage from "./WishlistPage";
-import WishlistItemsPage from "./WishlistItemsPage";
-import SpecificOrderPage from './SpecificOrderPage.jsx';
+import WishlistPage from "./pages/WishlistPage.jsx";
+import WishlistItemsPage from "./pages/WishlistItemsPage.jsx";
+import SpecificOrderPage from './pages/SpecificOrderPage.jsx';
 
-import TopNavbar from './TopNavbar.jsx';
-import BottomNavbar from './BottomNavbar.jsx';
-import ItemsFromSameCategoryAdvanced from './ItemsFromSameCategoryAdvanced.jsx';
+import TopNavbar from './components/global/TopNavbar.jsx';
+import BottomNavbar from './components/global/BottomNavbar.jsx';
+import ItemsFromSameCategoryAdvanced from './pages/ItemsFromSameCategoryAdvanced.jsx';
 import SearchResults from './Search_results.jsx'; 
 
 /*
@@ -148,44 +149,55 @@ function AppContent() {
 
 
   return (
-    <>  
-    <TopNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} userProfile={userProfile} />
-    <BottomNavbar />
-  
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <HomePage
-              userId={userId}
-              isLoggedIn={isLoggedIn}
-              selectedCategory={selectedCategory} // Pass the selected category
+    <>
+      {!(isLoggedIn && (userProfile?.role === 'product_manager' || userProfile?.role === 'sales_manager')) && (
+        <>
+          <TopNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} userProfile={userProfile} />
+          <BottomNavbar />
+
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  userId={userId}
+                  isLoggedIn={isLoggedIn}
+                  selectedCategory={selectedCategory} // Pass the selected category
+                />
+              }
             />
-          }
-        />
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
-        <Route path="/orders" element={<OrderPage userId={userId} />} />
-        {/* Comment page is not done yet */}
-        <Route path="/comment/:orderId" element={<CommentPage />} />
-        <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} userProfile={userProfile} />} />
+            <Route path="/orders" element={<OrderPage userId={userId} />} />
+            {/* Comment page is not done yet */}
+            <Route path="/comment/:orderId" element={<CommentPage />} />
+            <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
+            <Route path="/search-results" element={<SearchResults userId={userId} isLoggedIn={isLoggedIn}/>} /> {/* Add this */}
+            <Route path="/payment" element={<PaymentPage />} /> 
+            <Route path="/product-detail/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
+            <Route path="/invoice/:invoiceId" element={<InvoiceViewer />} />
+            {/* This is the path to show all wishlist */}
+            <Route path="/wishlists" element={<WishlistPage userId={userId} />} />
+            {/* This is the path for showing the products in one wish list */}
+            <Route path="/wishlist/:wishlistId" element={<WishlistItemsPage />} />
+            <Route path="/order/:orderId" element={<SpecificOrderPage  />} />
+            <Route path="/items-from-same-category-advanced/:categoryId" element={<ItemsFromSameCategoryAdvanced />} />
 
-        <Route path="/search-results" element={<SearchResults userId={userId} isLoggedIn={isLoggedIn}/>} /> {/* Add this */}
-
-        <Route path="/payment" element={<PaymentPage />} /> 
+          </Routes>
+        </>
+      )}
+      <Routes>
+      <Route path="invoice/:invoiceId" element={<InvoiceViewer />} />
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
-          <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard />} />
+          <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard onLogout={handleLogout} userProfile={userProfile}/>} />
         )}
-        <Route path="/product-detail/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
-        <Route path="/invoice/:invoiceId" element={<InvoiceViewer />} />
-        {/* This is the path to show all wishlist */}
-        <Route path="/wishlists" element={<WishlistPage userId={userId} />} />
-        {/* This is the path for showing the products in one wish list */}
-        <Route path="/wishlist/:wishlistId" element={<WishlistItemsPage />} />
-        <Route path="/order/:orderId" element={<SpecificOrderPage  />} />
-        <Route path="/items-from-same-category-advanced/:categoryId" element={<ItemsFromSameCategoryAdvanced />} />
+        {/* Protected route for Product Manager Dashboard */}
+        {isLoggedIn && userProfile?.role === 'sales_manager' && (
+          <Route path="/dashboards/smapp/*" element={<MainContent onLogout={handleLogout} userProfile={userProfile}/>} />
+        )}
+
       </Routes>
     </>
   );
