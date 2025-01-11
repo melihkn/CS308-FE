@@ -27,6 +27,7 @@ import SpecificOrderPage from './SpecificOrderPage.jsx';
 import TopNavbar from './TopNavbar.jsx';
 import BottomNavbar from './BottomNavbar.jsx';
 import ItemsFromSameCategory from './ItemsFromSameCategory.jsx';
+import ItemsFromSameCategoryAdvanced from './ItemsFromSameCategoryAdvanced.jsx';
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -182,11 +183,12 @@ function AppContent() {
         {/* This is the path for showing the products in one wish list */}
         <Route path="/wishlist/:wishlistId" element={<WishlistItemsPage />} />
         <Route path="/order/:orderId" element={<SpecificOrderPage  />} />
-        <Route path="/items-from-same-category/:categoryId" element={<ItemsFromSameCategory />} />
-
+        <Route path="/items-from-same-category-advanced/:categoryId" element={<ItemsFromSameCategoryAdvanced />} />
       </Routes>
     </>
   );
 }
 
 export default AppContent;
+
+// <Route path="/items-from-same-category/:categoryId" element={<ItemsFromSameCategory />} />

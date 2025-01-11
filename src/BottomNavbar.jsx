@@ -41,7 +41,8 @@ const BottomNavbar = () => {
   };
 
   const handleCategoryClick = (categoryId) => {
-    navigate(`/items-from-same-category/${categoryId}`);
+    //navigate(`/items-from-same-category/${categoryId}`);
+    navigate(`/items-from-same-category-advanced/${categoryId}`);
     handleMenuClose();
   };
 
