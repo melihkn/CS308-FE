@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { Grid, Container, CircularProgress, Typography, Paper } from "@mui/material";
-import FiltersSearch from "./FiltersSearch";
+import FiltersSearch from "../FiltersSearch";
 import ISFG_Product_Listing from "./ISFG_Product_Listing";
 
 const SearchResults = () => {

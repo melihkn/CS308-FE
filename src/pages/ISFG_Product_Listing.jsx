@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Box, Typography } from "@mui/material";
-import ProductCard from "./ProductCard";
+import ProductCard from "../components/ProductCard";
 
 const ISFG_Product_Listing = ({ products }) => {
   const BACKEND_URL = "http://127.0.0.1:8002";

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Grid, Box, CircularProgress, Typography, Paper, Container, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import Filters from "./Filters";
+import Filters from "../Filters";
 import ISFG_Product_Listing from "./ISFG_Product_Listing";
 
 function ItemsFromSameCategoryAdvanced() {

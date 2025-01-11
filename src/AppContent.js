@@ -7,7 +7,7 @@ import Register from './pages/register.js';
 import HomePage from './pages/HomePage.jsx';
 import Profile from './pages/profile.jsx';
 import ShoppingCart from './pages/ShoppingCart.js';
-import SearchResults from './pages/search-results.js';
+import SearchResults from './pages/Search_results.jsx';
 import axios from 'axios';
 import ProductManagerDashboard from './pages/ProductManagerDashboard.jsx';
 import ProductDetailPage from './pages/ProductDetailPage.jsx';
@@ -28,7 +28,6 @@ import SpecificOrderPage from './pages/SpecificOrderPage.jsx';
 import TopNavbar from './components/global/TopNavbar.jsx';
 import BottomNavbar from './components/global/BottomNavbar.jsx';
 import ItemsFromSameCategoryAdvanced from './pages/ItemsFromSameCategoryAdvanced.jsx';
-import SearchResults from './Search_results.jsx'; 
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
