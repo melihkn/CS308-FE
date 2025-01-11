@@ -69,6 +69,12 @@ const Invoices = () => {
     }
   };
 
+  const handleViewInvoice = (order_id) => {
+    //navigate(/invoice/${order_id});
+    console.log("orderid: ", order_id)
+    window.open(`/invoice/${order_id}`, '_blank');
+  };
+
   // Close modal
   const handleCloseModal = () => {
     setModalOpen(false);
@@ -77,6 +83,7 @@ const Invoices = () => {
 
   // DataGrid columns
   const columns = [
+    { field: "id", headerName: "Order ID", flex: 1 },
     { field: "customer_id", headerName: "Customer ID", flex: 1 },
     { field: "total_price", headerName: "Total Price ($)", flex: 1 },
     { field: "order_date", headerName: "Order Date", flex: 1 },
@@ -84,20 +91,17 @@ const Invoices = () => {
     { field: "payment_status", headerName: "Payment Status", flex: 1 },
     {
       field: "invoice_link",
-      headerName: "Invoice Link",
+      headerName: "Invoices",
       flex: 1,
       renderCell: (params) => (
-        <a
-          href={params.row.invoice_link}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: colors.blueAccent[400],
-            textDecoration: "none",
-          }}
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={() => handleViewInvoice(params.row.id)}
         >
           View Invoice
-        </a>
+        </Button>
       ),
     },
     {
@@ -155,7 +159,7 @@ const Invoices = () => {
         <Box
           p={4}
           sx={{
-            backgroundColor: colors.primary[500],
+            backgroundColor: colors.primary[400],
             color: colors.grey[100],
             width: "50%",
             margin: "100px auto",

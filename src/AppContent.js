@@ -187,6 +187,7 @@ function AppContent() {
         </>
       )}
       <Routes>
+      <Route path="invoice/:invoiceId" element={<InvoiceViewer />} />
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
           <Route path="/dashboards/ProductManager/*" element={<ProductManagerDashboard onLogout={handleLogout} userProfile={userProfile}/>} />

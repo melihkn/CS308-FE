@@ -147,19 +147,29 @@ export const fetchRefundsWithProductNames = async () => {
 
 export const fetchProfitLossData = async () => {
   try {
-    // Order Items ve Products verilerini çek
-    const [orderItemsData, productsData] = await Promise.all([
+    // Order Items, Products ve Refunds verilerini çek
+    const [orderItemsData, productsData, refundsData] = await Promise.all([
       fetchOrderItems(),
       fetchProducts(),
+      fetchRefunds(),
     ]);
-    console.log(productsData)
+
+    // İade edilen ve "Approved" statüsüne sahip order_item_id'leri alın
+    const refundedOrderItemIds = refundsData
+      .filter((refund) => refund.status === "Approved")
+      .map((refund) => refund.order_item_id);
 
     // Ürün başına toplam satış miktarı ve toplam satış değerini hesaplamak için bir nesne oluştur
     const profitLossMap = {};
 
     // Order items üzerinden dönerek her ürün için satış verilerini topla
     orderItemsData.forEach((orderItem) => {
-      const { product_id, price_at_purchase, quantity } = orderItem;
+      const { order_item_id, product_id, price_at_purchase, quantity } = orderItem;
+
+      // Eğer order_item_id, iade edilmiş (Approved statüsünde) ise bu veriyi atla
+      if (refundedOrderItemIds.includes(order_item_id)) {
+        return;
+      }
 
       if (!profitLossMap[product_id]) {
         profitLossMap[product_id] = {
@@ -205,6 +215,7 @@ export const fetchProfitLossData = async () => {
 
 
 
+
 export const fetchTotalRevenueAndCost = async () => {
   try {
     // Profit/Loss verilerini al
@@ -233,15 +244,24 @@ export const fetchTotalRevenueAndCost = async () => {
 
 export const fetchProductRevenueAndCost = async () => {
   try {
-    const [orderItems, products] = await Promise.all([
+    // Order Items, Products ve Refunds verilerini çek
+    const [orderItems, products, refundsData] = await Promise.all([
       fetchOrderItems(),
       fetchProducts(),
+      fetchRefunds(),
     ]);
+
+    // İade edilen ve "Approved" statüsüne sahip order_item_id'leri alın
+    const refundedOrderItemIds = refundsData
+      .filter((refund) => refund.status === "Approved")
+      .map((refund) => refund.order_item_id);
 
     const revenueCostData = products.map((product) => {
       // Her ürün için siparişleri filtrele
       const productOrders = orderItems.filter(
-        (item) => item.product_id === product.product_id
+        (item) => 
+          item.product_id === product.product_id && 
+          !refundedOrderItemIds.includes(item.order_item_id) // İade edilen (Approved) siparişleri çıkar
       );
 
       // Toplam gelir ve maliyet hesapla

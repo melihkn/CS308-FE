@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { fetchRefunds } from "../api/smAPI"; // Refundları almak için API fonksiyonu
 import { tokens } from "../theme";
+import { useNavigate } from "react-router-dom";
 
 const PendingRefunds = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [pendingCount, setPendingCount] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getPendingRefunds = async () => {
@@ -21,6 +23,7 @@ const PendingRefunds = () => {
 
     getPendingRefunds();
   }, []);
+  
 
   return (
     <Box
@@ -35,8 +38,21 @@ const PendingRefunds = () => {
       }}
     >
       <Typography variant="h6" fontWeight="bold">
-        {pendingCount} waiting refund requests
+        <h1>{pendingCount} </h1>waiting refund requests
       </Typography>
+      <Button
+                  type="submit"
+                  variant="contained"
+                  onClick={() => navigate("/dashboards/smapp/refunds")}
+                  fullWidth
+                  sx={{ mt: 2,
+                        backgroundColor: colors.greenAccent[600],
+                        color: colors.primary[500]
+                   }}
+                  
+                >
+                  Go To Refunds
+      </Button>
     </Box>
   );
 };
