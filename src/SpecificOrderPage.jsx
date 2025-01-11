@@ -63,7 +63,9 @@ const SpecificOrderPage = () => {
   const fetchOrderDetails = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://127.0.0.1:8004/api/orders/${orderId}`);
+      const response = await axios.get(`http://127.0.0.1:8004/api/orders/${orderId}`, 
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+      );
       console.log(response.data);
       setOrderDetails(response.data);
       // Fetch refund status for each product

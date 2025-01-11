@@ -24,6 +24,7 @@ const ISFG_Product_Listing = ({ products }) => {
                 name={product.name}
                 model={product.model}
                 description={product.description}
+                price  = {product.price}
                 quantity={product.quantity}
                 distributor={product.distributor}
                 imageUrl={getImageUrl(product.image_url)}

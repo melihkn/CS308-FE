@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchAverageRating } from "./api";
 
-const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantity, distributor, imageUrl }) => {
+const ProductCard = ({ userId, isLoggedIn, id, name, model, description, price, quantity, distributor, imageUrl }) => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [rating, setRating] = useState(0); // State to store the rating
@@ -83,6 +83,9 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
         </Typography>
         <Typography variant="body2" color="text.secondary">
           <strong>Quantity:</strong> {quantity}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          <strong>Price:</strong> {price}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           <strong>Distributor:</strong> {distributor}

@@ -4,13 +4,15 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  TextField,
+  Slider,
   Checkbox,
   FormControlLabel,
   Typography,
   Box,
   Divider,
   Button,
+  Rating,
+  TextField
 } from "@mui/material";
 
 function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onResetFilters }) {
@@ -18,16 +20,12 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
     onFilterChange({ sub_category: Number(event.target.value) });
   };
 
-  const handlePriceMinChange = (event) => {
-    onFilterChange({ price_min: Number(event.target.value) });
+  const handlePriceChange = (event, newValue) => {
+    onFilterChange({ price_min: newValue[0], price_max: newValue[1] });
   };
 
-  const handlePriceMaxChange = (event) => {
-    onFilterChange({ price_max: Number(event.target.value) });
-  };
-
-  const handleRatingChange = (event) => {
-    onFilterChange({ rating_min: Number(event.target.value) });
+  const handleRatingChange = (event, newValue) => {
+    onFilterChange({ rating_min: newValue });
   };
 
   const handleWarrantyChange = (event) => {
@@ -47,7 +45,7 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
           value={filters.sub_category || ""}
           onChange={handleSubCategoryChange}
         >
-          <MenuItem value="">All</MenuItem>
+          <MenuItem value="0">All</MenuItem>
           {subcategories.map((sub) => (
             <MenuItem key={sub.category_id} value={sub.category_id}>
               {sub.category_name}
@@ -56,49 +54,38 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
         </Select>
       </FormControl>
 
-      {/* Price Min Filter */}
-      <TextField
-        label="Min Price"
-        type="number"
-        value={filters.price_min || ""}
-        onChange={handlePriceMinChange}
-        fullWidth
-      />
+      {/* Price Filter (Slider) */}
+      <Box sx={{ px: 2 }}>
+        <Typography gutterBottom>Price Range</Typography>
+        <Slider
+          value={[filters.price_min || 0, filters.price_max || 1000]}
+          onChange={handlePriceChange}
+          valueLabelDisplay="auto"
+          min={0}
+          max={100}
+          step={3}
+        />
+      </Box>
 
-      {/* Price Max Filter */}
-      <TextField
-        label="Max Price"
-        type="number"
-        value={filters.price_max || ""}
-        onChange={handlePriceMaxChange}
-        fullWidth
-      />
-
-      {/* Rating Filter */}
-      <FormControl fullWidth>
-        <InputLabel id="rating-label">Rating</InputLabel>
-        <Select
-          labelId="rating-label"
-          value={filters.rating_min || ""}
+      {/* Rating Filter (Stars) */}
+      <Box sx={{ px: 2 }}>
+        <Typography gutterBottom>Minimum Rating</Typography>
+        <Rating
+          name="rating-filter"
+          value={filters.rating_min || 0}
           onChange={handleRatingChange}
-        >
-          <MenuItem value="">All</MenuItem>
-          <MenuItem value={1}>1 & up</MenuItem>
-          <MenuItem value={2}>2 & up</MenuItem>
-          <MenuItem value={3}>3 & up</MenuItem>
-          <MenuItem value={4}>4 & up</MenuItem>
-          <MenuItem value={5}>5</MenuItem>
-        </Select>
-      </FormControl>
+          precision={1}
+        />
+      </Box>
 
-      {/* Warranty Filter */}
-      <TextField
-        label="Min Warranty"
-        type="number"
-        value={filters.warranty_status || ""}
-        onChange={handleWarrantyChange}
-        fullWidth
-      />
+        {/* Warranty Filter */}
+        <TextField
+          label="Min Warranty"
+          type="number"
+          value={filters.warranty_status || ""}
+          onChange={handleWarrantyChange}
+          fullWidth
+        />
 
       <Divider />
 
@@ -116,3 +103,4 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
 }
 
 export default Filters;
+

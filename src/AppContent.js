@@ -7,7 +7,7 @@ import Register from './register';
 import HomePage from './HomePage';
 import Profile from './profile.jsx';
 import ShoppingCart from './ShoppingCart.js';
-import SearchResults from './search-results';
+//import SearchResults from './search-results';
 import axios from 'axios';
 import ProductManagerDashboard from './ProductManagerDashboard';
 import ProductDetailPage from './ProductDetailPage';
@@ -26,8 +26,8 @@ import SpecificOrderPage from './SpecificOrderPage.jsx';
 
 import TopNavbar from './TopNavbar.jsx';
 import BottomNavbar from './BottomNavbar.jsx';
-import ItemsFromSameCategory from './ItemsFromSameCategory.jsx';
 import ItemsFromSameCategoryAdvanced from './ItemsFromSameCategoryAdvanced.jsx';
+import SearchResults from './Search_results.jsx'; 
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -170,7 +170,9 @@ function AppContent() {
         {/* Comment page is not done yet */}
         <Route path="/comment/:orderId" element={<CommentPage />} />
         <Route path="/cart" element={<ShoppingCart isLoggedIn={isLoggedIn} userId={userId} />} />
+
         <Route path="/search-results" element={<SearchResults userId={userId} isLoggedIn={isLoggedIn}/>} /> {/* Add this */}
+
         <Route path="/payment" element={<PaymentPage />} /> 
         {/* Protected route for Product Manager Dashboard */}
         {isLoggedIn && userProfile?.role === 'product_manager' && (
@@ -191,4 +193,4 @@ function AppContent() {
 
 export default AppContent;
 
-// <Route path="/items-from-same-category/:categoryId" element={<ItemsFromSameCategory />} />
+//  <Route path="/search-results" element={<SearchResults userId={userId} isLoggedIn={isLoggedIn}/>} /> {/* Add this */}
