@@ -28,10 +28,13 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
+  colors,
 } from "@mui/material";
 import { LocalShipping, AttachMoney, CalendarToday, LocationOn, Cancel as CancelIcon } from "@mui/icons-material";
 import { requestRefund, refundStatusCall, cancelOrder} from "../api/api";
 import SpecificOrderItem from "../components/SpecificOrderItem";
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
 
 const ORDER_STATUS_MAP = {
   0: { text: "Pending", color: "warning" },
@@ -55,7 +58,8 @@ const SpecificOrderPage = () => {
   const [cancelReason, setCancelReason] = useState("");
   const [refundNumber, setRefundNumber] = useState(0);
   const navigate = useNavigate();
-
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   useEffect(() => {
     fetchOrderDetails();
   }, [orderId]);
@@ -270,11 +274,11 @@ const SpecificOrderPage = () => {
               </Button>
               <Button
                 variant="outlined"
-                color="secondary"
                 onClick={handleCancelOrder}
+                color = "error"
                 startIcon={<CancelIcon />}
                 fullWidth
-                sx={{ mb: 2 }}
+                sx={{ mb: 2, colors: colors.redAccent[400] }}
                 disabled = {orderDetails.order_status !== 0 || selectedProducts.some(productId => refundStatus[productId] !== "N/A")}
               >
                 Cancel Order

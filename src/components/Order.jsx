@@ -30,6 +30,9 @@ import {
   Receipt as ReceiptIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
+
 
 import { cancelOrder } from "../api/api";
 
@@ -52,6 +55,8 @@ const Order = ({ order, onOrderUpdate }) => {
     message: "",
     severity: "success",
   });
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   const orderStatus =
     ORDER_STATUS_MAP[order.order_status] || {
@@ -160,6 +165,7 @@ const Order = ({ order, onOrderUpdate }) => {
       </CardContent>
       <CardActions disableSpacing>
         <Button
+          sx = {{color: colors.blueAccent[400]}}
           size="small"
           startIcon={<ReceiptIcon />}
           onClick={handleViewInvoice}
@@ -167,6 +173,7 @@ const Order = ({ order, onOrderUpdate }) => {
           View Invoice
         </Button>
         <Button
+          sx = {{color: colors.blueAccent[400]}}
           size="small"
           startIcon={<CommentIcon />}
           onClick={handleCommentRedirect}
@@ -174,6 +181,7 @@ const Order = ({ order, onOrderUpdate }) => {
           Comment
         </Button>
         <Button
+          sx = {{color: colors.redAccent[400]}}
           size="small"
           startIcon={<CancelIcon />}
           onClick={handleCancelOrder}

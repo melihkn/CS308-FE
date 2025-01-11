@@ -68,19 +68,19 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
       {/* Search Bar */}
       <Box
         display="flex"
-        backgroundColor={colors.primary[700]}
+        backgroundColor={colors.grey[700]}
         borderRadius={4}
         p={1}
         sx={{ width: "50%" }}
       >
         <InputBase
-          sx={{ flex: 1, color: colors.secondary }}
+          sx={{ flex: 1, color: colors.blueAccent[300] }}
           placeholder="Search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <IconButton onClick={handleSearch} sx={{ p: 1 }}>
-          <SearchIcon sx={{ color: colors.secondary}} />
+          <SearchIcon sx={{ color: colors.blueAccent[300]}} />
         </IconButton>
       </Box>
 
@@ -88,13 +88,13 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
       <Box display="flex" alignItems="center" gap={2}>
         {/* Theme Toggle */}
         <IconButton onClick={colorMode.toggleColorMode}>
-          {mode === "dark" ? <LightModeOutlined sx={{ color: colors.secondary }} /> : <DarkModeOutlined sx={{ color: "white" }} />}
+          {mode === "dark" ? <LightModeOutlined sx={{ color: colors.blueAccent[300] }} /> : <DarkModeOutlined sx={{ color:colors.blueAccent[300] }} />}
         </IconButton>
 
         {/* Login/Register or Profile Dropdown */}
         {isLoggedIn ? (
           <>
-            <Button onClick={handleMenuClick} sx={{ color: "white" }}>
+            <Button onClick={handleMenuClick} sx={{ color: colors.blueAccent[400] }}>
                 {userProfile.name} <PersonIcon />
             </Button>
             <Menu
@@ -217,7 +217,7 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
 
 
         {/* Cart Button */}
-        <IconButton onClick={() => navigate("/cart")} sx={{ color: "white" }}>
+        <IconButton onClick={() => navigate("/cart")} sx={{ color: colors.redAccent[400] }}>
           <ShoppingCart />
         </IconButton>
       </Box>
