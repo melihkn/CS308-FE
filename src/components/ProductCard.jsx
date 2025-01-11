@@ -1,51 +1,22 @@
-// ProductCard.js
-/*
-    ProductCard component is a reusable component that displays information about a product.
-    It takes the following props:
-        - name: name of the product
-        - model: model of the product
-        - description: description of the product
-        - quantity: quantity of the product
-        - distributor: distributor of the product
-        - imageUrl: URL of the product image
-
-    Example usage:
-    <ProductCard 
-        name="Dog Food"
-        model="1234"
-        description="A healthy dog food for your furry friend."
-        quantity={10}
-        distributor="PetCo"
-        imageUrl="https://example.com/dog-food.jpg"
-    />
-
-    These info will be coming from the endpoint in the backend called /products which returns a list of products as json format.
-    Each product in the list is a dictionary object with the following keys: 
-        - product_id, name, model, description, quantity, distributor, image_url
-        - image_url is the URL of the product image on the server 
-
-*/
-
 import React, { useEffect, useState } from "react";
-import { Button, Card, CardContent, CardMedia, Typography, Box, Rating, IconButton } from "@mui/material";
+import { Button, Card, CardContent, CardMedia, Typography, Box, Rating, IconButton, Chip } from "@mui/material";
 import { ShoppingCart } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchAverageRating } from "../api/api";
 
-const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantity, distributor, imageUrl }) => {
+const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, quantity, distributor, imageUrl, discountRate }) => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [rating, setRating] = useState(0); // State to store the rating
+  const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    // Fetch the rating when the component is mounted
     const fetchRating = async () => {
-      const avgRating = await fetchAverageRating(id); // Fetch the average rating for this product
-      setRating(avgRating); // Update the state with the fetched rating
+      const avgRating = await fetchAverageRating(id);
+      setRating(avgRating);
     };
     fetchRating();
-  }, [id]); // Re-run the effect if `id` changes
+  }, [id]);
 
   const handleCardClick = () => {
     navigate(`/product-detail/${id}`);
@@ -76,7 +47,8 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent card click when adding to cart
     addToCart(id);
     console.log(`${name} added to cart.`);
   };
@@ -94,12 +66,38 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
       }}
       onClick={handleCardClick}
     >
-      <CardMedia
-        component="img"
-        alt={name}
-        height="140"
-        image={imageUrl}
-      />
+      <Box sx={{ position: 'relative' }}>
+        {quantity <= 0 && (
+          <Chip
+            label="Out of Stock"
+            color="error"
+            size="small"
+            sx={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}
+          />
+        )}
+        {quantity > 0 && quantity <= 5 && (
+          <Chip
+            label="Low Stock"
+            color="warning"
+            size="small"
+            sx={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}
+          />
+        )}
+        {discountRate > 0 && (
+          <Chip
+            label={`-${discountRate}%`}
+            color="error"
+            size="small"
+            sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}
+          />
+        )}
+        <CardMedia
+          component="img"
+          alt={name}
+          height="250"
+          image={imageUrl}
+        />
+      </Box>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {name}
@@ -111,11 +109,45 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
           {description}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          <strong>Quantity:</strong> {quantity}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
           <strong>Distributor:</strong> {distributor}
         </Typography>
+        
+        {/* Price Display Section */}
+        <Box sx={{ mt: 2, mb: 1 }}>
+          {discountRate > 0 && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  textDecoration: 'line-through',
+                  color: 'text.secondary',
+                  fontSize: '0.9rem'
+                }}
+              >
+                {price.toFixed(2)} TL
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'error.main',
+                  fontWeight: 'bold'
+                }}
+              >
+                %{discountRate}
+              </Typography>
+            </Box>
+          )}
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'primary.main',
+              fontWeight: 'bold'
+            }}
+          >
+            {(price * (1 - discountRate / 100)).toFixed(2)} TL
+          </Typography>
+        </Box>
+
         <Box
           sx={{
             display: "flex",
@@ -126,7 +158,7 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
         >
           <Rating
             name="read-only-rating"
-            value={rating} // Use the resolved rating value
+            value={rating}
             precision={0.5}
             readOnly
             sx={{ marginRight: 2 }}
@@ -134,14 +166,10 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, description, quantit
 
           <IconButton
             disabled={quantity <= 0}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAddToCart();
-            }}
+            onClick={handleAddToCart}
           >
-             <ShoppingCart />
+            <ShoppingCart />
           </IconButton>
-          
         </Box>
       </CardContent>
     </Card>
