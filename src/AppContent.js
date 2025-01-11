@@ -27,7 +27,8 @@ import SpecificOrderPage from './pages/SpecificOrderPage.jsx';
 
 import TopNavbar from './components/global/TopNavbar.jsx';
 import BottomNavbar from './components/global/BottomNavbar.jsx';
-import ItemsFromSameCategory from './pages/ItemsFromSameCategory.jsx';
+import ItemsFromSameCategoryAdvanced from './pages/ItemsFromSameCategoryAdvanced.jsx';
+import SearchResults from './Search_results.jsx'; 
 
 /*
   Created a functional component named AppContent because useNavigate hook must be used within a component that is rendered inside a Router.
@@ -181,7 +182,7 @@ function AppContent() {
             {/* This is the path for showing the products in one wish list */}
             <Route path="/wishlist/:wishlistId" element={<WishlistItemsPage />} />
             <Route path="/order/:orderId" element={<SpecificOrderPage  />} />
-            <Route path="/items-from-same-category/:categoryId" element={<ItemsFromSameCategory />} />
+            <Route path="/items-from-same-category-advanced/:categoryId" element={<ItemsFromSameCategoryAdvanced />} />
 
           </Routes>
         </>
@@ -203,3 +204,5 @@ function AppContent() {
 }
 
 export default AppContent;
+
+//  <Route path="/search-results" element={<SearchResults userId={userId} isLoggedIn={isLoggedIn}/>} /> {/* Add this */}
