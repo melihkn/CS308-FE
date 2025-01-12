@@ -4,7 +4,7 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2', // Blue color for primary actions
+      main: '#1372d1', // Blue color for primary actions
     },
     secondary: {
       main: '#ff4081', // Pink color for secondary actions
