@@ -29,6 +29,8 @@ const ISFG_Product_Listing = ({ products }) => {
                 distributor={product.distributor}
                 imageUrl={getImageUrl(product.image_url)}
                 rating={product.average_rating}
+                discountRate={product.discount_rate}
+                
               />
             </Grid>
           ))}

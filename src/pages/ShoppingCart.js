@@ -246,7 +246,11 @@ function ShoppingCart({ isLoggedIn, userId }) {
 
   useEffect(() => {
     const calculateTotal = () => {
-      const total = detailedCart.reduce((sum, item) => sum + item.quantity * item.price, 0);
+      const total = detailedCart.reduce((sum, item) => {
+        const discount = item.discount_rate ? (item.price * item.discount_rate) / 100 : 0;
+        const discountedPrice = item.price - discount;
+        return sum + item.quantity * discountedPrice;
+      }, 0);
       setTotalPrice(total);
     };
     calculateTotal();
@@ -333,6 +337,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
             quantity={item.quantity}
             distributor={item.distributor}
             imageUrl={item.image_url}
+            discountRate={item.discount_rate}
             price={item.price}
             onIncrease={() => adjustQuantity(item.product_id, 1)}
             onDecrease={() => adjustQuantity(item.product_id, -1)}
