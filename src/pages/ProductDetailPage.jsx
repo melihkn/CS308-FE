@@ -33,8 +33,6 @@ import { ShoppingCart } from "@mui/icons-material";
 import { Add, Remove } from "@mui/icons-material"; // For increment/decrement buttons
 import { fetchProductbyId, addReview, fetchReviewsByProductId, fetchAverageRating } from "../api/api";
 import axios from "axios";
-import {useTheme} from "@mui/material";
-import { tokens } from "../theme";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const ProductDetailPage = ({ isLoggedIn, userId }) => {

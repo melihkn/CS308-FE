@@ -264,11 +264,10 @@ const SpecificOrderPage = () => {
               </Typography>
               <Button
                 variant="contained"
-                color="primary"
+                sx = {{ backgroundColor: colors.blueAccent[400], color: "white", mb: 2 }}
                 onClick={handleRefundRequest}
                 disabled={selectedProducts.length === 0 || orderDetails.order_status !== 3}
                 fullWidth
-                sx={{ mb: 2 }}
               >
                 Request Refund for Selected Products
               </Button>
