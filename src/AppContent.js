@@ -175,7 +175,7 @@ function AppContent() {
             <Route path="/search-results" element={<SearchResults userId={userId} isLoggedIn={isLoggedIn}/>} /> {/* Add this */}
             <Route path="/payment" element={<PaymentPage />} /> 
             <Route path="/product-detail/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} userId={userId}/>} />
-            <Route path="/invoice/:invoiceId" element={<InvoiceViewer />} />
+            
             {/* This is the path to show all wishlist */}
             <Route path="/wishlists" element={<WishlistPage userId={userId} />} />
             {/* This is the path for showing the products in one wish list */}

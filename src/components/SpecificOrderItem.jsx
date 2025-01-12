@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { TableRow, TableCell, CardMedia, Checkbox, Chip } from "@mui/material";
 import axios from "axios";
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
 
 const SpecificOrderItem = ({ 
   productId, 
@@ -13,6 +15,8 @@ const SpecificOrderItem = ({
   changed
 }) => {
   const [product, setProduct] = useState(null);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     fetchProduct();
@@ -38,7 +42,14 @@ const SpecificOrderItem = ({
   return (
     <TableRow hover sx={{ cursor: "pointer" }} onClick={() => onProductClick(productId)}>
       <TableCell padding="checkbox" onClick={(e) => e.stopPropagation()}>
-        <Checkbox checked={isSelected} onChange={() => onProductSelect(productId)} />
+        <Checkbox checked={isSelected} onChange={() => onProductSelect(productId)}
+          sx={{
+            color: colors.blueAccent[400], // Default unchecked color
+            '&.Mui-checked': {
+              color: colors.greenAccent[400], // Lighter checked color
+            },
+          }} 
+      />
       </TableCell>
       <TableCell>
         <CardMedia

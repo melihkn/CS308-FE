@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Typography, Chip, Button, CardMedia } from "@mui/material";
+import { Box, Typography, Chip, Button, CardMedia, colors } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@mui/material";
+import { tokens } from "../theme";
 
 const OrderItem = ({ productId, quantity, purchase_price }) => {
   const [product, setProduct] = useState(null);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -72,7 +76,11 @@ const OrderItem = ({ productId, quantity, purchase_price }) => {
         variant="outlined"
         size="small"
         onClick={handleProductClick}
-        sx={{ textTransform: "none" }}
+        sx={{ textTransform: "none", color: colors.blueAccent[400], borderColor: colors.blueAccent[400],
+          "&:hover": { // Hover durumunda yazı rengi
+      transform: "scale(1.05)", // Hover durumunda buton hafif büyür
+    },
+         }}
       >
         View Details
       </Button>
