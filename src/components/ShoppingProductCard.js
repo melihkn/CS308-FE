@@ -13,6 +13,7 @@ const ShoppingProductCard = ({
   distributor,
   imageUrl,
   price,
+  discountRate,
   onIncrease,
   onDecrease,
   onRemove,
@@ -53,9 +54,40 @@ const ShoppingProductCard = ({
           <strong>Model:</strong> {model}
         </Typography>
         <Typography variant="body2">{description}</Typography>
-        <Typography variant="body2">
-          <strong>Price:</strong> ${price.toFixed(2)}
-        </Typography>
+        <Box sx={{ mt: 2, mb: 1 }}>
+          {discountRate > 0 && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  textDecoration: 'line-through',
+                  color: 'text.secondary',
+                  fontSize: '0.9rem'
+                }}
+              >
+                {price.toFixed(2)} TL
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'error.main',
+                  fontWeight: 'bold'
+                }}
+              >
+                %{discountRate}
+              </Typography>
+            </Box>
+          )}
+          <Typography
+            variant="h6"
+            sx={{
+              color: colors.primary,
+              fontWeight: 'bold'
+            }}
+          >
+            {(price * (1 - discountRate / 100)).toFixed(2)} TL
+          </Typography>
+        </Box>
         <Typography variant="body2">
           <strong>Quantity:</strong> {quantity}
         </Typography>

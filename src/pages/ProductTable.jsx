@@ -70,7 +70,9 @@ const ProductTable = () => {
         quantity: product.quantity,
         warranty_status: product.warranty_status, // Format warranty status
         distributor: product.distributor,
-        image_url: product.image_url
+        image_url: product.image_url, 
+        discount_rate: product.discount_rate,
+        end_date: product.end_date,
       }));
 
       console.log("Formatted Products:", formattedProducts); // Debugging formatted products
