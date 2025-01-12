@@ -22,11 +22,17 @@ import {
   List,
   ListItem,
   ListItemText,
+  colors,
 } from "@mui/material";
+
+import { ShoppingCart } from "@mui/icons-material";
 
 import { Add, Remove } from "@mui/icons-material"; // For increment/decrement buttons
 import { fetchProductbyId, addReview, fetchReviewsByProductId, fetchAverageRating } from "../api/api";
 import axios from "axios";
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const { id } = useParams();
@@ -45,6 +51,9 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const [wishlistDialogOpen, setWishlistDialogOpen] = useState(false);
   const [wishlists, setWishlists] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
   useEffect(() => {
     const loadProduct = async () => {
       try {
@@ -320,30 +329,27 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
             </Typography>
             {/* Quantity Counter */}
             <Stack direction="row" alignItems="center" spacing={2} mt={2}>
-              <IconButton onClick={decrementQuantity} color="secondary">
+              <IconButton onClick={decrementQuantity} sx = {{color: colors.blueAccent[400]}}>
                 <Remove />
               </IconButton>
               <Typography variant="h6">{quantity}</Typography>
-              <IconButton onClick={incrementQuantity} color="secondary">
+              <IconButton onClick={incrementQuantity} sx = {{color: colors.blueAccent[400]}}>
                 <Add />
               </IconButton>
             </Stack>
             <Stack direction="row" spacing={2} mt={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={product.quantity <= 0} // Disable button if quantity is 0
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleAddToWishlist}
-              >
-                Add to Wishlist
-              </Button>
+              <IconButton
+              sx = {{color: colors.blueAccent[400]}}
+              variant="contained"
+              disabled={product.quantity <= 0} // Disable button if quantity is 0
+              onClick={handleAddToCart}>
+                <ShoppingCart color={colors.blueAccent[400]}/>
+              </IconButton>
+              <IconButton sx = {{color: colors.blueAccent[400]}}
+                              variant="outlined"
+                              onClick={handleAddToWishlist}>
+                <FavoriteBorderIcon color={colors.blueAccent[400]}/>
+              </IconButton>
               <Snackbar
                     open={snackbarOpen}
                     autoHideDuration={1500}
@@ -360,7 +366,11 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
-          indicatorColor="secondary"
+          sx={{
+            "& .MuiTabs-indicator": {
+              backgroundColor: colors.blueAccent[400], // İndikatörün rengi
+            },
+          }}
           textColor="primary.light"
           variant="fullWidth"
         >
@@ -400,8 +410,10 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
               />
               <Button
                 variant="contained"
-                color="primary"
                 onClick={handleAddReview}
+                sx = {{backgroundColor: colors.blueAccent[400], 
+                  "&:hover": { // Hover durumunda yazı rengi
+            transform: "scale(1.02)"}}}
               >
                 Submit Review
               </Button>

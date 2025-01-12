@@ -4,6 +4,8 @@ import axios from "axios";
 import { Grid, Box, CircularProgress, Typography, Paper, Container, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import Filters from "../Filters";
 import ISFG_Product_Listing from "./ISFG_Product_Listing";
+import { useTheme } from '@mui/material';
+import { tokens } from '../theme';
 
 function ItemsFromSameCategoryAdvanced() {
   const { categoryId } = useParams(); // Extract categoryId from URL
@@ -19,7 +21,9 @@ function ItemsFromSameCategoryAdvanced() {
   const [products, setProducts] = useState([]);
   const [sortedProducts, setSortedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortCriteria, setSortCriteria] = useState(""); // Track selected sort option
+  const [sortCriteria, setSortCriteria] = useState(""); // Track selected sort optionü
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
 
   // Fetch subcategories and initial products for the root category
   useEffect(() => {
@@ -36,6 +40,8 @@ function ItemsFromSameCategoryAdvanced() {
         const productsResponse = await axios.get(
           `${BACKEND_URL}/products/getproduct/category/detailed/${categoryId}`
         );
+
+        console.log(productsResponse.data);
         setProducts(productsResponse.data);
         setSortedProducts(productsResponse.data); // Initialize sorted products
       } catch (error) {
@@ -120,6 +126,7 @@ function ItemsFromSameCategoryAdvanced() {
     } else if (criteria === "popularity") {
       sorted = [...products].sort((a, b) => b.item_sold - a.item_sold);
     }
+
     setSortedProducts(sorted);
     setSortCriteria(criteria);
   };
@@ -133,57 +140,103 @@ function ItemsFromSameCategoryAdvanced() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={3}>
-        {/* Filters Section */}
-        <Grid item xs={12} md={3}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Filters
-            </Typography>
-            <Filters
-              filters={filters}
-              subcategories={subcategories}
-              onFilterChange={handleFilterChange}
-              onApplyFilters={handleApplyFilters}
-              onResetFilters={handleResetFilters}
-            />
-          </Paper>
-        </Grid>
+<Container maxWidth="xl" sx={{ mt: 4, mb: 4, pl: 0 }}>
+  <Grid container spacing={3}>
+    {/* Filters Section */}
+    <Grid item xs={12} md={3}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 3, // Daha geniş padding
+          width: "100%",
+          minHeight: "calc(100vh - 64px)",
+          boxSizing: "border-box",
+          ml: -2, // Filtreleri sola yaklaştırmak için negatif margin
+        }}
+      >
+        <Typography variant="h6" gutterBottom>
+          Filters
+        </Typography>
+        <Filters
+          filters={filters}
+          subcategories={subcategories}
+          onFilterChange={handleFilterChange}
+          onApplyFilters={handleApplyFilters}
+          onResetFilters={handleResetFilters}
+        />
+      </Paper>
+    </Grid>
 
-        {/* Products Section */}
-        <Grid item xs={12} md={9}>
-          <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="h5" gutterBottom>
-              Products
-            </Typography>
-            <FormControl>
-              <InputLabel id="sort-label">Sort by</InputLabel>
-              <Select
-                labelId="sort-label"
-                value={sortCriteria}
-                onChange={(e) => sortItems(e.target.value)}
-                sx={{ minWidth: 150 }}
-              >
-                <MenuItem value="">Select</MenuItem>
-                <MenuItem value="price (ascending)">Price (Low to High)</MenuItem>
-                <MenuItem value="price (descending)">Price (High to Low)</MenuItem>
-                <MenuItem value="name (A-Z)">Name (A-Z)</MenuItem>
-                <MenuItem value="name (Z-A)">Name (Z-A)</MenuItem>
-                <MenuItem value="popularity">Popularity (Most Sold)</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          {sortedProducts.length > 0 ? (
-            <ISFG_Product_Listing products={sortedProducts} />
-          ) : (
-            <Typography variant="body1" color="textSecondary">
-              No products found.
-            </Typography>
-          )}
-        </Grid>
-      </Grid>
-    </Container>
+    {/* Products Section */}
+    <Grid item xs={12} md={9}>
+      <Box
+        sx={{
+          mb: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h5" gutterBottom>
+          Products
+        </Typography>
+        <FormControl
+          sx={{
+            minWidth: 150,
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor:
+                  theme.palette.mode === "dark"
+                    ? colors.blueAccent[200]
+                    : "rgba(0, 0, 0, 0.23)",
+              },
+              "&:hover fieldset": {
+                borderColor:
+                  theme.palette.mode === "dark"
+                    ? colors.grey[700]
+                    : "rgba(0, 0, 0, 0.87)",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: colors.blueAccent[100],
+                borderWidth: "2px",
+              },
+            },
+            input: {
+              color: theme.palette.text.primary,
+            },
+            "& .MuiInputLabel-root": {
+              color: theme.palette.text.secondary,
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: colors.blueAccent[100],
+            },
+          }}
+        >
+          <InputLabel id="sort-label">Sort by</InputLabel>
+          <Select
+            labelId="sort-label"
+            value={sortCriteria}
+            onChange={(e) => sortItems(e.target.value)}
+          >
+            <MenuItem value="price (ascending)">Price (Low to High)</MenuItem>
+            <MenuItem value="price (descending)">Price (High to Low)</MenuItem>
+            <MenuItem value="name (A-Z)">Name (A-Z)</MenuItem>
+            <MenuItem value="name (Z-A)">Name (Z-A)</MenuItem>
+            <MenuItem value="popularity">Popularity (Most Sold)</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+      {sortedProducts.length > 0 ? (
+        <ISFG_Product_Listing products={sortedProducts} />
+      ) : (
+        <Typography variant="body1" color="textSecondary">
+          No products found.
+        </Typography>
+      )}
+    </Grid>
+  </Grid>
+</Container>
+
   );
 }
 

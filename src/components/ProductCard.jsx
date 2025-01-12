@@ -7,10 +7,10 @@ import { fetchAverageRating } from "../api/api";
 import {useTheme} from "@mui/material";
 import { tokens } from "../theme";
 
-const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, quantity, distributor, imageUrl, discountRate }) => {
+const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, quantity, distributor, imageUrl, discountRate, rating }) => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [rating, setRating] = useState(0);
+  const [rating_, setRating] = useState(0);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -62,6 +62,7 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, 
       sx={{
         maxWidth: 345,
         margin: 2,
+        borderRadius: 4,
         transition: "transform 0.3s ease-in-out",
         cursor: "pointer",
         "&:hover": {

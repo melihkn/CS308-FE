@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import OrderItem from "./OrderItem";
 import axios from "axios";
+
 import {
   Alert,
   Box,
@@ -30,8 +31,12 @@ import {
   Receipt as ReceiptIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
+
 
 import { cancelOrder } from "../api/api";
+import { use } from "react";
 
 const ORDER_STATUS_MAP = {
   0: { text: "Pending", color: "warning" },
@@ -41,23 +46,30 @@ const ORDER_STATUS_MAP = {
   4: { text: "Cancelled", color: "error" },
   5: { text: "Returned", color: "secondary" },
 };
-
 const Order = ({ order, onOrderUpdate }) => {
   const navigate = useNavigate();
-  const [expanded, setExpanded] = React.useState(false);
-  const [openCancelModal, setOpenCancelModal] = React.useState(false);
-  const [cancelReason, setCancelReason] = React.useState("");
-  const [snackbar, setSnackbar] = React.useState({
+  const [expanded, setExpanded] = useState(false);
+  const [openCancelModal, setOpenCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [status, setStatus] = useState(order.order_status);
 
-  const orderStatus =
+  const [orderStatus, setOrderStatus] = useState(
     ORDER_STATUS_MAP[order.order_status] || {
       text: "Unknown Status",
       color: "default",
-    };
+    }
+  );
+
+  useEffect(() => {
+    setOrderStatus(ORDER_STATUS_MAP[status] || { text: "Unknown Status", color: "default" });
+  }, [status]);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -73,8 +85,9 @@ const Order = ({ order, onOrderUpdate }) => {
   };
 
   const handleViewInvoice = (e) => {
+    //navigate(`/invoice/${order_id}`);
     e.stopPropagation();
-    navigate(`/invoice/${order.order_id}`);
+    window.open(`/invoice/${order.order_id}`, '_blank');
   };
 
   const handleCancelOrder = (e) => {
@@ -98,6 +111,7 @@ const Order = ({ order, onOrderUpdate }) => {
         severity: "success",
       });
 
+      setStatus(4);
     } catch (error) {
       console.error("Error cancelling order:", error);
       setSnackbar({
@@ -160,6 +174,9 @@ const Order = ({ order, onOrderUpdate }) => {
       </CardContent>
       <CardActions disableSpacing>
         <Button
+          sx={{ color: colors.blueAccent[400], 
+            "&:hover": { // Hover durumunda yazı rengi
+      transform: "scale(1.05)"} }}
           size="small"
           startIcon={<ReceiptIcon />}
           onClick={handleViewInvoice}
@@ -167,6 +184,10 @@ const Order = ({ order, onOrderUpdate }) => {
           View Invoice
         </Button>
         <Button
+          sx={{ color: colors.blueAccent[400], 
+            "&:hover": { // Hover durumunda yazı rengi
+      transform: "scale(1.05)"}// Hover durumunda buton hafif büyür
+           }}
           size="small"
           startIcon={<CommentIcon />}
           onClick={handleCommentRedirect}
@@ -174,6 +195,9 @@ const Order = ({ order, onOrderUpdate }) => {
           Comment
         </Button>
         <Button
+          sx={{ color: colors.redAccent[400], 
+            "&:hover": { // Hover durumunda yazı rengi
+      transform: "scale(1.05)"} }}
           size="small"
           startIcon={<CancelIcon />}
           onClick={handleCancelOrder}

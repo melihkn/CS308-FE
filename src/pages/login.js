@@ -16,8 +16,11 @@ import {
   Stack,
   Link,
   Divider,
+  Snackbar,
+  Alert,
 } from '@mui/material';
-
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
 // Styled components
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -43,7 +46,10 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
   const navigate = useNavigate();
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -61,7 +67,7 @@ const Login = ({ onLogin }) => {
       const { userId, role } = profileResponse.data;
 
       onLogin(true, userId, profileResponse.data);
-      alert('Login successful');
+      setSnackbar({ open: true, message: 'Login successful', severity: 'success' });
       localStorage.setItem('isLoggedIn', true);
 
       // Navigate based on role
@@ -73,7 +79,11 @@ const Login = ({ onLogin }) => {
         navigate('/');
       }
     } catch (error) {
-      alert(error.response?.data?.detail || 'Login failed');
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.detail || 'Login failed',
+        severity: 'error',
+      });
     }
   };
 
@@ -87,7 +97,7 @@ const Login = ({ onLogin }) => {
       setEmailError('');
     }
 
-    if (!password || password.length < 1) {
+    if (!password || password.length < 2) {
       setPasswordError('Password must be at least 6 characters long.');
       isValid = false;
     } else {
@@ -95,6 +105,10 @@ const Login = ({ onLogin }) => {
     }
 
     return isValid;
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -137,26 +151,40 @@ const Login = ({ onLogin }) => {
           <Button
             type="submit"
             variant="contained"
-            color="primary"
+            color={colors.blueAccent[700]}
+            sx = {{backgroundColor: colors.blueAccent[400],  mt: 2}}
             fullWidth
-            sx={{ mt: 2 }}
           >
             Login
           </Button>
         </Box>
         <Divider sx={{ my: 2 }}>or</Divider>
         <Box>
-          <Button fullWidth variant="outlined">
+          <Button 
+            fullWidth variant="outlined"
+            color={colors.blueAccent[700]}
+            sx = {{backgroundColor: colors.blueAccent[400],  mt: 2}}
+          >
             Login with Google
           </Button>
         </Box>
-        <Typography align="center" sx={{ mt: 2 }}>
+        <Typography align="center" sx={{ mt: 2}}>
           Don&apos;t have an account?{' '}
-          <Link href="/register" underline="hover">
+          <Link href="/register" underline="hover" sx = {{color: colors.blueAccent[400]}}>
             Sign up
           </Link>
         </Typography>
       </Card>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

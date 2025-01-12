@@ -28,10 +28,13 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
+  colors,
 } from "@mui/material";
 import { LocalShipping, AttachMoney, CalendarToday, LocationOn, Cancel as CancelIcon } from "@mui/icons-material";
 import { requestRefund, refundStatusCall, cancelOrder} from "../api/api";
 import SpecificOrderItem from "../components/SpecificOrderItem";
+import {useTheme} from "@mui/material";
+import { tokens } from "../theme";
 
 const ORDER_STATUS_MAP = {
   0: { text: "Pending", color: "warning" },
@@ -55,7 +58,8 @@ const SpecificOrderPage = () => {
   const [cancelReason, setCancelReason] = useState("");
   const [refundNumber, setRefundNumber] = useState(0);
   const navigate = useNavigate();
-
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   useEffect(() => {
     fetchOrderDetails();
   }, [orderId]);
@@ -245,7 +249,7 @@ const SpecificOrderPage = () => {
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <LocationOn sx={{ mr: 1 }} />
                 <Typography>
-                  <strong>Delivery Address:</strong> {orderDetails.address}
+                  <strong>Delivery Address:</strong> {orderDetails.order_address}
                 </Typography>
               </Box>
             </CardContent>
@@ -270,11 +274,11 @@ const SpecificOrderPage = () => {
               </Button>
               <Button
                 variant="outlined"
-                color="secondary"
                 onClick={handleCancelOrder}
+                color = "error"
                 startIcon={<CancelIcon />}
                 fullWidth
-                sx={{ mb: 2 }}
+                sx={{ mb: 2, colors: colors.redAccent[400] }}
                 disabled = {orderDetails.order_status !== 0 || selectedProducts.some(productId => refundStatus[productId] !== "N/A")}
               >
                 Cancel Order
@@ -297,6 +301,12 @@ const SpecificOrderPage = () => {
             <TableRow>
               <TableCell padding="checkbox">
                 <Checkbox
+                  sx={{
+                    color: colors.blueAccent[400], // Default unchecked color
+                    '&.Mui-checked': {
+                      color: colors.greenAccent[400], // Lighter checked color
+                    },
+                  }}
                   indeterminate={selectedProducts.length > 0 && selectedProducts.length < orderDetails.items.length}
                   checked={selectedProducts.length === orderDetails.items.length}
                   onChange={() =>

@@ -10,8 +10,12 @@ import {
   Rating,
   TextField,
 } from "@mui/material";
+import {useTheme} from "@mui/material";
+import { tokens } from "./theme";
 
 function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onResetFilters }) {
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
   const handleSubCategoryChange = (subCategoryId) => {
     onFilterChange({ sub_category: subCategoryId });
   };
@@ -45,7 +49,7 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
             display: "flex",
             flexDirection: "column",
             gap: 1,
-            maxHeight: "250px", // Increased height for more content
+            maxHeight: "350px", // Increased height for more content
             overflowY: "auto",
             px: 1, // Padding for better spacing
           }}
@@ -55,6 +59,11 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
             control={
               <Checkbox
                 size="small"
+                sx = {{color: colors.blueAccent[400],
+                  '&.Mui-checked': {
+                    color: colors.greenAccent[400], // Lighter checked color
+                  },
+                }}
                 checked={!filters.sub_category} // None selected when sub_category is null or undefined
                 onChange={() => handleSubCategoryChange(null)} // Clear sub_category filter
               />
@@ -75,6 +84,11 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
               key={sub.category_id}
               control={
                 <Checkbox
+                  sx = {{color: colors.blueAccent[400],
+                    '&.Mui-checked': {
+                      color: colors.greenAccent[400], // Lighter checked color
+                    },
+                  }}
                   size="small"
                   checked={filters.sub_category === sub.category_id}
                   onChange={() => handleSubCategoryChange(sub.category_id)}
@@ -93,7 +107,7 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
                 justifyContent: "space-between",
                 alignItems: "center",
                 width: "100%",
-              }}
+                color: colors.blueAccent[400]            }}
             />
           ))}
         </Box>
@@ -107,6 +121,7 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
           Price Range
         </Typography>
         <Slider
+          sx = {{color: colors.blueAccent[200]}}
           value={[filters.price_min || 0, filters.price_max || 1000]}
           onChange={handlePriceChange}
           valueLabelDisplay="auto"
@@ -144,10 +159,10 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
 
       {/* Buttons */}
       <Box sx={{ display: "flex", justifyContent: "space-between", gap: 1 }}>
-        <Button variant="contained" color="primary" onClick={onApplyFilters} size="small" sx={{ fontSize: "12px" }}>
+        <Button variant="contained" onClick={onApplyFilters} size="small" sx={{ fontSize: "12px", backgroundColor: colors.blueAccent[700] }}>
           Apply Filters
         </Button>
-        <Button variant="outlined" color="secondary" onClick={onResetFilters} size="small" sx={{ fontSize: "12px" }}>
+        <Button variant="outlined" onClick={onResetFilters} size="small" sx={{ fontSize: "12px", backgroundColor: colors.greenAccent[400] }}>
           Reset Filters
         </Button>
       </Box>

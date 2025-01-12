@@ -107,6 +107,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
             distributor={product.distributor}
             imageUrl={getImageUrl(product.image_url)}
             discountRate={product.discount_rate}
+            rating={product.average_rating}
             />
           </Grid>
           ))}
@@ -143,6 +144,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
             distributor={product.distributor}
             imageUrl={getImageUrl(product.image_url)}
             discountRate={product.discount_rate}
+            rating= {product.average_rating}
             />
           </Grid>
           ))}
@@ -173,6 +175,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
           distributor={product.distributor}
           imageUrl={getImageUrl(product.image_url)}
           discountRate={discountRate}
+          rating = {product.average_rating}
           />
         </Grid>
         );
@@ -202,6 +205,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
           distributor={product.distributor}
           imageUrl={getImageUrl(product.image_url)}
           discountRate={discountRate}
+          rating = {product.average_rating}
           />
         </Grid>
         );
