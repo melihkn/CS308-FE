@@ -7,7 +7,7 @@ import ISFG_Product_Listing from "./ISFG_Product_Listing";
 import { useTheme } from '@mui/material';
 import { tokens } from '../theme';
 
-function ItemsFromSameCategoryAdvanced() {
+function ItemsFromSameCategoryAdvanced({ userId }) {
   const { categoryId } = useParams(); // Extract categoryId from URL
   const BACKEND_URL = "http://127.0.0.1:8002";
   const [filters, setFilters] = useState({
@@ -227,7 +227,7 @@ function ItemsFromSameCategoryAdvanced() {
         </FormControl>
       </Box>
       {sortedProducts.length > 0 ? (
-        <ISFG_Product_Listing products={sortedProducts} />
+        <ISFG_Product_Listing products={sortedProducts} userId={userId} />
       ) : (
         <Typography variant="body1" color="textSecondary">
           No products found.

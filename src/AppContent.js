@@ -181,7 +181,7 @@ function AppContent() {
             {/* This is the path for showing the products in one wish list */}
             <Route path="/wishlist/:wishlistId" element={<WishlistItemsPage />} />
             <Route path="/order/:orderId" element={<SpecificOrderPage  />} />
-            <Route path="/items-from-same-category-advanced/:categoryId" element={<ItemsFromSameCategoryAdvanced />} />
+            <Route path="/items-from-same-category-advanced/:categoryId" element={<ItemsFromSameCategoryAdvanced userId={userId}/>} />
 
           </Routes>
         </>
