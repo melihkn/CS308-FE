@@ -334,3 +334,14 @@ export const cancelOrder = async (cancelRequest) => {
 
 
   
+export const fetchDiscountByProductID = async (product_id) => {
+
+    try {
+        const response = await productsService.get(`/products/discount/${product_id}`);
+        console.log("Discount for product:", response.data); // Debugging
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching discount:", error);
+        throw error;
+    }
+}

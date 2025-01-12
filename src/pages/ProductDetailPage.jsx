@@ -23,6 +23,9 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
+import {tokens} from "../theme";  
+import {useTheme} from "@mui/material";
+
 
 import { Add, Remove } from "@mui/icons-material"; // For increment/decrement buttons
 import { fetchProductbyId, addReview, fetchReviewsByProductId, fetchAverageRating } from "../api/api";
@@ -45,6 +48,8 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const [wishlistDialogOpen, setWishlistDialogOpen] = useState(false);
   const [wishlists, setWishlists] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   useEffect(() => {
     const loadProduct = async () => {
       try {
@@ -310,14 +315,40 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
             <Typography variant="body2" gutterBottom>
               {product.distributor}
             </Typography>
-            <Typography
-              variant="h5"
-              color="theme.palette.primary.light"
-              fontWeight="bold"
-              gutterBottom
-            >
-              {(product.price ?? 0).toLocaleString("tr-TR")} TL
-            </Typography>
+            <Box sx={{ mt: 2, mb: 1 }}>
+              {product.discount_rate > 0 && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textDecoration: 'line-through',
+                      color: 'text.secondary',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    {product.price.toFixed(2)} TL
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: 'error.main',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    %{product.discount_rate}
+                  </Typography>
+                </Box>
+              )}
+              <Typography
+                variant="h6"
+                sx={{
+                  color: colors.primary,
+                  fontWeight: 'bold'
+                }}
+              >
+                {(product.price * (1 - product.discount_rate / 100)).toFixed(2)} TL
+              </Typography>
+            </Box>
             {/* Quantity Counter */}
             <Stack direction="row" alignItems="center" spacing={2} mt={2}>
               <IconButton onClick={decrementQuantity} color="secondary">
