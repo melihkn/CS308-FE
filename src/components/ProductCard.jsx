@@ -62,6 +62,7 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, 
       sx={{
         maxWidth: 345,
         margin: 2,
+        borderRadius: 4,
         transition: "transform 0.3s ease-in-out",
         cursor: "pointer",
         "&:hover": {

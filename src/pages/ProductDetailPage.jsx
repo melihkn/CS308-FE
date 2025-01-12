@@ -366,7 +366,11 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
-          indicatorColor="secondary"
+          sx={{
+            "& .MuiTabs-indicator": {
+              backgroundColor: colors.blueAccent[400], // İndikatörün rengi
+            },
+          }}
           textColor="primary.light"
           variant="fullWidth"
         >
@@ -406,8 +410,10 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
               />
               <Button
                 variant="contained"
-                color="primary"
                 onClick={handleAddReview}
+                sx = {{backgroundColor: colors.blueAccent[400], 
+                  "&:hover": { // Hover durumunda yazı rengi
+            transform: "scale(1.02)"}}}
               >
                 Submit Review
               </Button>

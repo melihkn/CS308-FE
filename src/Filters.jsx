@@ -59,7 +59,11 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
             control={
               <Checkbox
                 size="small"
-                sx = {{color: colors.blueAccent[400]}}
+                sx = {{color: colors.blueAccent[400],
+                  '&.Mui-checked': {
+                    color: colors.greenAccent[400], // Lighter checked color
+                  },
+                }}
                 checked={!filters.sub_category} // None selected when sub_category is null or undefined
                 onChange={() => handleSubCategoryChange(null)} // Clear sub_category filter
               />
@@ -80,7 +84,11 @@ function Filters({ filters, subcategories, onFilterChange, onApplyFilters, onRes
               key={sub.category_id}
               control={
                 <Checkbox
-                  sx = {{color: colors.blueAccent[400]}}
+                  sx = {{color: colors.blueAccent[400],
+                    '&.Mui-checked': {
+                      color: colors.greenAccent[400], // Lighter checked color
+                    },
+                  }}
                   size="small"
                   checked={filters.sub_category === sub.category_id}
                   onChange={() => handleSubCategoryChange(sub.category_id)}

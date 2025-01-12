@@ -60,7 +60,7 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
       {/* Logo */}
       <Button
         onClick={() => navigate("/")}
-        sx={{ fontSize: "24px", fontWeight: "bold", color: colors.primary[500] }}
+        sx={{ fontSize: "24px", fontWeight: "bold", color: colors.blueAccent[100] }}
       >
         MyTech
       </Button>
@@ -169,7 +169,7 @@ const TopNavbar = ({ isLoggedIn, onLogout, userProfile }) => {
           </>
         ) : (
           <>
-            <Button onClick={handleMenuClick} sx={{ color: "white" }}>
+            <Button onClick={handleMenuClick} sx={{ color: colors.blueAccent[400] }}>
               Login
             </Button>
             <Menu

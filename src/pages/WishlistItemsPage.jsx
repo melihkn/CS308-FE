@@ -91,7 +91,9 @@ const WishlistItemsPage = () => {
       ) : (
       <Grid container spacing={3}>
         {detailedItems.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item.wishlist_item_id}>
+          <Grid item xs={12} sm={6} md={4} key={item.wishlist_item_id} onClick={() => handleNavigateToProduct(item.product_id)} sx = {{ "&:hover": {
+            transform: "scale(1.05)",
+          } }}>
             <Card sx={{ backgroundColor: "background.paper", color: "text.primary" }}>
               {/* Product Image */}
               <CardMedia

@@ -249,7 +249,7 @@ const SpecificOrderPage = () => {
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <LocationOn sx={{ mr: 1 }} />
                 <Typography>
-                  <strong>Delivery Address:</strong> {orderDetails.address}
+                  <strong>Delivery Address:</strong> {orderDetails.order_address}
                 </Typography>
               </Box>
             </CardContent>
@@ -301,6 +301,12 @@ const SpecificOrderPage = () => {
             <TableRow>
               <TableCell padding="checkbox">
                 <Checkbox
+                  sx={{
+                    color: colors.blueAccent[400], // Default unchecked color
+                    '&.Mui-checked': {
+                      color: colors.greenAccent[400], // Lighter checked color
+                    },
+                  }}
                   indeterminate={selectedProducts.length > 0 && selectedProducts.length < orderDetails.items.length}
                   checked={selectedProducts.length === orderDetails.items.length}
                   onChange={() =>
