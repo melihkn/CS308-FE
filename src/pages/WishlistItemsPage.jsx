@@ -156,7 +156,7 @@ const WishlistItemsPage = () => {
                     <strong>Price:</strong> ${item.price}
                   </Typography>
                   <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                    <Rating name="read-only-rating" value={item.rating || 0} precision={0.5} readOnly />
+                    <Rating name="read-only-rating" value={item.average_rating || 0} precision={0.5} readOnly />
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation();

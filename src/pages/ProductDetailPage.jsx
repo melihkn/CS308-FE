@@ -13,6 +13,7 @@ import {
   Button,
   TextField,
   Stack,
+  Alert,
   Snackbar,
   CircularProgress,
   Dialog,
@@ -24,16 +25,18 @@ import {
   ListItemText,
   colors,
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import {tokens} from "../theme";  
 import {useTheme} from "@mui/material";
 
 
-import { ShoppingCart } from "@mui/icons-material";
+import { BorderColor, ShoppingCart } from "@mui/icons-material";
 
 import { Add, Remove } from "@mui/icons-material"; // For increment/decrement buttons
 import { fetchProductbyId, addReview, fetchReviewsByProductId, fetchAverageRating } from "../api/api";
 import axios from "axios";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Scale } from "lucide-react";
 
 const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const { id } = useParams();
@@ -132,21 +135,21 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
       const result = await addToCart({ productId: id});
       console.log("Result:", result);
       if (result !== "Could not add item to cart.")
-      alert("Product added to cart!");
+      setSnackbar({ open: true, message: "Product added to cart successfully!", severity: "success" });
     } catch (httpError) {
       // Differentiate error responses based on status codes or messages
       const errorDetail = httpError.response?.data?.detail;
 
       if (httpError.response?.status === 400 && errorDetail === "Stock is not enough.") {
-        alert("Stock is not enough! Please reduce the quantity or try again later.");
+        setSnackbar({ open: true, message: "Stock is not enough! Please reduce the quantity or try again later.", severity: "error" });
       } else if (httpError.response?.status === 400) {
-        alert("Bad Request: " + (errorDetail || "Invalid request."));
+        setSnackbar({ open: true, message: "Bad Request: " + (errorDetail || "Invalid request."), severity: "error" });
       } else if (httpError.response?.status === 404) {
-        alert("Product not found!");
+        setSnackbar({ open: true, message: "Product not found!", severity: "error" });
       } else if (httpError.response?.status === 500) {
-        alert("Internal server error! Please try again later.");
+        setSnackbar({ open: true, message: "Internal server error! Please try again later.", severity: "error" });
       } else {
-        alert("Failed to add product to cart: " + (errorDetail || httpError.message));
+        setSnackbar({ open: true, message: "Failed to add product to cart: " + (errorDetail || httpError.message), severity: "error" });
       }
       console.error("Error adding to cart:", httpError.response?.data || httpError);
     }
@@ -155,7 +158,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const handleAddToWishlist = async () => {
     if (!isLoggedIn) {
       console.error("User is not logged in", isLoggedIn);
-      setSnackbarMessage("User must be logged in");
+      setSnackbar({open:true, message:"User must be logged in", severity:"error"});
       setSnackbarOpen(true);
       return;
     }
@@ -166,7 +169,7 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
       setWishlistDialogOpen(true);
     } catch (error) {
       console.error("Error fetching wishlists:", error.response?.data || error);
-      setSnackbarMessage("Failed to fetch wishlists.");
+      setSnackbar("Failed to fetch wishlists.");
       setSnackbarOpen(true);
     }
   };
@@ -176,12 +179,12 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
         wishlist_id: wishlistId,
         product_id: id
       });
-      setSnackbarMessage("Product added to wishlist successfully!");
+      setSnackbar({ open: true, message: "Product added to wishlist successfully!", severity: 'success' });
       setSnackbarOpen(true);
       setWishlistDialogOpen(false);
     } catch (error) {
       console.error("Error adding product to wishlist:", error.response?.data || error);
-      setSnackbarMessage("Failed to add product to wishlist. It may already exist in the wishlist");
+      setSnackbar({ open: true, message: "Failed to add product to wishlist. It may already exist in the wishlist", severity: 'error' });
       console.log(error.response.data)
       setSnackbarOpen(true);
     }
@@ -251,15 +254,14 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
         wishlist_id: newWishlist.wishlist_id,
         product_id: id,
       });
-  
-      setSnackbarMessage("Wishlist created and product added successfully!");
+      setSnackbar({ open: true, message: "Wishlist created and product added successfully!", severity: "success" });
       setSnackbarOpen(true);
   
       setWishlistDialogOpen(false); // Close the dialog
     } catch (error) {
       console.log(error)
       console.error("Error creating wishlist or adding product:", error.response?.data || error);
-      setSnackbarMessage("Failed to create wishlist or add product.",error);
+      setSnackbar({ open: true, message: "Failed to create wishlist or add product.", severity: "error" });
       setSnackbarOpen(true);
     }
   };
@@ -273,8 +275,8 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
   const decrementQuantity = () => {
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1)); // Prevent quantity from going below 1
   };
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
   if (loading) return <CircularProgress />;
   if (error)
@@ -378,11 +380,14 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
                 <FavoriteBorderIcon color={colors.blueAccent[400]}/>
               </IconButton>
               <Snackbar
-                    open={snackbarOpen}
-                    autoHideDuration={1500}
-                    onClose={handleCloseSnackbar}
-                    message={snackbarMessage}
-                  />
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
             </Stack>
           </Grid>
         </Grid>
@@ -487,9 +492,11 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
               <ListItem
                 button
                 key={wishlist.wishlist_id}
+                BorderColor = {colors.blueAccent[400]}
                 onClick={() => handleSelectWishlist(wishlist.wishlist_id)}
+                sx = {{'@hover': {Scale: 1.02}, BorderColor: colors.blueAccent[400]}}
               >
-                <ListItemText primary={wishlist.name || "Unnamed Wishlist"} />
+                <ListItemText sx = {{'@hover': {Scale: 1.02}, BorderColor: colors.blueAccent[400]}} primary={wishlist.name || "Unnamed Wishlist"} />
               </ListItem>
             ))}
           </List>
@@ -525,16 +532,19 @@ const ProductDetailPage = ({ isLoggedIn, userId }) => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setWishlistDialogOpen(false)}>Cancel</Button>
+          <IconButton color= "error" onClick={() => setWishlistDialogOpen(false)}><CloseIcon></CloseIcon></IconButton>
         </DialogActions>
     </Dialog>
 
       <Snackbar
-     open={snackbarOpen}
-     autoHideDuration={1500}
-     onClose={handleCloseSnackbar}
-     message={snackbarMessage}
-   />
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
 
     

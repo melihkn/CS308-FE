@@ -145,7 +145,7 @@ function ItemsFromSameCategoryAdvanced({ userId }) {
     {/* Filters Section */}
     <Grid item xs={12} md={3}>
       <Paper
-        elevation={3}
+        elevation={3} md={3}
         sx={{
           p: 3, // Daha geniş padding
           width: "100%",

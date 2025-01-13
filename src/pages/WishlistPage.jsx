@@ -32,9 +32,9 @@ const WishlistPage = ({ userId }) => {
   const [wishlistName, setWishlistName] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const theme = useTheme(); // Access the current theme
   const navigate = useNavigate();
-  const colors = theme.palette; // Extract the color palette
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [wishlistToDelete, setWishlistToDelete] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -142,9 +142,9 @@ const WishlistPage = ({ userId }) => {
         <Button
           variant="contained"
           sx={{
-            backgroundColor: colors.secondary.main,
-            color: colors.getContrastText(colors.secondary.main),
-            "&:hover": { backgroundColor: colors.secondary.dark },
+            backgroundColor: colors.blueAccent[400],
+            color: "secondary",
+            "&:hover": { scale: 1.02 },
           }}
           onClick={handleCreateWishlist}
         >
@@ -181,8 +181,7 @@ const WishlistPage = ({ userId }) => {
                   </Typography>
                   <Button
                     variant="contained"
-                    color="primary"
-                    sx={{ mt: 2 }}
+                    sx={{ mt: 2 , backgroundColor: colors.blueAccent[400], color: "secondary", "&:hover": { scale: 1.02 } }}
                     onClick={() => handleViewItems(wishlist.wishlist_id)}
                   >
                     View Items
@@ -240,9 +239,9 @@ const WishlistPage = ({ userId }) => {
             onClick={closeDeleteDialog}
             variant="outlined"
             sx={{
-              backgroundColor: colors.secondary.main,
-              color: colors.getContrastText(colors.secondary.main),
-              "&:hover": { backgroundColor: colors.secondary.dark },
+              backgroundColor: colors.primary[400],
+              color: "text.secondary",
+              "&:hover": { scale: 1.02 },
             }}
           >
             Cancel

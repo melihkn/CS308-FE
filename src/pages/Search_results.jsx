@@ -68,7 +68,10 @@ const SearchResults = () => {
       const matchesRating =
         !filters.rating_min || product.average_rating >= filters.rating_min;
 
-      return matchesPrice && matchesRating;
+      const matchesWarranty =
+        !filters.warranty_status || product.warranty_status >= filters.warranty_status;
+
+      return matchesPrice && matchesRating && matchesWarranty;
     });
 
     setProducts(filteredProducts);
@@ -109,7 +112,7 @@ const SearchResults = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4, pl:0}}>
       <Grid container spacing={3}>
         {/* Filters Section */}
         <Grid item xs={12} md={3}>

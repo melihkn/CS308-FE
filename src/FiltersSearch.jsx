@@ -43,11 +43,11 @@ function FiltersSearch({ filters, onFilterChange, onApplyFilters, onResetFilters
         </Typography>
         <Slider
           sx={{ color: colors.blueAccent[200] }}
-          value={[filters.price_min || 0, filters.price_max || 1000]}
+          value={[filters.price_min || 0, filters.price_max || 2000]}
           onChange={handlePriceChange}
           valueLabelDisplay="auto"
           min={0}
-          max={1000}
+          max={2000}
           step={3}
         />
       </Box>
@@ -69,7 +69,7 @@ function FiltersSearch({ filters, onFilterChange, onApplyFilters, onResetFilters
       {/* Warranty Filter */}
       <Box sx={{ px: 2 }}>
         <Typography gutterBottom fontSize="14px">
-          Warranty (in years)
+          Warranty (in months)
         </Typography>
         <TextField
           label="Min Warranty"
