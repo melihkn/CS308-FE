@@ -18,21 +18,24 @@ import {
   TextField,
   Snackbar,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ListIcon from "@mui/icons-material/List";
+import { tokens } from "../theme";
+import { useTheme } from "@mui/material/styles";
 
 const Profile = ({ userProfile }) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const theme = useTheme(); // Access the current theme
-  const colors = theme.palette; // Extract the color palette
   const [openDialog, setOpenDialog] = useState(false);
   const [wishlistName, setWishlistName] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const theme = useTheme();
+  const mode = theme.palette.mode;
+  const colors = tokens(mode);
 
   useEffect(() => {
     const loggedIn = JSON.parse(localStorage.getItem("isLoggedIn")) || false;
@@ -46,6 +49,7 @@ const Profile = ({ userProfile }) => {
   const handleViewWishlists = () => {
     navigate(`/wishlists`);
   };
+
   const handleCreateWishlist = () => {
     setOpenDialog(true);
   };
@@ -57,10 +61,10 @@ const Profile = ({ userProfile }) => {
 
   const handleSubmitWishlist = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:8005/api/wishlists/create", {
+      await axios.post("http://127.0.0.1:8005/api/wishlists/create", {
         name: wishlistName,
         customer_id: localStorage.getItem("token"),
-        wishlist_status: "active"
+        wishlist_status: "active",
       });
       setSnackbarMessage("Wishlist created successfully!");
       setSnackbarOpen(true);
@@ -84,8 +88,8 @@ const Profile = ({ userProfile }) => {
       maxWidth="lg"
       sx={{
         mt: 4,
-        backgroundColor: colors.background.default,
-        color: colors.text.primary,
+        backgroundColor: mode === "dark" ? colors.primary[500] : colors.grey[900],
+        color: colors.grey[100],
         p: 2,
         borderRadius: "8px",
         boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
@@ -101,8 +105,8 @@ const Profile = ({ userProfile }) => {
                 textAlign: "center",
                 boxShadow: 3,
                 borderRadius: 2,
-                backgroundColor: colors.background.paper,
-                color: colors.text.primary,
+                backgroundColor: mode === "dark" ? colors.primary[400] : colors.grey[50],
+                color: mode === "dark" ? colors.grey[100] : "black",
               }}
             >
               <Avatar
@@ -111,8 +115,8 @@ const Profile = ({ userProfile }) => {
                   height: 100,
                   margin: "0 auto",
                   mb: 2,
-                  bgcolor: colors.primary.main,
-                  color: colors.getContrastText(colors.primary.main),
+                  bgcolor: colors.blueAccent[500],
+                  color: colors.grey[100],
                 }}
               >
                 <AccountCircleIcon sx={{ fontSize: 50 }} />
@@ -120,7 +124,7 @@ const Profile = ({ userProfile }) => {
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 {userProfile.name} {userProfile.surname}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color={mode === "dark" ? colors.grey[300] : colors.grey[700]}>
                 {userProfile.email}
               </Typography>
               <Divider sx={{ my: 2 }} />
@@ -128,9 +132,9 @@ const Profile = ({ userProfile }) => {
                 variant="contained"
                 sx={{
                   mb: 1,
-                  backgroundColor: colors.primary.main,
-                  color: colors.getContrastText(colors.primary.main),
-                  "&:hover": { backgroundColor: colors.primary.dark },
+                  backgroundColor: colors.blueAccent[500],
+                  color: colors.grey[100],
+                  "&:hover": { backgroundColor: colors.blueAccent[600] },
                 }}
                 fullWidth
                 onClick={() => alert("Edit Profile Feature Coming Soon!")}
@@ -147,8 +151,8 @@ const Profile = ({ userProfile }) => {
                 padding: 2,
                 boxShadow: 3,
                 borderRadius: 2,
-                backgroundColor: colors.background.paper,
-                color: colors.text.primary,
+                backgroundColor: mode === "dark" ? colors.primary[400] : colors.grey[50],
+                color: mode === "dark" ? colors.grey[100] : "black",
               }}
             >
               <CardContent>
@@ -163,18 +167,18 @@ const Profile = ({ userProfile }) => {
                     variant="h6"
                     sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
                   >
-                    <ShoppingCartIcon sx={{ mr: 1, color: colors.primary.main }} /> Your Orders
+                    <ShoppingCartIcon sx={{ mr: 1, color: colors.blueAccent[500] }} /> Your Orders
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color={mode === "dark" ? colors.grey[300] : colors.grey[700]}>
                     Track, return, or buy items.
                   </Typography>
                   <Button
                     variant="contained"
                     sx={{
                       mt: 1,
-                      backgroundColor: colors.secondary.main,
-                      color: colors.getContrastText(colors.secondary.main),
-                      "&:hover": { backgroundColor: colors.secondary.dark },
+                      backgroundColor: colors.greenAccent[500],
+                      color: colors.grey[100],
+                      "&:hover": { backgroundColor: colors.greenAccent[600] },
                     }}
                     onClick={() => navigate("/orders")}
                   >
@@ -184,24 +188,24 @@ const Profile = ({ userProfile }) => {
 
                 <Divider sx={{ mb: 3 }} />
 
-                 {/* Wishlists Section */}
-                 <Box sx={{ mb: 3 }}>
+                {/* Wishlists Section */}
+                <Box sx={{ mb: 3 }}>
                   <Typography
                     variant="h6"
                     sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
                   >
-                    <ListIcon sx={{ mr: 1, color: colors.secondary.main }} /> Your Wishlists
+                    <ListIcon sx={{ mr: 1, color: colors.greenAccent[500] }} /> Your Wishlists
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color={mode === "dark" ? colors.grey[300] : colors.grey[700]}>
                     View and manage your wishlists.
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                  <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
                     <Button
                       variant="contained"
                       sx={{
-                        backgroundColor: colors.primary.main,
-                        color: colors.getContrastText(colors.primary.main),
-                        "&:hover": { backgroundColor: colors.primary.dark },
+                        backgroundColor: colors.blueAccent[500],
+                        color: colors.grey[100],
+                        "&:hover": { backgroundColor: colors.blueAccent[600] },
                       }}
                       onClick={handleViewWishlists}
                     >
@@ -210,9 +214,12 @@ const Profile = ({ userProfile }) => {
                     <Button
                       variant="outlined"
                       sx={{
-                        backgroundColor: colors.secondary.main,
-                        color: colors.getContrastText(colors.secondary.main),
-                        "&:hover": { backgroundColor: colors.secondary.dark },
+                        borderColor: colors.greenAccent[500],
+                        color: colors.greenAccent[500],
+                        "&:hover": {
+                          backgroundColor: colors.greenAccent[100],
+                          borderColor: colors.greenAccent[500],
+                        },
                       }}
                       onClick={handleCreateWishlist}
                     >
@@ -226,7 +233,7 @@ const Profile = ({ userProfile }) => {
         </Grid>
       ) : (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
-          <Typography variant="h6" color="text.secondary">
+          <Typography variant="h6" color={mode === "dark" ? colors.grey[300] : colors.grey[700]}>
             Loading Profile...
           </Typography>
         </Box>
@@ -250,13 +257,15 @@ const Profile = ({ userProfile }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleSubmitWishlist} variant="contained" sx={{
-            bgcolor: 'primary.main',
-            color: 'primary.contrastText',
-            '&:hover': {
-              bgcolor: 'primary.dark',
-            },
-          }}>
+          <Button
+            onClick={handleSubmitWishlist}
+            variant="contained"
+            sx={{
+              bgcolor: colors.blueAccent[500],
+              color: colors.grey[100],
+              "&:hover": { bgcolor: colors.blueAccent[600] },
+            }}
+          >
             Create
           </Button>
         </DialogActions>
