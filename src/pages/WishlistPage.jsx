@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import { Delete as DeleteIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import axios from "axios";
+import {tokens} from "../theme.js";
 import { useTheme } from "@mui/material/styles";
 
 const BACKEND_URL = "http://127.0.0.1:8005/api";
@@ -193,7 +194,7 @@ const WishlistPage = ({ userId }) => {
         </Grid>
       )}
 
-      {/* Create Wishlist Dialog */}
+ 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Create New Wishlist</DialogTitle>
         <DialogContent>
@@ -217,7 +218,7 @@ const WishlistPage = ({ userId }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+    
       <ConfirmDialog
         open={deleteDialogOpen}
         onClose={closeDeleteDialog}
@@ -256,7 +257,7 @@ const WishlistPage = ({ userId }) => {
         </DialogActions>
       </ConfirmDialog>
 
-      {/* Snackbar for notifications */}
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
@@ -280,4 +281,3 @@ const WishlistPage = ({ userId }) => {
 };
 
 export default WishlistPage;
-
