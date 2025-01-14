@@ -1,4 +1,3 @@
-/*
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -81,122 +80,15 @@ function PaymentPage() {
       }
     } catch (error) {
       console.error('Failed to clear shopping cart:', error);
-      alert(`Failed to clear shopping cart: ${error.message}`);
+      setSnackbar({
+        open: true,
+        message: `Failed to clear shopping cart: ${error.message}`,
+        severity: 'error',
+      });
     }
   };
 
-  return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Payment Page
-        </Typography>
-        <List>
-          {cartItems.map((item, index) => (
-            <ListItem key={index} disableGutters>
-              <ListItemText
-                primary={`Product Name: ${item.name}, Model: ${item.model}`}
-                secondary={`Quantity: ${item.quantity}, Price: $${item.price_at_purchase.toFixed(2)}`}
-              />
-            </ListItem>
-          ))}
-        </List>
-        <Box component="form" sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <TextField
-            label="Delivery Address"
-            variant="outlined"
-            fullWidth
-            value={deliveryAddress}
-            onChange={(e) => setDeliveryAddress(e.target.value)}
-          />
-          <TextField
-            label="Address Type (Home, Work, etc.)"
-            variant="outlined"
-            fullWidth
-            value={addressType}
-            onChange={(e) => setAddressType(e.target.value)}
-          />
-          <TextField
-            label="Address Name (Optional)"
-            variant="outlined"
-            fullWidth
-            value={addressName}
-            onChange={(e) => setAddressName(e.target.value)}
-          />
-          <TextField
-            label="Card Number"
-            variant="outlined"
-            fullWidth
-            value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value)}
-          />
-          <TextField
-            label="CVC"
-            variant="outlined"
-            fullWidth
-            value={cvc}
-            onChange={(e) => setCvc(e.target.value)}
-          />
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <TextField
-              label="Expiry Month"
-              variant="outlined"
-              fullWidth
-              value={expiryMonth}
-              onChange={(e) => setExpiryMonth(e.target.value)}
-            />
-            <TextField
-              label="Expiry Year"
-              variant="outlined"
-              fullWidth
-              value={expiryYear}
-              onChange={(e) => setExpiryYear(e.target.value)}
-            />
-          </Box>
-          <Button variant="contained" color="primary" onClick={handlePayment} fullWidth>
-            Finish Payment
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
-  );
-}
-
-export default PaymentPage;
-
-*/
-
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Container,
-  Paper,
-} from '@mui/material';
-
-function PaymentPage() {
-  const location = useLocation();
-  const { cartItems = [], userId = null } = location.state || {};
-
-  const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [addressType, setAddressType] = useState('Home');
-  const [addressName, setAddressName] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [cvc, setCvc] = useState('');
-  const [expiryMonth, setExpiryMonth] = useState('');
-  const [expiryYear, setExpiryYear] = useState('');
-
-  const navigate = useNavigate();
-
-  // Helper function to get the token from localStorage
-  const getToken = () => localStorage.getItem('token');
-
+  // Sipariş oluşturma & ödeme tamamlama
   const handlePayment = async () => {
     try {
       if (!cartItems.length) {
