@@ -127,6 +127,13 @@ const Profile = ({ userProfile }) => {
               <Typography variant="body2" color={mode === "dark" ? colors.grey[300] : colors.grey[700]}>
                 {userProfile.email}
               </Typography>
+              <Typography variant="body2" color={mode === "dark" ? colors.grey[300] : colors.grey[700]}>
+                {userProfile.phone_number}
+              </Typography>
+              <Typography variant="body2" color={mode === "dark" ? colors.grey[300] : colors.grey[700]}>
+                {userProfile.user_adress}
+              </Typography>
+
               <Divider sx={{ my: 2 }} />
               <Button
                 variant="contained"
