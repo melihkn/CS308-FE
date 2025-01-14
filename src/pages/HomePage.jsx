@@ -27,6 +27,8 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
         const allProducts = response.data;
         setProducts(allProducts);
 
+        console.log("All products:", allProducts); // Debugging
+
         const sortedProducts = [...allProducts]
           .sort((a, b) => b.item_sold - a.item_sold)
           .slice(0, 10);
@@ -180,6 +182,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
               distributor={product.distributor}
               imageUrl={getImageUrl(product.image_url)}
               rating={product.average_rating}
+              discountRate={product.discount_rate}
             />
           </Grid>
         ))}
@@ -203,6 +206,7 @@ const HomePage = ({ isLoggedIn, userId, selectedCategory }) => {
               distributor={product.distributor}
               imageUrl={getImageUrl(product.image_url)}
               rating={product.average_rating}
+              discountRate={product.discount_rate}
             />
           </Grid>
         ))}

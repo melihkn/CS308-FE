@@ -61,6 +61,7 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, 
     <Card
       sx={{
         maxWidth: 345,
+        width: 250,
         margin: 2,
         borderRadius: 4,
         transition: "transform 0.3s ease-in-out",
@@ -100,10 +101,11 @@ const ProductCard = ({ userId, isLoggedIn, id, name, model, price, description, 
           component="img"
           alt={name}
           height="250"
+          width={345}
           image={imageUrl}
         />
       </Box>
-      <CardContent  sx={{ height: 220, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <CardContent  sx={{ height: 250, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <Typography gutterBottom variant="h5" component="div">
           {name}
         </Typography>

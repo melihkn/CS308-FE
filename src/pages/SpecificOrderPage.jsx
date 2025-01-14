@@ -57,6 +57,7 @@ const SpecificOrderPage = () => {
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [refundNumber, setRefundNumber] = useState(0);
+  const [refundable, setRefundable] = useState(true);
   const navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -70,6 +71,18 @@ const SpecificOrderPage = () => {
       const response = await axios.get(`http://127.0.0.1:8004/api/orders/${orderId}`, 
         { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
       );
+            // Calculate days since the order was placed
+      const currentDate = new Date();
+      const orderDate = new Date(response.data.order_date);
+      const daysSinceOrder = Math.floor((currentDate - orderDate) / (1000 * 60 * 60 * 24));
+      if (daysSinceOrder > 30) {
+        setRefundable(false);
+      }
+      else { 
+        setRefundable(true);
+      }
+
+
       console.log(response.data);
       setOrderDetails(response.data);
       // Fetch refund status for each product
@@ -266,7 +279,7 @@ const SpecificOrderPage = () => {
                 variant="contained"
                 sx = {{ backgroundColor: colors.blueAccent[400], color: "white", mb: 2 }}
                 onClick={handleRefundRequest}
-                disabled={selectedProducts.length === 0 || orderDetails.order_status !== 3}
+                disabled={selectedProducts.length === 0 || orderDetails.order_status !== 3 || !refundable}
                 fullWidth
               >
                 Request Refund for Selected Products

@@ -1,5 +1,5 @@
-/*
-import React, { useState } from 'react';
+
+/* import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -180,9 +180,9 @@ function PaymentPage() {
   );
 }
 
-export default PaymentPage;
+export default PaymentPage; */
 
-*/
+
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';

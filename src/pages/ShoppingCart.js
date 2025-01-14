@@ -136,7 +136,7 @@ function ShoppingCart({ isLoggedIn, userId }) {
       setSnackbar({ open: true, message: 'Cart is empty, cannot proceed to payment!', severity: 'error' });
       return;
     }
-    navigate("/payment");
+    navigate("/payment", { state: { cartItems: detailedCart, userId } });
   };
 
   const handleSnackbarClose = () => {
@@ -204,4 +204,4 @@ function ShoppingCart({ isLoggedIn, userId }) {
   );
 }
 
-export default ShoppingCart;
+export default ShoppingCart; 

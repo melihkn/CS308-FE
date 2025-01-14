@@ -280,12 +280,14 @@ export const requestRefund = async (refundRequest) => {
     catch (error) {
         if (error.response) {
             console.error("API error response:", error.response.data);
+            throw error; // Re-throw error for higher-level handling
           } else if (error.request) {
             console.error("No response from API:", error.request);
+            throw error; // Re-throw error for higher-level handling
           } else {
             console.error("Unexpected error:", error.message);
+            throw error; // Re-throw error for higher-level handling
           }
-          throw error; // Re-throw error for higher-level handling
     }
 }
 
